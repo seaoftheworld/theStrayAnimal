@@ -1,0 +1,14 @@
+test 00:
+
+aa55(2) + num_cells(2-bytes) + 6 * num_cells (bytes) + 
+          num_goals(2-bytes) + 6 * num_goals (bytes) + 55aa (2-bytes)
+
+
+
+test 01:
+aa55(2) + num_cells(2-bytes) + 6 * num_cells (bytes) + 
+          num_goals(2-bytes) + 6 * num_goals (bytes) + 
+
+          player_int_x, Y (4 bytes)
+
+55aa (2-bytes)
