@@ -13,7 +13,10 @@
 #include <iostream>
 #include <stdio.h>
 
-
+#define SET_FPS_LIMIT (1)
+    // #if SET_FPS_LIMIT
+    // #else
+    // #endif
 
 enum InputResult {
     input_none = 0, input_up, input_down, input_left, input_right, input_max
@@ -45,10 +48,10 @@ int tsa_main() {
             win.stop();
             return -1;
         }
-        if (!renderers.picRenderer.ready()) {
-            win.stop();
-            return -1;
-        }
+        // if (!renderers.picRenderer.ready()) {
+        //     win.stop();
+        //     return -1;
+        // }
         if (!renderers.skyboxRenderer.ready()) {
             win.stop();
             return -1;
@@ -207,9 +210,12 @@ int tsa_main() {
                      sleep_times = 0;
         unsigned int fps = 0;
 
+    #if SET_FPS_LIMIT
         double update_cycle = (float)(1.0f / (55)),
                render_cycle = (float)(1.0f / (55)),
                min_cycle = (update_cycle < render_cycle) ? (update_cycle) : (render_cycle);
+    #else
+    #endif
 
             //*
             float clipPlane_display_down_all[] = {0.0f, 0.0f, -1.0f, 1000.0f};
@@ -303,22 +309,29 @@ int tsa_main() {
             // When less than the amount of 'min_cycle' time has passed since the last valid loop,
             // sleep for 'min_cycle' time before the next loop for power-consumption.
             //
-            // if (now - last_wake_up_time < min_cycle) {
-            //     // sleep for 'min_cycle' time using the OS's api
-            //     sleep_times++;
-            //     continue;
-            // }
-            // else {
-            //     wakeup_times++;
-            //     last_wake_up_time = now;
-            // }
+        #if SET_FPS_LIMIT
+            if (now - last_wake_up_time < min_cycle) {
+                // sleep for 'min_cycle' time using the OS's api
+                sleep_times++;
+                continue;
+            }
+            else {
+                wakeup_times++;
+                last_wake_up_time = now;
+            }
+        #else
+        #endif
 
             // Read input
             // update view-matrix according to input, 
             // update entity pos, rot, scale...  
             // and the others...
+        #if SET_FPS_LIMIT
             // if ( now - last_update_time >= update_cycle ) {
             {
+        #else
+            {
+        #endif
 
                 PROFILE_SCOPE("Update inputs, view...");
                 
@@ -400,7 +413,11 @@ int tsa_main() {
             }
 
             // Update games's data(area_data, crates_data, goals_data) according to input
+        #if SET_FPS_LIMIT
+            if ( now - last_update_time >= update_cycle || input_result != input_none ) {
+        #else
             {
+        #endif
                 unsigned short updated_crate_idx = NUM_CRATES, 
                                reached_goal = MAX_NUM_GOALS,
                                remained_goals = MAX_NUM_GOALS;
@@ -468,8 +485,11 @@ int tsa_main() {
             }
 
             // Render entities according to updated data
-            // if ( now - last_render_time >= render_cycle ) {
+        #if SET_FPS_LIMIT
+            if ( now - last_render_time >= render_cycle ) {
+        #else
             {
+        #endif
                 PROFILE_SCOPE("Render scene");
 
                 // renderers.processScene(test_light, &clipPlane_up);

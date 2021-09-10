@@ -7,8 +7,8 @@
 
 class BasicEntityRenderer : public BaseRenderer {
 private:
-    StaticShader *entityShader = NULL;
     // SpecularShader *entityShader = NULL;
+    NoLightingShader *entityShader = NULL;
 
     std::vector<Entity *> entities;
 
@@ -93,9 +93,34 @@ public:
         StaticTexture *static_texture = entity->getTexture();
         BaseModel *static_model = entity->getModel();
 
+        // Before each draw-call, the texture-object (the color-buffer created) shall be 
+        // set (with it's texture-id) to bound to a 'texture-unit', 
+        // for the 'sampler2D' in the frag-shader to fetch color from the same unit 
+        // (according to the uv for each vertex).
+        //
+        // Seems the sampler samples unit-0 by default, if there's multi-textures to sample from,
+        // then the samplers has to be set (with it's uniform-locations for the shader) 
+        // to sample-from/bound-to correspondent 'texture-units' 
+        // when the shader's created.
         if (static_texture) {
-            // bind a texture buffer object
+
+            // Seems the frag-shader's sampler fetches from texture-unit-0 by default, so
+            // bind the texture buffer-object (mem-buffer for pixel-colors) to 
+            // unit-0 for the frag-shader's sampler to sample from.
+            //
+            // Could also explicitly set the sampler to fetch from unit-0
+            // with gluniform1i(loc_sampler2D, 0) call,
+            // when creating this shader.
+            //
+            // In terrain shader, with multi textures to sample from, sampler2Ds are indeed
+            // bound to corresondent texture units for sampling
+            // when the shader's created.
+
+            // Bind this texture-buffer to unit-0, since the shader's 
+            // sampler samples from unit-0 
+            // (default setting, also set explicitly when shader created).
             int texture_id = static_texture->getId();
+
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture_id);
         }
@@ -104,6 +129,7 @@ public:
 
             switch (static_model->getModelType()) {    
 
+                // The 2 square pictures displaying road are single_vbo model
                 case BaseModel::single_vbo:
                 {
                     indices_count = ((StaticModel_SingleVbo *)static_model)->getNumIndices();
@@ -117,7 +143,10 @@ public:
                         // enable a corresponding-attribute in v-shader (pos, uv, or normal), then
                         // set how to interprete all-in-one vbo data for each attribute's data.
                             glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-                            for (unsigned int i = 0; i < StaticModel_SingleVbo::valid_attr_num; i++) {
+
+                            // The NoLightingShader doesn't do anything about normal-attribute data,
+                            // so it could be ignored.
+                            for (unsigned int i = 0; i < StaticModel_SingleVbo::valid_attr_num - 1; i++) {
                                 
                                 glEnableVertexAttribArray(StaticModel_SingleVbo::valid_attr_idx[i]);
 
@@ -162,6 +191,7 @@ public:
                 }
                 break;
 
+                // The many pictures with transparency is multi_vbo model
                 case BaseModel::multi_vbos:
                 {
                     indices_count = ((StaticModel *)static_model)->getNumIndices();
@@ -176,7 +206,9 @@ public:
                     // bind vbo, enable its corresponding-attribute in v-shader (pos, uv, or normal), then
                     // set how to interpretate vbo data into the attribute.
 
-                    for (unsigned int i = 0; i < StaticModel::vboNum; i++) {
+                    // The NoLightingShader doesn't do anything about normal-attribute data,
+                    // so it could be ignored.
+                    for (unsigned int i = 0; i < StaticModel::vboNum - 1; i++) {
                     // for (unsigned int i = 0; i < 3 - 3; i++) {
                         glBindBuffer(GL_ARRAY_BUFFER, vbos_ibo_ids[i]);
                         

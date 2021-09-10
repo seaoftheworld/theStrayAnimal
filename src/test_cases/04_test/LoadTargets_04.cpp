@@ -37,11 +37,6 @@ void LoadTargets_04::initCrate() {
 
     // Doesnt work before shader is bound/opened/started .... !!!
     // multiLightsShader.loadLights(&light_pos[0], &light_color[0], 4);
-
-    // printf("4 lights inited and crate model loaded, press anything to continue ...\n\n"); {
-    //     int dbg;
-    //     scanf("%d", &dbg);
-    // }
 }
 
 void LoadTargets_04::initSkybox() {
@@ -54,11 +49,6 @@ void LoadTargets_04::initSkybox() {
         "data/tex/sky/bottom.png"
     };
     skybox.init(&loader, &cloudySky, 50);
-
-    printf("skybox init done, press anything to continue ...\n\n"); {
-        int dbg;
-        scanf("%d", &dbg);
-    }
 }
 
 void LoadTargets_04::initWaterTiles() {
@@ -163,25 +153,25 @@ void LoadTargets_04::initGui() {
     {
         float gui_pos[] = { -0.7f, 0.7f };
         float gui_scale[] = { 0.125f, 0.25f };
-        // gui[0].init(waterTile[0].getFbo()->getTexture(), &gui_pos, &gui_scale);
+            // gui[0].init(waterTile[0].getFbo()->getTexture(), &gui_pos, &gui_scale);
     }
 
     {
         float gui_pos[] = { 0.7f, 0.7f };
         float gui_scale[] = { 0.25f, 0.25f };
-        // gui[1].init(waterTile[1].getFbo()->getTexture(), &gui_pos, &gui_scale);
+            // gui[1].init(waterTile[1].getFbo()->getTexture(), &gui_pos, &gui_scale);
     }
 
     {
         float gui_pos[] = { -0.7f, -0.7f };
         float gui_scale[] = { 0.25f, 0.25f };
-        // gui[2].init(waterTile[2].getFbo()->getTexture(), &gui_pos, &gui_scale);
+            // gui[2].init(waterTile[2].getFbo()->getTexture(), &gui_pos, &gui_scale);
     }
 
     {
         float gui_pos[] = { 0.7f, -0.7f };
         float gui_scale[] = { 0.25f, 0.25f };
-        // gui[3].init(waterTile[3].getFbo()->getTexture(), &gui_pos, &gui_scale);
+            // gui[3].init(waterTile[3].getFbo()->getTexture(), &gui_pos, &gui_scale);
     }
 
     printf("gui init done, press anything to continue ...\n\n"); {

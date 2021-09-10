@@ -6,7 +6,7 @@ void BasicEntityRenderer::allocShadersData() {
     }
 
     // SpecularShader *shader = new SpecularShader;
-    StaticShader *shader = new StaticShader;
+    NoLightingShader *shader = new NoLightingShader;
 
     if (!shader) {
         // shader is not allocated
@@ -23,10 +23,10 @@ void BasicEntityRenderer::allocShadersData() {
         return;
     }
 
-
     // load projection matrix for the only once
     shader->start();
     shader->loadProjMatrix(getProjMatrix());
+    shader->sampleTextureUnit(0);
     shader->stop();
 
     entityShader = shader;

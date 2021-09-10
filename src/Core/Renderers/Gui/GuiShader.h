@@ -2,8 +2,19 @@
 
 #include "Core/Shader/Base/BaseShader.h"
 
-#define GUI_VSH_PATH "data/shaders/Gui/Gui.vsh"
-#define GUI_FSH_PATH "data/shaders/Gui/Gui.fsh"
+
+#ifdef Z370_PC
+    // #define GUI_VSH_PATH "data/shaders/Gui/Gui.vsh"
+    // #define GUI_FSH_PATH "data/shaders/Gui/Gui.fsh"
+    #define GUI_VSH_PATH "data/shaders/Z370_PC/models/specular.vsh"
+    #define GUI_FSH_PATH "data/shaders/Z370_PC/models/specular.fsh"
+#elif defined T14sGen1_PC
+    #define GUI_VSH_PATH "data/shaders/T14sGen1_PC/gui/gui_vsh.c"
+    #define GUI_FSH_PATH "data/shaders/T14sGen1_PC/gui/gui_fsh.c"
+#else 
+    #define GUI_VSH_PATH "data/shaders/T14sGen1_PC/gui/gui_vsh.c"
+    #define GUI_FSH_PATH "data/shaders/T14sGen1_PC/gui/gui_fsh.c"
+#endif
 
 class GuiType00Shader : public BaseShader {
 
@@ -30,6 +41,10 @@ public:
 
     void bindAllAttributeLocations() override;
     void getAllUniformLocations() override;
+
+    // void sampleTextureUnit(unsigned int i) {
+    //     uniform1i();
+    // }
 };
 
 class PictureShader : public BaseShader {

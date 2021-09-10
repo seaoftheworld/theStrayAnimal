@@ -51,13 +51,17 @@ void TerrainShader::bindAllAttributeLocations() {
 }
 
 void TerrainShader::getAllUniformLocations() {
-    printf("    override for getting uniform-loc called.\n");
+    printf("    TerrainShader::getAllUniformLocations() override called.\n");
 
     setTransformMatLoc(getUniformLocation("transformMatrix"));
     setViewMatLoc(getUniformLocation("viewMatrix"));
     setProjMatLoc(getUniformLocation("projMatrix"));
-    printf("    unif_loc for mvp loc: %d, %d, %d\n\n", 
-        getTransformMatLoc(), getViewMatLoc(), getProjMatLoc());
+
+    printf("    transMat: %d, viewMat: %d, projMat: %d\n\n", 
+        getTransformMatLoc(), 
+        getViewMatLoc(), 
+        getProjMatLoc()
+    );
 
     // lightPosition_loc = getUniformLocation("lightPosition");
     // lightColor_loc = getUniformLocation("lightColor");
@@ -100,9 +104,14 @@ void TerrainShader::getAllUniformLocations() {
     texture02_sampler_loc = getUniformLocation("texture02");
     texture03_sampler_loc = getUniformLocation("texture03");
     blendMap_sampler_loc = getUniformLocation("blendMap");
+
     printf("    terrain unif_loc for 5 textures: %d, %d, %d, %d, %d\n\n", 
-        texture00_sampler_loc, texture01_sampler_loc, texture02_sampler_loc, 
-        texture03_sampler_loc, blendMap_sampler_loc);
+        texture00_sampler_loc, 
+        texture01_sampler_loc, 
+        texture02_sampler_loc, 
+        texture03_sampler_loc, 
+        blendMap_sampler_loc
+    );
 
     clipPlane_loc = getUniformLocation("terrainClipPlane");
     printf("    terrain clipPlane_loc : %d\n\n\n\n", clipPlane_loc);

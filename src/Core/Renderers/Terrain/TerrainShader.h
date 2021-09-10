@@ -2,11 +2,36 @@
 #include "Core/Shader/Base/BaseShader.h"
 #include "Core/Common/light.h"
 
-#define TERRAIN_VSH_PATH "data/shaders/terrain/terrain_multi_lights_clip_plane.vsh"
-#define TERRAIN_FSH_PATH "data/shaders/terrain/terrain_multi_lights_clip_plane.fsh"
+
+#ifdef Z370_PC
+    #define TERRAIN_VSH_PATH "data/shaders/terrain/terrain_multi_lights_clip_plane.vsh"
+    #define TERRAIN_FSH_PATH "data/shaders/terrain/terrain_multi_lights_clip_plane.fsh"
+#elif defined T14sGen1_PC
+    #define TERRAIN_VSH_PATH "data/shaders/T14sGen1_PC/terrain/terrain_multi_lights_vsh.c"
+    #define TERRAIN_FSH_PATH "data/shaders/T14sGen1_PC/terrain/terrain_multi_lights_fsh.c"
+#else 
+    #define TERRAIN_VSH_PATH "data/shaders/T14sGen1_PC/terrain/terrain_multi_lights_clip_plane_vsh.c"
+    #define TERRAIN_FSH_PATH "data/shaders/T14sGen1_PC/terrain/terrain_multi_lights_clip_plane_fsh.c"
+#endif
 #define TERRAIN_SHADER_MAX_LIGHTS (8)
 
 class TerrainShader : public BaseShader {
+    // int lightPosition_loc = -1, 
+    //     lightColor_loc = -1,
+    int    lightPosition_loc[TERRAIN_SHADER_MAX_LIGHTS];
+    int       lightColor_loc[TERRAIN_SHADER_MAX_LIGHTS];
+    int lightAttenuation_loc[TERRAIN_SHADER_MAX_LIGHTS];
+
+    int objReflect_loc = -1,
+        objShineDamper_loc = -1;
+
+    int texture00_sampler_loc = -1, 
+        texture01_sampler_loc = -1, 
+        texture02_sampler_loc = -1, 
+        texture03_sampler_loc = -1, 
+        blendMap_sampler_loc = -1;
+
+    int clipPlane_loc = -1;
 
 public:
     enum attrNum {
@@ -28,7 +53,7 @@ public:
     void bindAllAttributeLocations() override;
     void getAllUniformLocations() override;
 
-    void bindTextureUnits() {
+    void bindTextureSampleUnits() {
         // uniform1i(texture00_sampler_loc, GL_TEXTURE0);
         // uniform1i(texture01_sampler_loc, GL_TEXTURE1);
         // uniform1i(texture02_sampler_loc, GL_TEXTURE2);
@@ -99,25 +124,23 @@ public:
     //     uniform1f(alpha_loc, p);
     // }
 
+    // void t00_sampleTextureUnit(unsigned int i) {
+    //     uniform1i(texture00_sampler_loc, i);
+    // }
+    // void t01_sampleTextureUnit(unsigned int i) {
+    //     uniform1i(texture01_sampler_loc, i);
+    // }
+    // void t02_sampleTextureUnit(unsigned int i) {
+    //     uniform1i(texture02_sampler_loc, i);
+    // }
+    // void t03_sampleTextureUnit(unsigned int i) {
+    //     uniform1i(texture02_sampler_loc, i);
+    // }
+    // void blendmap_sampleTextureUnit(unsigned int i) {
+    //     uniform1i(blendMap_sampler_loc, i);
+    // }
+
     void loadClipPlane(float pa4f[][4]) {
         uniform4fv(clipPlane_loc, 1, &(*pa4f)[0]);
     }
-
-private:
-    // int lightPosition_loc = -1, 
-    //     lightColor_loc = -1,
-    int    lightPosition_loc[TERRAIN_SHADER_MAX_LIGHTS];
-    int       lightColor_loc[TERRAIN_SHADER_MAX_LIGHTS];
-    int lightAttenuation_loc[TERRAIN_SHADER_MAX_LIGHTS];
-
-    int objReflect_loc = -1,
-        objShineDamper_loc = -1;
-
-    int texture00_sampler_loc = -1, 
-        texture01_sampler_loc = -1, 
-        texture02_sampler_loc = -1, 
-        texture03_sampler_loc = -1, 
-        blendMap_sampler_loc = -1;
-
-    int clipPlane_loc = -1;
 };

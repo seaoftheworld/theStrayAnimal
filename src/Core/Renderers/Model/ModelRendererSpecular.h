@@ -6,9 +6,7 @@
 
 class SpecularEntityRenderer : public BaseRenderer {
 private:
-    // StaticShader *entityShader = NULL;
     SpecularShader *entityShader = NULL;
-
     std::vector<Entity *> entities;
 
 public:
@@ -141,7 +139,8 @@ public:
         BaseModel *static_model = entity->getModel();
 
         if (static_texture) {
-            // bind a texture buffer object
+            // bind a texture-buffer to unit-0 for the shader's sampler to sample from
+            // (shader's sampler is also set to sample from unit-0)
             int texture_id = static_texture->getId();
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture_id);

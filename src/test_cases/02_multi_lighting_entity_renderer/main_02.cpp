@@ -3,6 +3,11 @@
 // 2. gl3w (included in Renderer.h)
 // 3. gl_math
 
+#define SET_FPS_LIMIT (1)
+    // #if SET_FPS_LIMIT
+    // #else
+    // #endif
+
 #define __USE_INLINE_METHODS__
 #include "WindowSystem/WindowSystem.h"
 
@@ -110,9 +115,12 @@ int test_02_multi_lights_entity_renderer() {
                  sleep_times = 0;
     unsigned int fps = 0;
 
-    double update_cycle = (float)(1.0f / (55)),
-           render_cycle = (float)(1.0f / (55)),
+#if SET_FPS_LIMIT
+    double update_cycle = (float)(1.0f / (60)),
+           render_cycle = (float)(1.0f / (120)),
            min_cycle = (update_cycle < render_cycle) ? (update_cycle) : (render_cycle);
+#else
+#endif
 
     while ( win.isValid() ) {
 
@@ -138,13 +146,15 @@ int test_02_multi_lights_entity_renderer() {
         static bool stop = false;
         if (now - last_1s_time > 1.0f) {
             {
-                // printf("  __ 1s: sleep/wakeup: %d--%d, update/render: %d--%d \n\n", 
-                //     sleep_times, wakeup_times, updated_times, rendered_times);
-
+            #if SET_FPS_LIMIT
+                printf("  __ 1s: sleep/wakeup: %d--%d, update/render: %d--%d \n\n", 
+                    sleep_times, wakeup_times, updated_times, rendered_times);
                 // if (updated_times < update_freq) {
                 // }
                 // if (rendered_times < render_freq) {
                 // }
+            #else
+            #endif
 
                 rendered_times = 0;
                 updated_times = 0;
@@ -190,25 +200,31 @@ int test_02_multi_lights_entity_renderer() {
             }
         }
 
+    #if SET_FPS_LIMIT
         // When less than the amount of 'min_cycle' time has passed since the last valid loop,
         // sleep for 'min_cycle' time before the next loop for power-consumption.
         //
-        // if (now - last_wake_up_time < min_cycle) {
-        //     // sleep for 'min_cycle' time using the OS's api
-        //     sleep_times++;
-        //     continue;
-        // }
-        // else {
-        //     wakeup_times++;
-        //     last_wake_up_time = now;
-        // }
+        if (now - last_wake_up_time < min_cycle) {
+            // sleep for 'min_cycle' time using the OS's api
+            sleep_times++;
+            continue;
+        }
+        else {
+            wakeup_times++;
+            last_wake_up_time = now;
+        }
+    #else
+    #endif
 
         // Updating rountine
         // update view-matrix according to input, 
         // update entity pos, rot, scale...  
         // and the others...
-        // if ( now - last_update_time >= update_cycle ) {
+    #if SET_FPS_LIMIT
+        if ( now - last_update_time >= update_cycle ) {
+    #else
         {    
+    #endif
             win.pollEvents();  // not respond when close win with mouse without this
             cam.input_update(win);
             BaseRenderer::calculateViewMatrix(cam.getPosition(), cam.getDirection(), cam.getUp());
@@ -324,8 +340,11 @@ int test_02_multi_lights_entity_renderer() {
         }
 
         // Render entities
-        // if ( now - last_render_time >= render_cycle ) {
+    #if SET_FPS_LIMIT
+        if ( now - last_render_time >= render_cycle ) {
+    #else
         {
+    #endif
             abstractRenderer.process();
 
             last_render_time = now;

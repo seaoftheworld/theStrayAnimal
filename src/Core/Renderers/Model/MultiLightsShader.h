@@ -3,10 +3,21 @@
 #include "Core/Shader/Base/BaseShader.h"
 #include "Core/Common/light.h"
 
-// #define MULTI_LIGHTS_VSH_PATH "data/shaders/models/multi_lights_clip_plane.vsh"
-// #define MULTI_LIGHTS_FSH_PATH "data/shaders/models/multi_lights_clip_plane.fsh"
-#define MULTI_LIGHTS_VSH_PATH "data/shaders/models/multi_lights.vsh"
-#define MULTI_LIGHTS_FSH_PATH "data/shaders/models/multi_lights.fsh"
+
+// The 'plane' part in the shader shall be disabled
+//
+#ifdef Z370_PC
+    // #define MULTI_LIGHTS_VSH_PATH "data/shaders/models/multi_lights_clip_plane.vsh"
+    // #define MULTI_LIGHTS_FSH_PATH "data/shaders/models/multi_lights_clip_plane.fsh"
+    #define MULTI_LIGHTS_VSH_PATH "data/shaders/Z370_PC/models/multi_lights.vsh"
+    #define MULTI_LIGHTS_FSH_PATH "data/shaders/Z370_PC/models/multi_lights.fsh"
+#elif defined T14sGen1_PC
+    #define MULTI_LIGHTS_VSH_PATH "data/shaders/T14sGen1_PC/model/multi_lighting_vsh.c"
+    #define MULTI_LIGHTS_FSH_PATH "data/shaders/T14sGen1_PC/model/multi_lighting_fsh.c"
+#else 
+    #define MULTI_LIGHTS_VSH_PATH "data/shaders/T14sGen1_PC/model/multi_lighting_vsh.c"
+    #define MULTI_LIGHTS_FSH_PATH "data/shaders/T14sGen1_PC/model/multi_lighting_fsh.c"
+#endif
 
 #define SHADER_MAX_LIGHTS (8)
 

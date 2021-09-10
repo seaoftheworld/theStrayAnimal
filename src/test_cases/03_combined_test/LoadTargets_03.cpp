@@ -117,9 +117,9 @@ void LoadTargets_03::initMultiVboEntity() {
     unsigned short test_indices[] = { 0, 1, 2, 0, 3, 2 };
 
     StaticModel *model = NULL; {
-        unsigned int vertices_count_from_pos    = ARRAY_SIZE(test_pos) / StaticShader::attr_stride[StaticShader::id0_pos3f];
-        unsigned int vertices_count_from_uv     = ARRAY_SIZE(test_uv) / StaticShader::attr_stride[StaticShader::id1_uv2f];
-        unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / StaticShader::attr_stride[StaticShader::id2_normal3f];
+        unsigned int vertices_count_from_pos    = ARRAY_SIZE(test_pos) / NoLightingShader::attr_stride[NoLightingShader::id0_pos3f];
+        unsigned int vertices_count_from_uv     = ARRAY_SIZE(test_uv) / NoLightingShader::attr_stride[NoLightingShader::id1_uv2f];
+        unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / NoLightingShader::attr_stride[NoLightingShader::id2_normal3f];
 
         unsigned int vertices_count = \
             (vertices_count_from_pos == vertices_count_from_uv && \
@@ -299,10 +299,10 @@ void LoadTargets_03::initTerrain() {
 
         texturePack.init(terrainTexture00, terrainTexture01, terrainTexture02, terrainTexture03);
 
-        printf("\n\n terrain model init done, press anything to continue ...\n\n"); {
-            int dbg;
-            scanf("%d", &dbg);
-        }
+        // printf("\n\n terrain model init done, press anything to continue ...\n\n"); {
+        //     int dbg;
+        //     scanf("%d", &dbg);
+        // }
     }
 
     TerrainTexture blendmap; {
@@ -313,13 +313,13 @@ void LoadTargets_03::initTerrain() {
         blendmap.init(terrainTexture->getId());
     }
 
-    terrain.init(&loader, 0, 0, texturePack, blendmap, "data/tex/terrain/height_map/heightmap.png");
-
-    printf("grass tex id: %d.\n", terrain.getTexturePack()->getTerrainTexture00()->getTextureID());
-    printf("  mud tex id: %d.\n", terrain.getTexturePack()->getTerrainTexture01()->getTextureID());
-    printf("flowertex id: %d.\n", terrain.getTexturePack()->getTerrainTexture02()->getTextureID());
-    printf(" path tex id: %d.\n", terrain.getTexturePack()->getTerrainTexture03()->getTextureID());
-    printf("blend tex id: %d.\n", terrain.getBlendMap()->getTextureID());
+    terrain.init(&loader, 0, 0, texturePack, blendmap, "data/tex/terrain/height_map/heightmap.png"); {
+        printf("grass tex id: %d.\n", terrain.getTexturePack()->getTerrainTexture00()->getTextureID());
+        printf("  mud tex id: %d.\n", terrain.getTexturePack()->getTerrainTexture01()->getTextureID());
+        printf("flowertex id: %d.\n", terrain.getTexturePack()->getTerrainTexture02()->getTextureID());
+        printf(" path tex id: %d.\n", terrain.getTexturePack()->getTerrainTexture03()->getTextureID());
+        printf("blend tex id: %d.\n\n\n", terrain.getBlendMap()->getTextureID());
+    }
 }
 
 void LoadTargets_03::initSkybox() {

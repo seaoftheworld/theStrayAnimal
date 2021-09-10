@@ -335,8 +335,8 @@ int test_03_terrain() {
                 dummy_normal
             };
 
-            unsigned int test_vertices_count_from_pos = ARRAY_SIZE(test_pos) / StaticShader::attr_stride[StaticShader::id0_pos3f];
-            unsigned int test_vertices_count_from_uv = ARRAY_SIZE(test_uv) / StaticShader::attr_stride[StaticShader::id1_uv2f];
+            unsigned int test_vertices_count_from_pos = ARRAY_SIZE(test_pos) / NoLightingShader::attr_stride[NoLightingShader::id0_pos3f];
+            unsigned int test_vertices_count_from_uv = ARRAY_SIZE(test_uv) / NoLightingShader::attr_stride[NoLightingShader::id1_uv2f];
 
             unsigned short test_indices[] = { 0, 1, 2, 0, 3, 2 };
 

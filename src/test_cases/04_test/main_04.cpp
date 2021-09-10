@@ -3,6 +3,11 @@
 // 2. gl3w (included in Renderer.h)
 // 3. gl_math
 
+#define SET_FPS_LIMIT (1)
+    // #if SET_FPS_LIMIT
+    // #else
+    // #endif
+
 #define __USE_INLINE_METHODS__
 #include "WindowSystem/WindowSystem.h"
 
@@ -56,9 +61,6 @@ int test_04() {
 
     LoadTargets_04 targets; {
 
-        // renderers.entityRenderer.addEntity(targets.getSingleVboEntity());
-        // renderers.entityRenderer.addEntity(targets.getMultiVboEntity());
-
         for (auto crate_entity = targets.getCrate()->entities.begin(); crate_entity != targets.getCrate()->entities.end(); crate_entity++) {
             renderers.entityRenderer.addEntity(&(*crate_entity));
         }
@@ -71,10 +73,10 @@ int test_04() {
         renderers.waterRenderer.addWaterTile(&waterTiles[2]);
         renderers.waterRenderer.addWaterTile(&waterTiles[3]);
 
-        renderers.guiRenderer.addGui(&(targets.getGui()[0]));
-        renderers.guiRenderer.addGui(&(targets.getGui()[1]));
-        renderers.guiRenderer.addGui(&(targets.getGui()[2]));
-        renderers.guiRenderer.addGui(&(targets.getGui()[3]));
+        // renderers.guiRenderer.addGui(&(targets.getGui()[0]));
+        // renderers.guiRenderer.addGui(&(targets.getGui()[1]));
+        // renderers.guiRenderer.addGui(&(targets.getGui()[2]));
+        // renderers.guiRenderer.addGui(&(targets.getGui()[3]));
     }
 
     // Light light; {
@@ -156,9 +158,12 @@ int test_04() {
                  sleep_times = 0;
     unsigned int fps = 0;
 
+#if SET_FPS_LIMIT
     double update_cycle = (float)(1.0f / (55)),
            render_cycle = (float)(1.0f / (55)),
            min_cycle = (update_cycle < render_cycle) ? (update_cycle) : (render_cycle);
+#else
+#endif
 
         //*
         float clipPlane_display_down_all[] = {0.0f, 0.0f, -1.0f, 1000.0f};
@@ -250,23 +255,28 @@ int test_04() {
         // When less than the amount of 'min_cycle' time has passed since the last valid loop,
         // sleep for 'min_cycle' time before the next loop for power-consumption.
         //
-        // if (now - last_wake_up_time < min_cycle) {
-        //     // sleep for 'min_cycle' time using the OS's api
-        //     sleep_times++;
-        //     continue;
-        // }
-        // else {
-        //     wakeup_times++;
-        //     last_wake_up_time = now;
-        // }
+    #if SET_FPS_LIMIT
+        if (now - last_wake_up_time < min_cycle) {
+            // sleep for 'min_cycle' time using the OS's api
+            sleep_times++;
+            continue;
+        }
+        else {
+            wakeup_times++;
+            last_wake_up_time = now;
+        }
+    #else
+    #endif
 
         // Updating rountine
         // update view-matrix according to input, 
         // update entity pos, rot, scale...  
         // and the others...
-        // if ( now - last_update_time >= update_cycle ) {
+    #if SET_FPS_LIMIT
+        if ( now - last_update_time >= update_cycle ) {
+    #else
         {
-
+    #endif
             PROFILE_SCOPE("Update inputs, view...");
             
             win.pollEvents();  // not respond when close win with mouse without this
@@ -369,8 +379,11 @@ int test_04() {
         }
 
         // Render entities
-        // if ( now - last_render_time >= render_cycle ) {
+    #if SET_FPS_LIMIT
+        if ( now - last_render_time >= render_cycle ) {
+    #else
         {
+    #endif
             PROFILE_SCOPE("Render");
 
             // renderers.processScene(test_light, &clipPlane_up);
@@ -400,7 +413,7 @@ int test_04() {
             // renderers.processWater(waterFbos, dudvTex, normalTex);  // high consumption on 1st frame ???
             renderers.processWater(NULL, dudvTex, normalTex);          // high consumption on 1st frame ???
 
-            renderers.processGui();
+                // renderers.processGui();
 
             last_render_time = now;
             rendered_times++;

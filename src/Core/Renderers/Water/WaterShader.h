@@ -1,9 +1,18 @@
 #include "Core/Shader/Base/BaseShader.h"
 
-// #define WATER_VSH_PATH "data/shaders/Water/Water.vsh"
-// #define WATER_FSH_PATH "data/shaders/Water/Water.fsh"
-#define WATER_VSH_PATH "data/shaders/Water/pureColor.vsh"
-#define WATER_FSH_PATH "data/shaders/Water/pureColor.fsh"
+
+#ifdef Z370_PC
+    // #define WATER_VSH_PATH "data/shaders/Water/Water.vsh"
+    // #define WATER_FSH_PATH "data/shaders/Water/Water.fsh"
+    #define WATER_VSH_PATH "data/shaders/Water/pureColor.vsh"
+    #define WATER_FSH_PATH "data/shaders/Water/pureColor.fsh"
+#elif defined T14sGen1_PC
+    #define WATER_VSH_PATH "data/shaders/T14sGen1_PC/water/pureColor_vsh.c"
+    #define WATER_FSH_PATH "data/shaders/T14sGen1_PC/water/pureColor_fsh.c"
+#else 
+    #define WATER_VSH_PATH "data/shaders/T14sGen1_PC/water/pureColor_vsh.c"
+    #define WATER_FSH_PATH "data/shaders/T14sGen1_PC/water/pureColor_fsh.c"
+#endif
 
 class WaterShader : public BaseShader {
 

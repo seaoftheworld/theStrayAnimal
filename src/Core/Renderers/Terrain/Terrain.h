@@ -17,6 +17,12 @@ private:
 };
 
 class TerrainTexturePack {
+
+    TerrainTexture tex00;
+    TerrainTexture tex01;
+    TerrainTexture tex02;
+    TerrainTexture tex03;
+
 public:
     void init(const TerrainTexture &input_tex00, 
         const TerrainTexture &input_tex01, 
@@ -44,12 +50,6 @@ public:
     TerrainTexture *getTerrainTexture03() {
         return &tex03;
     }
-
-private:
-    TerrainTexture tex00;
-    TerrainTexture tex01;
-    TerrainTexture tex02;
-    TerrainTexture tex03;
 };
 
 class Terrain {
@@ -59,6 +59,7 @@ class Terrain {
     static const unsigned int EDGE_VERTEX_COUNT = 128;  // only 128 * 128 pixels on height map can be sampled now
     static const unsigned int TOTAL_VERTEX_COUNT = EDGE_VERTEX_COUNT * EDGE_VERTEX_COUNT;
     
+    // static const unsigned int SIZE = 500;
     static const unsigned int SIZE = 20;
     static const unsigned int MAX_HEIGHT = SIZE * 2 / 3;
     // static const unsigned int MAX_HEIGHT = SIZE * 4 / 5;
@@ -78,7 +79,7 @@ class Terrain {
     TerrainTexturePack texturePack;
     TerrainTexture blendMap;
 
-    StaticModel *generateTerrainModel(Loader* loader, const std::string &height_map_path);
+    StaticModel *generateTerrainModel(Loader *loader, const std::string &height_map_path);
 
     void calculateNormal(unsigned int x, unsigned int y, unsigned char *height_map, float *result);
     float getHeight(unsigned int x, unsigned int y, unsigned char* height_map, int intput_comp);

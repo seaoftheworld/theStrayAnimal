@@ -2,8 +2,19 @@
 #include "Core/Shader/Base/BaseShader.h"
 // #include "Core/Common/light.h"
 
-#define SKYBOX_VSH_PATH "data/shaders/skybox.vsh"
-#define SKYBOX_FSH_PATH "data/shaders/skybox.fsh"
+
+#ifdef Z370_PC
+    // #define SKYBOX_VSH_PATH "data/shaders/skybox.vsh"
+    // #define SKYBOX_FSH_PATH "data/shaders/skybox.fsh"
+    #define SKYBOX_VSH_PATH "data/shaders/Z370_PC/models/specular.vsh"
+    #define SKYBOX_FSH_PATH "data/shaders/Z370_PC/models/specular.fsh"
+#elif defined T14sGen1_PC
+    #define SKYBOX_VSH_PATH "data/shaders/T14sGen1_PC/skybox/skybox_vsh.c"
+    #define SKYBOX_FSH_PATH "data/shaders/T14sGen1_PC/skybox/skybox_fsh.c"
+#else 
+    #define SKYBOX_VSH_PATH "data/shaders/T14sGen1_PC/skybox/skybox_vsh.c"
+    #define SKYBOX_FSH_PATH "data/shaders/T14sGen1_PC/skybox/skybox_fsh.c"
+#endif
 
 class SkyboxShader : public BaseShader {
 

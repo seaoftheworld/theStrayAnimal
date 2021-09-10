@@ -27,6 +27,7 @@ void SpecularEntityRenderer::allocShadersData() {
     // load projection matrix for the only once
     shader->start();
     shader->loadProjMatrix(getProjMatrix());
+    shader->sampleTextureUnit(0);
     shader->stop();
 
     entityShader = shader;

@@ -34,9 +34,9 @@ void TSA_LoadTargets::initOriginSquare() {
     unsigned short test_indices[] = { 0, 1, 2, 0, 3, 2 };
 
     StaticModel *model = NULL; {
-        unsigned int vertices_count_from_pos = ARRAY_SIZE(dummy_pos) / StaticShader::attr_stride[StaticShader::id0_pos3f];
-        unsigned int vertices_count_from_uv = ARRAY_SIZE(dummy_uv) / StaticShader::attr_stride[StaticShader::id1_uv2f];
-        unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / StaticShader::attr_stride[StaticShader::id2_normal3f];
+        unsigned int vertices_count_from_pos = ARRAY_SIZE(dummy_pos) / NoLightingShader::attr_stride[NoLightingShader::id0_pos3f];
+        unsigned int vertices_count_from_uv = ARRAY_SIZE(dummy_uv) / NoLightingShader::attr_stride[NoLightingShader::id1_uv2f];
+        unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / NoLightingShader::attr_stride[NoLightingShader::id2_normal3f];
 
         unsigned int vertices_count = \
             (vertices_count_from_pos == vertices_count_from_uv && \

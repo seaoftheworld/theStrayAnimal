@@ -74,8 +74,8 @@ int test_01_specular_entity_renderer() {
         sleep_times = 0;
     unsigned int fps = 0;
 
-    double update_cycle = (float)(1.0f / (50)),
-        render_cycle = (float)(1.0f / (50)),
+    double update_cycle = (float)(1.0f / (60)),
+        render_cycle = (float)(1.0f / (60)),
         min_cycle = (update_cycle < render_cycle) ? (update_cycle) : (render_cycle);
 
     while (win.isValid()) {
@@ -102,9 +102,8 @@ int test_01_specular_entity_renderer() {
         static bool stop = false;
         if (now - last_1s_time > 1.0f) {
             {
-                // printf("  __ 1s: sleep/wakeup: %d--%d, update/render: %d--%d \n\n", 
-                //     sleep_times, wakeup_times, updated_times, rendered_times);
-
+                printf("  __ 1s: sleep/wakeup: %d--%d, update/render: %d--%d \n\n", 
+                    sleep_times, wakeup_times, updated_times, rendered_times);
                 // if (updated_times < update_freq) {
                 // }
                 // if (rendered_times < render_freq) {
@@ -158,19 +157,19 @@ int test_01_specular_entity_renderer() {
         // When less than the amount of 'min_cycle' time has passed since the last valid loop,
         // sleep for 'min_cycle' time before the next loop for power-consumption.
         //
-        // if (now - last_wake_up_time < min_cycle) {
-        //     // sleep for 'min_cycle' time using the OS's api
-        //     sleep_times++;
-        //     continue;
-        // }
-        // else {
-        //     wakeup_times++;
-        //     last_wake_up_time = now;
-        // }
+        if (now - last_wake_up_time < min_cycle) {
+            // sleep for 'min_cycle' time using the OS's api
+            sleep_times++;
+            continue;
+        }
+        else {
+            wakeup_times++;
+            last_wake_up_time = now;
+        }
 
         // Update data (view-mat) according to input, update entity pos, rot, scale...
-        // if ( now - last_update_time >= update_cycle ) {
-        {
+        // {
+        if ( now - last_update_time >= update_cycle ) {
             win.pollEvents();  // not respond when close win with mouse without this
             cam.input_update(win);
             BaseRenderer::calculateViewMatrix(cam.getPosition(), cam.getDirection(), cam.getUp());
@@ -227,8 +226,8 @@ int test_01_specular_entity_renderer() {
         }
 
         // Render entities
-        // if ( now - last_render_time >= render_cycle ) {
-        {
+        // {
+        if ( now - last_render_time >= render_cycle ) {
             abstractRenderer.process(test_light);
 
             last_render_time = now;

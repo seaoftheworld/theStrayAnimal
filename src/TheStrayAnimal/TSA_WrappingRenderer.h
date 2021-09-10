@@ -17,7 +17,8 @@ class TSA_WrappingRenderer {  // need a base-wrapping-renderer ???
     std::vector<Light *> lights;
 
 public:
-    TSA_WrappingRenderer(Loader &loader) : picRenderer(loader) {
+    // TSA_WrappingRenderer(Loader &loader) : picRenderer(loader) {
+    TSA_WrappingRenderer(Loader &loader) {
         lights.clear();
     }
     ~TSA_WrappingRenderer() {
@@ -38,7 +39,7 @@ public:
     SkyboxRenderer   skyboxRenderer;
     WaterRenderer     waterRenderer;
 
-    PictureRenderer     picRenderer;
+    // PictureRenderer     picRenderer;
 
     void specificSettingsOff();
     void specificSettingsOn();

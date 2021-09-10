@@ -16,17 +16,11 @@
 class LoadTargets_04 {
     Loader loader;
 
-    // Entity single_vbo_entity;
-    // Entity multi_vbo_entity;
-
-    // AssimpLib misa;
-    // AssimpLib rock;
     AssimpLib crate;
+    Skybox  skybox;
 
-    // Terrain terrain;
     // GuiType00 gui_00;
     GuiType00 gui[4];
-    Skybox  skybox;
 
     // WaterFrameBuffers waterFbos;
     unsigned int water_dudvTexture = 0;
@@ -34,13 +28,6 @@ class LoadTargets_04 {
     WaterTile waterTile[4];
 
     void initData() {
-        // single_vbo_entity.cleanUp();
-        // multi_vbo_entity.cleanUp();
-
-        // for (auto misa_entity = misa.entities.begin(); misa_entity != misa.entities.end(); misa_entity++) {
-        //     misa_entity->cleanUp();
-        // }
-        // misa.cleanUp();
 
         // for (auto rock_entity = rock.entities.begin(); rock_entity != rock.entities.end(); rock_entity++) {
         //     rock_entity->cleanUp();
@@ -59,14 +46,10 @@ class LoadTargets_04 {
         // waterFbos.cleanUp();  // this shall not be called in constructor
     }
 
-    // void initSingleVboEntity();
-    // void initMultiVboEntity();
-    // void initMisa();
-    // void initRock();
     void initCrate();
 
-    // void initTerrain();
     void initSkybox();
+
     void initWaterTiles();
     void initWaterTextures();
     void initGui();
@@ -79,44 +62,30 @@ public:
         initData();
 
         // init entities
-        // initSingleVboEntity();
-        // initMultiVboEntity();
-
-        // initMisa();
-        // initRock();
         initCrate();
-
-        printf("\n\n models/entities init done, press anything to continue ...\n\n"); {
+        printf("\n\n crate init done, press anything to continue ...\n\n"); {
             int dbg;
             scanf("%d", &dbg);
         }
 
-        // init terrain
-        // initTerrain();
-
         // init skybox
         initSkybox();
+        printf("skybox init done, press anything to continue ...\n\n"); {
+            int dbg;
+            scanf("%d", &dbg);
+        }
 
         // init water
         initWaterTextures();
         initWaterTiles();
 
         // init gui
-        initGui();
+        // initGui();
     }
     virtual ~LoadTargets_04() {
         cleanUp();
     }
 
-    // Terrain* getTerrain() {
-    //     return &terrain;
-    // }
-    // GuiType00* getGui00() {
-    //     return &gui_00;
-    // }
-    // GuiType00* getGui01() {
-    //     return &gui_01;
-    // }
     GuiType00 *getGui() {
         return gui;
     }

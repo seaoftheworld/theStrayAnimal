@@ -26,7 +26,7 @@ void TerrainRenderer::allocShadersData() {
     // load projection matrix for the only once
     shader->start();
         shader->loadProjMatrix(getProjMatrix());
-        shader->bindTextureUnits();
+        shader->bindTextureSampleUnits();
     shader->stop();
 
     terrainShader = shader;

@@ -13,6 +13,11 @@
 // #define PROFILING (0)
 // #include "Core/profile.h"
 
+#define SET_FPS_LIMIT (1)
+    // #if SET_FPS_LIMIT
+    // #else
+    // #endif
+
 int test_03_terrain() {
 
     printf("  __ 03 combined test __\n");
@@ -161,9 +166,12 @@ int test_03_terrain() {
                  sleep_times = 0;
     unsigned int fps = 0;
 
+#if SET_FPS_LIMIT
     double update_cycle = (float)(1.0f / (55)),
            render_cycle = (float)(1.0f / (55)),
            min_cycle = (update_cycle < render_cycle) ? (update_cycle) : (render_cycle);
+#else
+#endif
 
     float clipPlane_display_down_all[] = {0.0f, 0.0f, -1.0f, 1000.0f};
     // float clipPlane_display_down[] = {0.0f, 0.0f, -1.0f, -1.5f};
@@ -198,13 +206,15 @@ int test_03_terrain() {
         static bool stop = false;
         if (now - last_1s_time > 1.0f) {
             {
-                // printf("  __ 1s: sleep/wakeup: %d--%d, update/render: %d--%d \n\n", 
-                //     sleep_times, wakeup_times, updated_times, rendered_times);
-
+            #if SET_FPS_LIMIT
+                printf("  __ 1s: sleep/wakeup: %d--%d, update/render: %d--%d \n\n", 
+                    sleep_times, wakeup_times, updated_times, rendered_times);
                 // if (updated_times < update_freq) {
                 // }
                 // if (rendered_times < render_freq) {
                 // }
+            #else
+            #endif
 
                 rendered_times = 0;
                 updated_times = 0;
@@ -253,22 +263,28 @@ int test_03_terrain() {
         // When less than the amount of 'min_cycle' time has passed since the last valid loop,
         // sleep for 'min_cycle' time before the next loop for power-consumption.
         //
-        // if (now - last_wake_up_time < min_cycle) {
-        //     // sleep for 'min_cycle' time using the OS's api
-        //     sleep_times++;
-        //     continue;
-        // }
-        // else {
-        //     wakeup_times++;
-        //     last_wake_up_time = now;
-        // }
+    #if SET_FPS_LIMIT
+        if (now - last_wake_up_time < min_cycle) {
+            // sleep for 'min_cycle' time using the OS's api
+            sleep_times++;
+            continue;
+        }
+        else {
+            wakeup_times++;
+            last_wake_up_time = now;
+        }
+    #else
+    #endif
 
         // Updating rountine
         // update view-matrix according to input, 
         // update entity pos, rot, scale...  
         // and the others...
-        // if ( now - last_update_time >= update_cycle ) {
+    #if SET_FPS_LIMIT
+        if ( now - last_update_time >= update_cycle ) {
+    #else
         {
+    #endif
 
             PROFILE_SCOPE("Update inputs, view...");
             
@@ -370,8 +386,11 @@ int test_03_terrain() {
         }
 
         // Render entities
-        // if ( now - last_render_time >= render_cycle ) {
+    #if SET_FPS_LIMIT
+        if ( now - last_render_time >= render_cycle ) {
+    #else
         {
+    #endif
             PROFILE_SCOPE("Render");
 
             // float distance = 2 * (cam.getHeight() - targets.getWater()->getHeight()); {
