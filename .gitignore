@@ -1,0 +1,20 @@
+#.gitignore
+zygote_gl_proj.vcxproj.user
+.vs/
+
+# directories
+bakup__/*
+building_output__/*
+!building_output__/x64_Debug/
+
+# src/00_libs/*
+# !src/00_libs/.gitkeep
+# !src/00_libs/00_libs.zip
+# src/not_used__/
+
+
+
+
+
+# files
+notes__.txt

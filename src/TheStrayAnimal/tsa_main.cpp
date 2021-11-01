@@ -72,7 +72,7 @@ int tsa_main() {
     // ---------------------------------
     // set the lights for the scene
     // ---------------------------------
-    const unsigned short NUM_LIGHTS = 4; {
+    const unsigned short NUM_LIGHTS = 5; {
 
         Light light[NUM_LIGHTS];
 
@@ -80,7 +80,8 @@ int tsa_main() {
             { 20.0f,   0.0f, 25.0f},  // x+
             {  0.0f,  20.0f, 25.0f},  // y+
             {-20.0f,   0.0f, 25.0f},  // x-
-            {  0.0f, -20.0f, 25.0f}   // y-
+            {  0.0f, -20.0f, 25.0f},  // y-
+            {  0.0f, -20.0f, 1.0f}    // y-
         };
 
         // float color[Light::Color::max_color] = {1.6f, 1.2f, 1.6f};
@@ -89,7 +90,8 @@ int tsa_main() {
             { 1.0f, 1.0f, 0.6f },   // yellow
             { 0.9f, 1.0f, 0.9f },   // green
             { 1.0f, 1.0f, 1.0f },
-            { 0.6f, 0.6f, 1.0f }    // blue
+            { 0.6f, 0.6f, 1.0f },   // blue
+            { 1.0f, 1.0f, 1.0f }    // white
         };
         float attenuation[Light::Attenuation::max_att] = { 2.0f, 0.02f, 0.0f };
 

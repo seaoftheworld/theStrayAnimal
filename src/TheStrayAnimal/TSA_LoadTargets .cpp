@@ -85,9 +85,13 @@ void TSA_LoadTargets::initOriginSquare() {
 
         origin_square.setTextureModel(texture, model); {
             float trans_values[NUM_TRANSFORM][Entity::transform::max] = {
-                { -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f },
-                { -0.5f,  1.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f },
-                {  1.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f }
+                // { -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f },
+                // { -0.5f,  1.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f },
+                // {  1.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f }
+
+                { -0.5f, -0.5f, -1.0f,  0.0f, 0.0f, 0.0f,  1.0f },
+                { -0.5f,  1.5f, -1.0f,  0.0f, 0.0f, 0.0f,  1.0f },
+                {  1.5f, -0.5f, -1.0f,  0.0f, 0.0f, 0.0f,  1.0f }
             };
 
             for (int i = 0; i < NUM_TRANSFORM; i++) {
@@ -287,7 +291,9 @@ void TSA_LoadTargets::initGoals(GoalsData *goals) {
         transform[i].values[Transform::rot_x] = 0.0f;
         transform[i].values[Transform::rot_y] = 0.0f;
         transform[i].values[Transform::rot_z] = 0.0f;
-        transform[i].values[Transform::scale] = 0.125f;
+        // transform[i].values[Transform::scale] = 0.125f;  // size for the crate
+        transform[i].values[Transform::scale] = 0.05f;  // size for the fruits
+
         num_transforms++;
     }
 
@@ -301,7 +307,9 @@ void TSA_LoadTargets::initGoals(GoalsData *goals) {
         // printf("\n\n");
     };
 
-    goal_obj.loadModel("data/models/target/Crate1.obj", loader, p_transforms, num_transforms);
+    // goal_obj.loadModel("data/models/target/orange/orange.obj", loader, p_transforms, num_transforms);
+    // goal_obj.loadModel("data/models/target/apple/apple.obj", loader, p_transforms, num_transforms);
+    goal_obj.loadModel("data/models/target/banana/banana.obj", loader, p_transforms, num_transforms);
 }
 void TSA_LoadTargets::deleteGoal(GoalsData *goals, unsigned short i) {
     if (!goals || i >= goals->num) {
