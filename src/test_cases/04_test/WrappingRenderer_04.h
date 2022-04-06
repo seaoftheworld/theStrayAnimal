@@ -2,7 +2,7 @@
 
 // #include "Core/Renderers/Model/ModelRendererBasic.h"
 // #include "Core/Renderers/Model/ModelRendererSpecular.h"
-#include "Core/Renderers/Model/ModelRendererMultiLights.h"
+#include "Core/Renderers/Model/MultiLightsRenderer.h"
 
 // #include "Core/Renderers/Terrain/TerrainRenderer.h"
 #include "Core/Renderers/Gui/GuiRenderer.h"
@@ -31,7 +31,7 @@ public:
 public:
     // BasicEntityRenderer   entityRenderer;
     // SpecularEntityRenderer   entityRenderer;
-    MultiLightsEntityRenderer entityRenderer;
+    MultiLightsRenderer entityRenderer;
 
     // TerrainRenderer terrainRenderer;
     GuiRenderer         guiRenderer;

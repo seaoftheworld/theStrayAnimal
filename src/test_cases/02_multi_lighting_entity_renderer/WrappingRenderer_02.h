@@ -1,4 +1,4 @@
-#include "Core/Renderers/Model/ModelRendererMultiLights.h"
+#include "Core/Renderers/Model/MultiLightsRenderer.h"
 
 class WrappingRenderer_02 {
     std::vector<Light *> lights;
@@ -17,7 +17,8 @@ public:
     }
 
 public:
-    MultiLightsEntityRenderer entityRenderer;
+    // NormalMappedModelRenderer nmRenderer;
+    MultiLightsRenderer mlRenderer;
 
     void specificSettingsOn() {
         glClearColor(0.7f, 0.7f, 0.8f, 1.0f);
@@ -35,9 +36,15 @@ public:
     }
     void specificSettingsOff() {}
     
+    void process(std::vector<TexturedModel>& meshes, std::vector<Light>& lights) {
+        prepare();
+        // nmRenderer.run(meshes, lights);
+        mlRenderer.run(meshes, lights);
+    }
+
     void process() {
         prepare();
-        entityRenderer.run(lights, NULL);
+        mlRenderer.run(lights, NULL);
     }
 
 private:

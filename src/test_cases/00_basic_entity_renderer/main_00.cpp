@@ -32,7 +32,7 @@ int test_00_basic_entity_renderer() {
 
     // -----------------------------
     WrappingRenderer_00 abstractRenderer;
-    if (!abstractRenderer.entityRenderer.ready()) {
+    if (!abstractRenderer.noLightingRenderer.ready()) {
         // loading/compiling/linking shader-program failed
         win.stop();
         return -1;
@@ -40,12 +40,14 @@ int test_00_basic_entity_renderer() {
     abstractRenderer.specificSettingsOn();
 
     LoadTargets targets; {
+        /*
         abstractRenderer.entityRenderer.addEntity(targets.getSingleVboEntity());
         abstractRenderer.entityRenderer.addEntity(targets.getMultiVboEntity());
 
         for (auto misa_entity = targets.getMisa()->entities.begin(); misa_entity != targets.getMisa()->entities.end(); misa_entity++) {
             abstractRenderer.entityRenderer.addEntity(&(*misa_entity));
         }
+        // */
     }
 
     // Light test_light; {
@@ -75,7 +77,7 @@ int test_00_basic_entity_renderer() {
     unsigned int fps = 0;
 
     float  update_cycle = (1.0f / (60)),
-           render_cycle = (1.0f / (120)),
+           render_cycle = (1.0f / (60)),
            min_cycle = (update_cycle < render_cycle) ? (update_cycle) : (render_cycle);
 
     while ( win.isValid() ) {
@@ -199,12 +201,25 @@ int test_00_basic_entity_renderer() {
                     float delta_rot_z = ( facing_left ) ? (rot_z_step) : (-rot_z_step);
                     delta_rot_z = (turn_back) ? (-delta_rot_z) : (delta_rot_z);
                     
+                    /*
+                    float misa_angle = 0.0f;
                     for (auto itr = targets.getMisa()->entities.begin(); itr != targets.getMisa()->entities.end(); itr++) {
                         itr->increaseRotation(transform_idx, 0.0f, 0.0f, delta_rot_z);
                     }
+                    if (targets.getMisa()->entities.size()) {
+                        Entity* misaEntity = &targets.getMisa()->entities[0];
+                        misa_angle = (*(misaEntity->getTransformValues(transform_idx)))[Entity::transform::rot_z];
+                    }
+                    // */
 
-                    Entity *misaEntity = &targets.getMisa()->entities[0];
-                    float misa_angle = (*(misaEntity->getTransformValues(transform_idx)))[Entity::transform::rot_z];
+                    float misa_angle = 0.0f;
+                    for (size_t i = 0; i < targets.getMisa()->texturedModels.size(); i++) {
+                        targets.getMisa()->texturedModels[i].increaseRotation(transform_idx, 0.0f, 0.0f, delta_rot_z);
+                    }
+                    if (targets.getMisa()->texturedModels.size()) {
+                        TexturedModel& mesh_00 = *(targets.getMisa()->texturedModels.begin());
+                        misa_angle = (*mesh_00.getTransformValues(transform_idx))[Transform::rot_z];
+                    }
 
                     if (!turn_back) {
                         if (facing_left && misa_angle > 3.14f + 3.14f / 4.0f) {
@@ -236,9 +251,8 @@ int test_00_basic_entity_renderer() {
         // Render entities
         // {
         if ( now - last_render_time >= render_cycle ) {
-            // abstractRenderer.process(test_light);
-            abstractRenderer.process();
 
+            abstractRenderer.process(targets.getMisa()->texturedModels);
             win.swapBuffers();
 
             last_render_time = now;

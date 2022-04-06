@@ -41,10 +41,14 @@ int tsa_main() {
     // ---------------------------------
     // set the renderers for the scene
     // ---------------------------------
-    Loader loader;
-    TSA_WrappingRenderer renderers(loader); 
+    // Loader loader;
+    TSA_WrappingRenderer renderers; 
     {
-        if (!renderers.entityRenderer.ready()) {
+        if (!renderers.nlRenderer.ready()) {
+            win.stop();
+            return -1;
+        }
+        if (!renderers.mlRenderer.ready()) {
             win.stop();
             return -1;
         }
@@ -72,8 +76,8 @@ int tsa_main() {
     // ---------------------------------
     // set the lights for the scene
     // ---------------------------------
-    const unsigned short NUM_LIGHTS = 5; {
-
+    std::vector<Light> lights; {
+        const unsigned short NUM_LIGHTS = 5; 
         Light light[NUM_LIGHTS];
 
         float pos[NUM_LIGHTS][Light::Position::max_pos] = {
@@ -97,7 +101,8 @@ int tsa_main() {
 
         for (int i = 0; i < NUM_LIGHTS; i++) {
             light[i].setValues(&pos[i], &color[i], &attenuation);
-            renderers.addLights(&light[i]);
+            // renderers.addLights(&light[i]);
+            lights.push_back(light[i]);
         }
     }
 
@@ -127,8 +132,10 @@ int tsa_main() {
         // Without this line, when loading next level, the software will crash 
         // because the rendering-objects(ground, crate, player) 
         // from the previous level are gone (when 'targets' setData() is called):
-        renderers.entityRenderer.clearEntities();
-        TSA_LoadTargets targets(loader);
+        // renderers.modelRenderer.clearEntities();
+
+        // TSA_LoadTargets targets(loader);
+        TSA_LoadTargets targets;
 
         unsigned short NUM_CRATES = 0;
         heiduzi.clearLevelData();
@@ -171,21 +178,19 @@ int tsa_main() {
 
             targets.setData(heiduzi);
 
-            renderers.entityRenderer.addEntity(targets.getOriginSquare());
-
-            for (auto ground_entity = targets.getGround()->entities.begin(); ground_entity != targets.getGround()->entities.end(); ground_entity++) {
-                renderers.entityRenderer.addEntity(&(*ground_entity));
-            }
-            for (auto crate_entity = targets.getCrate()->entities.begin(); crate_entity != targets.getCrate()->entities.end(); crate_entity++) {
-                renderers.entityRenderer.addEntity(&(*crate_entity));
-            }
-            for (auto goal_entity = targets.getGoal()->entities.begin(); goal_entity != targets.getGoal()->entities.end(); goal_entity++) {
-                renderers.entityRenderer.addEntity(&(*goal_entity));
-            }
-
-            for (auto player_entity = targets.getPlayer()->entities.begin(); player_entity != targets.getPlayer()->entities.end(); player_entity++) {
-                renderers.entityRenderer.addEntity(&(*player_entity));
-            }
+            // renderers.entityRenderer.addEntity(targets.getOriginSquare());
+            // for (auto ground_entity = targets.getGround()->entities.begin(); ground_entity != targets.getGround()->entities.end(); ground_entity++) {
+            //     renderers.entityRenderer.addEntity(&(*ground_entity));
+            // }
+            // for (auto crate_entity = targets.getCrate()->entities.begin(); crate_entity != targets.getCrate()->entities.end(); crate_entity++) {
+            //     renderers.entityRenderer.addEntity(&(*crate_entity));
+            // }
+            // for (auto goal_entity = targets.getGoal()->entities.begin(); goal_entity != targets.getGoal()->entities.end(); goal_entity++) {
+            //     renderers.entityRenderer.addEntity(&(*goal_entity));
+            // }
+            // for (auto player_entity = targets.getPlayer()->entities.begin(); player_entity != targets.getPlayer()->entities.end(); player_entity++) {
+            //     renderers.entityRenderer.addEntity(&(*player_entity));
+            // }
 
             renderers.skyboxRenderer.setSkybox(targets.getSkybox());
 
@@ -495,7 +500,8 @@ int tsa_main() {
                 PROFILE_SCOPE("Render scene");
 
                 // renderers.processScene(test_light, &clipPlane_up);
-                renderers.processScene(&clipPlane_display_down_all);
+                renderers.processScene(targets.getPlayerGoals(), lights, targets.getGroudCrates());
+                // renderers.processScene(&clipPlane_display_down_all);
 
                 // float distance = 2 * (cam.getHeight() - targets.getWater()->getHeight()); {
                 //     cam.setHeight(cam.getHeight() - distance);
@@ -516,11 +522,13 @@ int tsa_main() {
                 // renderers.processScene(test_light, &clipPlane_display_down);
                 // targets.getWaterFbos()->unbindCurrentFBO();
 
+                    //*
                     // WaterFrameBuffers *waterFbos = targets.getWaterFbos();
                     unsigned int dudvTex = 0, normalTex = 0;
                     targets.getWaterTextures(dudvTex, normalTex);
                     // renderers.processWater(waterFbos, dudvTex, normalTex);  // high consumption on 1st frame ???
                     renderers.processWater(NULL, dudvTex, normalTex);          // high consumption on 1st frame ???
+                    // */
 
                     // renderers.processGui();
 
@@ -542,7 +550,7 @@ int tsa_main() {
 
 // LOADER_WIN_CLEANUP:
     if (quit_game) {
-        printf("game is quit\n");
+        printf("quit game\n");
     }
     else if (levels_all_passed) {
         printf("game levels all passed !!!\n");
@@ -550,7 +558,7 @@ int tsa_main() {
     else {
     }
 
-    loader.cleanUp();
+    // loader.cleanUp();
     win.stop();
     // Instrumentor::Get().EndSession();
     return 0;

@@ -21,49 +21,35 @@ class SpecularShader : public BaseShader {
         lightPosition_loc = -1, 
         lightColor_loc = -1,
 
-        objShineDamper_loc = -1,
-        objReflect_loc = -1;
+        shineDamper_loc = -1,
+        reflect_loc = -1;
 
 public:
-    // enum attrNum {
-    //     id0_pos3f = 0, id1_uv2f, id2_normal3f, max_attrNum
-    // };
-    // static const unsigned int attr_idx[max_attrNum];
-    // static const unsigned int attr_stride[max_attrNum];
-    // static const unsigned int attr_offset[max_attrNum];
-    // static const unsigned int all_in_one_stride;
-
     SpecularShader() : BaseShader(SPECULAR_VSH_PATH, SPECULAR_FSH_PATH) {
-        
-        printf("  SpecularShader constructor called.\n");
+        printf("  SpecularShader constructor().\n");
         call_subclass_init_funcs();
-
-        // enable specific settings
-        // specificSettingsOn();
     }
-    ~SpecularShader(){
+    ~SpecularShader() {
+        printf("  SpecularShader destructor().\n");
     }
 
     void bindAllAttributeLocations() override;
     void getAllUniformLocations() override;
 
-    // void loadAlpha(float p) {
-    //     uniform1f(alpha_loc, p);
-    // }
+    void bindTextureSamplerToSlot() {
+        uniform1i(texture_sampler_loc, 0);
+    }
+
     void loadLight(Light &light) {
         uniform3fv(lightPosition_loc, 1, light.getPosition3fv());
         uniform3fv(lightColor_loc, 1, light.getColor3fv());
     }
 
     void loadReflectivity(float input) {
-        uniform1f(objReflect_loc, input);
+        uniform1f(reflect_loc, input);
     }
 
     void loadShineDamper(float input) {
-        uniform1f(objShineDamper_loc, input);
-    }
-
-    void sampleTextureUnit(unsigned int i) {
-        uniform1i(texture_sampler_loc, i);
+        uniform1f(shineDamper_loc, input);
     }
 };

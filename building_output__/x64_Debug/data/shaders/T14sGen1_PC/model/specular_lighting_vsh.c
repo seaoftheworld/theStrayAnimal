@@ -5,9 +5,9 @@ layout(location = 1) in vec2 vertexUV;
 layout(location = 2) in vec3 vertexNormal;
 
 out vec3 vertexSurface;
-out vec3 vertexToLight;
-out vec3 vertexToCamera;
 out vec2 uv;
+out vec3 vertexToCamera;
+out vec3 vertexToLight;
 
 // uniform float tFloat;
 uniform mat4 projMatrix;
@@ -22,12 +22,12 @@ void main()
     // gl_Position.x += tFloat;
     // gl_Position.w = 1.0;
     // gl_Position.xyz = vertexPosition;
-
-    vertexSurface = (transformMatrix * vec4(vertexNormal, 0.0)).xyz;
     vec4 vertexWorldPosition = transformMatrix * vec4(vertexPosition, 1.0);
     gl_Position = projMatrix * viewMatrix * vertexWorldPosition;
 
-    vertexToLight = lightPosition - vertexWorldPosition.xyz;
-    vertexToCamera = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - vertexWorldPosition.xyz;
+    vertexSurface = (transformMatrix * vec4(vertexNormal, 0.0)).xyz;
     uv = vertexUV;
+
+    vertexToCamera = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - vertexWorldPosition.xyz;
+    vertexToLight = lightPosition - vertexWorldPosition.xyz;
 }

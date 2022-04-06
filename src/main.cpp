@@ -6,6 +6,7 @@ int test_02_multi_lights_entity_renderer();
 int test_03_terrain();
 int test_04();
 int tsa_main();
+int loop_test_with_basic_entity_renderer();
 
 int main() {
     
@@ -20,7 +21,7 @@ int main() {
         int input_value = -1;
 
         printf("    please input a number to run the corresponding test:\n");
-        printf("    input \'999\' to quit.\n");
+        // printf("    input \'999\' to quit.\n");
         scanf("%d", &input_value);
 
         printf("    %d is input\n", input_value);
@@ -53,18 +54,20 @@ int main() {
 
             case 5:
                 result = tsa_main();
-                run = false;
+                // run = false;
                 break;
 
+            case 6:
+                loop_test_with_basic_entity_renderer();
 
-            case 999:
-                run = false;
-            break;
+                break;
 
             default:
             printf("    test-%d not supported yet.\n\n", input_value);
             break;
         }
+
+        run = false;
     }
 
     return result;

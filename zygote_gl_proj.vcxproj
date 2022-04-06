@@ -93,12 +93,12 @@
     <ClCompile Include="src\Core\Renderers\Gui\Gui.cpp" />
     <ClCompile Include="src\Core\Renderers\Gui\GuiRenderer.cpp" />
     <ClCompile Include="src\Core\Renderers\Gui\GuiShader.cpp" />
-    <ClCompile Include="src\Core\Renderers\Model\ModelRendererMultiLights.cpp" />
-    <ClCompile Include="src\Core\Renderers\Model\ModelRendererSpecular.cpp" />
-    <ClCompile Include="src\Core\Renderers\Model\ModelRendererBasic.cpp" />
+    <ClCompile Include="src\Core\Renderers\Model\MultiLightsRenderer.cpp" />
+    <ClCompile Include="src\Core\Renderers\Model\SpecularRenderer.cpp" />
+    <ClCompile Include="src\Core\Renderers\Model\NoLightingRenderer.cpp" />
     <ClCompile Include="src\Core\Renderers\Model\MultiLightsShader.cpp" />
     <ClCompile Include="src\Core\Renderers\Model\SpecularShader.cpp" />
-    <ClCompile Include="src\Core\Renderers\Model\StaticShader.cpp" />
+    <ClCompile Include="src\Core\Renderers\Model\NoLightingShader.cpp" />
     <ClCompile Include="src\Core\Renderers\Skybox\SkyboxRenderer.cpp" />
     <ClCompile Include="src\Core\Renderers\Skybox\SkyboxShader.cpp" />
     <ClCompile Include="src\Core\Renderers\Terrain\Terrain.cpp" />
@@ -122,6 +122,8 @@
     <ClCompile Include="src\test_cases\04_test\LoadTargets_04.cpp" />
     <ClCompile Include="src\test_cases\04_test\main_04.cpp" />
     <ClCompile Include="src\test_cases\04_test\WrappingRenderer_04.cpp" />
+    <ClCompile Include="src\test_cases\Loop_basic_renderer\LoopModels.cpp" />
+    <ClCompile Include="src\test_cases\Loop_basic_renderer\loop_test.cpp" />
     <ClCompile Include="src\TheStrayAnimal\TheStrayAnimal.cpp" />
     <ClCompile Include="src\TheStrayAnimal\TSA_LoadTargets .cpp" />
     <ClCompile Include="src\TheStrayAnimal\tsa_main.cpp" />

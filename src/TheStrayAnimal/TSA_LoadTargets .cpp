@@ -1,13 +1,14 @@
 #include "TSA_LoadTargets.h"
 
-#include "Core/Renderers/Model/StaticShader.h"  // for: StaticShader::attr_stride[StaticShader::id0_pos3f]
-                                                // shall be replaced with something better
+// #include "Core/Renderers/Model/StaticShader.h"  // for: StaticShader::attr_stride[StaticShader::id0_pos3f]
+                                                   // shall be replaced with something better
 
 #define CELL_TRANSLATE_UNIT_X (0.5f)
 #define CELL_TRANSLATE_UNIT_Y (0.5f)
 #define CELL_TRANSLATE_UNIT_Z (0.5f)
 #define CELL_TRANSLATE_DEFAULT_Z      (0)
 
+/*
 void TSA_LoadTargets::initOriginSquare() {
 
     float dummy_pos[] = { -0.5f, 0.5f,  0.0f,
@@ -34,9 +35,12 @@ void TSA_LoadTargets::initOriginSquare() {
     unsigned short test_indices[] = { 0, 1, 2, 0, 3, 2 };
 
     StaticModel *model = NULL; {
-        unsigned int vertices_count_from_pos = ARRAY_SIZE(dummy_pos) / NoLightingShader::attr_stride[NoLightingShader::id0_pos3f];
-        unsigned int vertices_count_from_uv = ARRAY_SIZE(dummy_uv) / NoLightingShader::attr_stride[NoLightingShader::id1_uv2f];
-        unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / NoLightingShader::attr_stride[NoLightingShader::id2_normal3f];
+        // unsigned int vertices_count_from_pos = ARRAY_SIZE(dummy_pos) / NoLightingShader::attr_stride[NoLightingShader::id0_pos3f];
+        // unsigned int vertices_count_from_uv = ARRAY_SIZE(dummy_uv) / NoLightingShader::attr_stride[NoLightingShader::id1_uv2f];
+        // unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / NoLightingShader::attr_stride[NoLightingShader::id2_normal3f];
+        unsigned int vertices_count_from_pos = ARRAY_SIZE(dummy_pos) / 3;
+        unsigned int vertices_count_from_uv = ARRAY_SIZE(dummy_uv) / 2;
+        unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / 3;
 
         unsigned int vertices_count = \
             (vertices_count_from_pos == vertices_count_from_uv && \
@@ -111,6 +115,7 @@ void TSA_LoadTargets::initOriginSquare() {
         // }
     }
 }
+// */
 
 void TSA_LoadTargets::initPaw() {
 
@@ -156,13 +161,9 @@ void TSA_LoadTargets::initPaw() {
     if (buffer) {
         paw.vboId = buffer->getVboID();
     }
-
-    {
-    }
 }
 
 void TSA_LoadTargets::initGround(AreaData *area_data) {
-
     if (!area_data) {
         return;
     }
@@ -198,12 +199,10 @@ void TSA_LoadTargets::initGround(AreaData *area_data) {
         // printf("\n\n");
     };
 
-    ground_obj.loadModel("data/models/ground/Crate1.obj", loader, p_crate_transforms, num_transform);
+    // ground_obj.loadModel("data/models/ground/Crate1.obj", loader, p_crate_transforms, num_transform);
 
-    // printf("4 lights inited and crate model loaded, press anything to continue ...\n\n"); {
-    //     int dbg;
-    //     scanf("%d", &dbg);
-    // }
+    // player_goals_models.loadModel("data/models/ground/Crate_1.obj", loader, p_crate_transforms, num_transform);
+    ground_crates_models.loadModel("data/models/ground/Crate1.obj", loader, p_crate_transforms, num_transform);
 }
 
 void TSA_LoadTargets::initPlayer(unsigned int player_pos_idx, float rot) {
@@ -218,14 +217,25 @@ void TSA_LoadTargets::initPlayer(unsigned int player_pos_idx, float rot) {
     }
     Transform *p_transforms = &transf;
 
-    player_obj.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", loader, &p_transforms, 1);
+    // player_obj.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", loader, &p_transforms, 1);
+    player_start_idx = player_goals_models.texturedModels.size();
+    player_goals_models.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", loader, &p_transforms, 1);
+    player_end_idx = player_goals_models.texturedModels.size();
 }
 
 void TSA_LoadTargets::updatePlayer(unsigned int player_pos_idx, float rot) {
+    /*
     for (auto itr = player_obj.entities.begin(); itr != player_obj.entities.end(); itr++) {
         (*itr).setTransformValue(0, Transform::x, IDX_TO_COORD_X(player_pos_idx) * CELL_TRANSLATE_UNIT_X);
         (*itr).setTransformValue(0, Transform::y, IDX_TO_COORD_Y(player_pos_idx) * CELL_TRANSLATE_UNIT_Y);
         (*itr).setTransformValue(0, Transform::rot_z, rot);
+    }
+    // */
+    std::vector<TexturedModel>::iterator ir_ply_mesh = player_goals_models.texturedModels.begin() + player_start_idx;
+    for (; ir_ply_mesh != player_goals_models.texturedModels.begin() + player_end_idx; ir_ply_mesh++) {
+        ir_ply_mesh->setTransformValue(0, Transform::x, IDX_TO_COORD_X(player_pos_idx) * CELL_TRANSLATE_UNIT_X);
+        ir_ply_mesh->setTransformValue(0, Transform::y, IDX_TO_COORD_Y(player_pos_idx) * CELL_TRANSLATE_UNIT_Y);
+        ir_ply_mesh->setTransformValue(0, Transform::rot_z, rot);
     }
 }
 
@@ -257,7 +267,10 @@ void TSA_LoadTargets::initCrate(CratesData *crates_data) {
         // printf("\n\n");
     };
 
-    crate_obj.loadModel("data/models/crate/Crate1.obj", loader, p_transforms, num_transform);
+    // crate_obj.loadModel("data/models/crate/Crate1.obj", loader, p_transforms, num_transform);
+    crate_start_idx = getGroudCrates().size();
+    ground_crates_models.loadModel("data/models/crate/Crate1.obj", loader, p_transforms, num_transform);
+    crate_end_idx = getGroudCrates().size();
 }
 
 void TSA_LoadTargets::updateCrate(CratesData *crates_data, unsigned short i) {
@@ -268,10 +281,19 @@ void TSA_LoadTargets::updateCrate(CratesData *crates_data, unsigned short i) {
     // crate_data.transform[i].values[Transform::y] = IDX_TO_COORD_Y(crates_data->crate[i].xy_pos_idx) * CELL_TRANSLATE_UNIT_Y;
     // crate_data.transform[i].values[Transform::z] = crates_data->crate[i].z * CELL_TRANSLATE_UNIT_Z;
 
+    /*
     for (auto itr = crate_obj.entities.begin(); itr != crate_obj.entities.end(); itr++) {
         (*itr).setTransformValue(i, Transform::x, IDX_TO_COORD_X(crates_data->crate[i].xy_pos_idx) * CELL_TRANSLATE_UNIT_X);
         (*itr).setTransformValue(i, Transform::y, IDX_TO_COORD_Y(crates_data->crate[i].xy_pos_idx) * CELL_TRANSLATE_UNIT_Y);
         (*itr).setTransformValue(i, Transform::z, crates_data->crate[i].z * CELL_TRANSLATE_UNIT_Z);
+    }
+    // */
+
+    std::vector<TexturedModel>::iterator ir_crate_mesh = ground_crates_models.texturedModels.begin() + crate_start_idx;
+    for (; ir_crate_mesh != ground_crates_models.texturedModels.begin() + crate_end_idx; ir_crate_mesh++) {
+        ir_crate_mesh->setTransformValue(i, Transform::x, IDX_TO_COORD_X(crates_data->crate[i].xy_pos_idx) * CELL_TRANSLATE_UNIT_X);
+        ir_crate_mesh->setTransformValue(i, Transform::y, IDX_TO_COORD_Y(crates_data->crate[i].xy_pos_idx) * CELL_TRANSLATE_UNIT_Y);
+        ir_crate_mesh->setTransformValue(i, Transform::z, crates_data->crate[i].z * CELL_TRANSLATE_UNIT_Z);
     }
 }
 
@@ -309,16 +331,26 @@ void TSA_LoadTargets::initGoals(GoalsData *goals) {
 
     // goal_obj.loadModel("data/models/target/orange/orange.obj", loader, p_transforms, num_transforms);
     // goal_obj.loadModel("data/models/target/apple/apple.obj", loader, p_transforms, num_transforms);
-    goal_obj.loadModel("data/models/target/banana/banana.obj", loader, p_transforms, num_transforms);
+    // goal_obj.loadModel("data/models/target/banana/banana.obj", loader, p_transforms, num_transforms);
+
+    goals_start_idx = player_goals_models.texturedModels.size();
+    player_goals_models.loadModel("data/models/target/banana/banana.obj", loader, p_transforms, num_transforms);
+    goals_end_idx = player_goals_models.texturedModels.size();
 }
 void TSA_LoadTargets::deleteGoal(GoalsData *goals, unsigned short i) {
     if (!goals || i >= goals->num) {
         return;
     }
-
+    /*
     for (auto itr = goal_obj.entities.begin(); itr != goal_obj.entities.end(); itr++) {
         // (*itr).deleteTransform(i);
         (*itr).setTransformValue(i, Transform::z, 5 * CELL_TRANSLATE_UNIT_Z);
+    }
+    // */
+
+    std::vector<TexturedModel>::iterator ir_mesh = getPlayerGoals().begin() + goals_start_idx;
+    for (; ir_mesh != getPlayerGoals().begin() + goals_end_idx; ir_mesh++) {
+        ir_mesh->setTransformValue(i, Transform::z, 5 * CELL_TRANSLATE_UNIT_Z);
     }
 }
 

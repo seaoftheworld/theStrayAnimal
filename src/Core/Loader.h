@@ -30,6 +30,10 @@ public:
 
     StaticTexture *loadStaticTextureCube(string imgPaths[][6]);
 
+    // Single-Vbo couldn't differenciate what type of model is being loaded, like,
+    // is it a pos-uv-normal         model for basic renderer, or 
+    // is it a pos-uv-normal-tangent model for normal-mapping renderer
+    //
     StaticModel_SingleVbo *loadSingleVboModel(
         float *input_attr_data, unsigned int vertex_count, unsigned short *input_indices_data, unsigned int indices_count
     );
@@ -41,14 +45,30 @@ public:
     // allocSingleAttributeModel()
     SingleAttributeModel *allocSingleAttributeModel(float *data, unsigned int vertices_stride, unsigned int vertices_count);
 
+    // added on 22nd Mar '22
+    VaoModel* getVaoModel(vector<float>& pos, vector<float>& uv, vector<float>& normal, vector<float>& tangent, vector<int unsigned>& indices);
+    VaoModel* getVaoModel(vector<float>& pos, vector<float>& uv, vector<float>& normal, vector<unsigned int>& indices);
+    Texture* getTexture(const string& imgPaths);
+
 private:
     vector<StaticModel_SingleVbo *> pSingleVboModel;
     vector<StaticModel *> pStaticModels;
 
-    // vector<RawModel *> pRawModels;
     vector<SingleAttributeModel *> pSingleAttributeModels;
-
     vector<StaticTexture *> pStaticTextures;
+
+    // added on 22nd Mar '22
+    vector<VaoModel*> pVaoModels;
+    vector<Texture*> pTextures;
+    vector<unsigned int> textures;
+    vector<unsigned int> vaos;
+    vector<unsigned int> vbos;
+
+    // added on 22nd Mar '22
+    void fillAttributeData(unsigned int attrNum, unsigned int attrSizeInFloat, vector<float>& data);
+    void bindIndicesBuffer(vector<unsigned int>& indices);
+    unsigned int bindNewVao();
+    void unbindVao();
 
     unsigned int createStaticTextureBuffers(std::string *imgPaths, unsigned int num, unsigned int output_buff_texture_ids[][MAX_TEXTURE_NUM_ONCE]);
     void allocStaticTextureFromBuffers(unsigned int *input_textureIds, unsigned int num, StaticTexture **output_result);

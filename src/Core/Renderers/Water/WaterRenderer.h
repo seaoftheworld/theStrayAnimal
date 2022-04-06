@@ -49,6 +49,8 @@ public:
                 // restore view / perspective matrices
                 // waterShader->loadViewMatrix(getViewMatrix());
                 // waterShader->loadProjMatrix(getProjMatrix());
+
+                // ruins last mesh nlRenderer has renderered
                 render((*water), dudv, normal);
             }
     }
@@ -60,6 +62,7 @@ public:
             stride_in_float = WaterTile::rect->getVerticesStride();
             vertices_count = WaterTile::rect->getVerticesCount();
 
+            // ruins last mesh nlRenderer has renderered
             glBindBuffer(GL_ARRAY_BUFFER, WaterTile::rect->getVboID());
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(

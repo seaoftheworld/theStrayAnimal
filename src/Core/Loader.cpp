@@ -281,4 +281,101 @@ void Loader::cleanUp() {
         delete pStaticTextures[i];
     }
     pStaticTextures.clear();
+
+    // added on 22nd Mar '22
+    for (auto pVaoModel : pVaoModels) {
+        delete pVaoModel;
+    }
+
+    for (auto vbo : vbos) {
+        glDeleteBuffers(1, &vbo);
+    }
+
+    for (auto vao : vaos) {
+        glDeleteVertexArrays(1, &vao);
+    }
+
+    for (auto tex : textures) {
+        glDeleteTextures(1, &tex);
+    }
+}
+
+void Loader::fillAttributeData(unsigned int attrNum, unsigned int attrSizeInFloat, vector<float>& data) {
+    unsigned int vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
+        glVertexAttribPointer(attrNum, attrSizeInFloat, GL_FLOAT, false, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    vbos.push_back(vbo);
+}
+void Loader::bindIndicesBuffer(vector<unsigned int>& indices) {
+    unsigned int ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+    vbos.push_back(ibo);
+}
+unsigned int Loader::bindNewVao() {
+    unsigned int vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    vaos.push_back(vao);
+    return vao;
+}
+void Loader::unbindVao() {
+    glBindVertexArray(0);
+}
+
+VaoModel* Loader::getVaoModel(vector<float>& pos, vector<float>& uv, vector<float>& normal, 
+    vector<unsigned int>& indices) {
+    size_t pos_size = pos.size();
+    size_t uv_size = uv.size();
+    size_t normal_size = normal.size();
+
+    if (pos_size % 3 != 0 || uv_size % 2 != 0 || normal_size % 3 != 0) {
+        return NULL;
+    }
+    if (pos_size / 3 != uv_size / 2 || normal_size / 3 != uv_size / 2) {
+        return NULL;
+    }
+
+    unsigned int vao = bindNewVao(); {
+        bindIndicesBuffer(indices);
+        fillAttributeData(0, 3, pos);
+        fillAttributeData(1, 2, uv);
+        fillAttributeData(2, 3, normal);
+    }
+    unbindVao();
+
+    VaoModel* pVaoModel = new VaoModel(vao, indices.size());
+    if (pVaoModel) {
+        pVaoModels.push_back(pVaoModel);
+    }
+    else {
+        // don't have to do anything, vao and vbos will be deleted
+        // when loader is outof scope
+    }
+    return pVaoModel;
+}
+
+VaoModel* Loader::getVaoModel(vector<float>& pos, vector<float>& uv, vector<float>& normal, 
+    vector<float>& tangent, vector<unsigned int>& indices) {
+
+    //shall validate the input ...
+
+    unsigned int vao = bindNewVao(); {
+        bindIndicesBuffer(indices);
+        fillAttributeData(0, 3, pos);
+        fillAttributeData(1, 2, uv);
+        fillAttributeData(2, 3, normal);
+        fillAttributeData(3, 3, tangent);
+    }
+    unbindVao();
+
+    VaoModel* pVaoModel = new VaoModel(vao, indices.size());
+    if (pVaoModel) {
+        pVaoModels.push_back(pVaoModel);
+    }
+    return pVaoModel;
 }

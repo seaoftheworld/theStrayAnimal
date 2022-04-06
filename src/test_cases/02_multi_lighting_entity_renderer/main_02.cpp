@@ -34,12 +34,13 @@ int test_02_multi_lights_entity_renderer() {
 
     // ---------------------------------
     WrappingRenderer_02 abstractRenderer;
-    if (!abstractRenderer.entityRenderer.ready()) {
+    if (!abstractRenderer.mlRenderer.ready()) {
         win.stop();
         return -1;
     }
     abstractRenderer.specificSettingsOn();
 
+    /*
     Light lights[NUM_LIGHTS]; {
         float light_color[NUM_LIGHTS][Light::Color::max_color] = {
             { 1.8f, 1.0f, 1.8f },  // pink
@@ -59,20 +60,37 @@ int test_02_multi_lights_entity_renderer() {
         }
 
         for (int i = 0; i < NUM_LIGHTS; i++) {
-        // for (int i = 0; i < 1; i++) {
             abstractRenderer.addLight(&lights[i]);
+        }
+    }
+    // */
+
+    std::vector<Light> vLights; {
+        float light_color[NUM_LIGHTS][Light::Color::max_color] = {
+            { 1.8f, 1.0f, 1.8f },  // pink
+                // float color[Light::max_color] = { 2.0f, 0.0f, 0.0f };         // red
+                // float light_color0[Light::max_color] = { 0.0f, 2.0f, 0.0f };  // green
+                // float light_pos0[Light::max_pos] = {0.0f, 1.0f, 2.0f};
+                // float light_color0[Light::max_color] = { 0.0f, 0.0f, 0.0f };  // none
+            { 1.0f, 2.6f, 1.0f },  // green
+            { 1.8f, 1.8f, 1.0f },  // red + green ==> yellow
+            { 0.6f, 0.6f, 2.2f }   // blue
+        };
+        // float default_att[Light::max_att] = { 1.0f, 0.3f, 0.4f };
+        float default_att[Light::max_att] = { 2.0f, 0.02f, 0.05f };
+
+        Light lights[NUM_LIGHTS];
+        for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
+            lights[i].setValues(&(LightsPositionsUpdate::initPosition[i]), &light_color[i], &default_att);
+        }
+
+        for (int i = 0; i < NUM_LIGHTS; i++) {
+            vLights.push_back(lights[i]);
         }
     }
 
     // 4 crates represents the positions of 4 lights
-    LoadTargets_02 targets; {
-        for (auto misa_entity = targets.getMisa()->entities.begin(); misa_entity != targets.getMisa()->entities.end(); misa_entity++) {
-            abstractRenderer.entityRenderer.addEntity(&(*misa_entity));
-        }
-        for (auto crate_entity = targets.getCrate()->entities.begin(); crate_entity != targets.getCrate()->entities.end(); crate_entity++) {
-            abstractRenderer.entityRenderer.addEntity(&(*crate_entity));
-        }
-    }
+    LoadTargets_02 targets;
 
     // unsigned int num_misa_entities = assimp_misa.entities.size(), num_all_entities = 0; {
     //     // This way doesn't work !!!
@@ -236,8 +254,15 @@ int test_02_multi_lights_entity_renderer() {
 
             // Update the 4 lights according to positions of the 4 crates
             {
-                // The 1st and the only entity in 'assimp_crate' is the crate model with 4 transforms
-                Entity *crate = &(targets.getCrate()->entities[0]);
+                // The 1st and the only 'TexturedModel' in 'assimp_crate' is the crate model with 4 transforms
+                std::vector<TexturedModel>::iterator crate_mesh_00;
+                if (targets.getModels().texturedModels.size()) {
+                    crate_mesh_00 = targets.getModels().texturedModels.begin() + targets.getCrateStartIdx();
+                }
+                else if (targets.getModels().normalMappedModels.size()) {
+                    crate_mesh_00 = targets.getModels().normalMappedModels.begin() + targets.getCrateStartIdx();
+                }
+                // Entity *crate = &(targets.getCrate()->entities[0]);
 
                 // float rot_z_step = 0.032f;
                 // float xy_step = 0.048f;
@@ -263,8 +288,8 @@ int test_02_multi_lights_entity_renderer() {
                     // }
 
                     unsigned int offsets[] = {
-                        Entity::transform::x, Entity::transform::y,
-                        Entity::transform::z, Entity::transform::rot_z
+                        Transform::x, Transform::y,
+                        Transform::z, Transform::rot_z
                     };
 
                     XYZRotz xyz_rotz;
@@ -280,7 +305,8 @@ int test_02_multi_lights_entity_renderer() {
                             // xyz_rotz.pos[Light::Position::x] += 2.0f;
                             // xyz_rotz.pos[Light::Position::y] += 2.0f;
 
-                        crate->setTransformValues(i, xyz_rotz.pos, offsets, ARRAY_SIZE(offsets));
+                        crate_mesh_00->setTransformValues(i, xyz_rotz.pos, offsets, ARRAY_SIZE(offsets));
+                        // crate->setTransformValues(i, xyz_rotz.pos, offsets, ARRAY_SIZE(offsets));
                     }
                 }
 
@@ -289,19 +315,25 @@ int test_02_multi_lights_entity_renderer() {
                     float updated_light_pos[NUM_LIGHTS][Light::Position::max_pos];
                     for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
                         for (unsigned int j = 0; j < 3; j++) {
-                            updated_light_pos[i][j] = (*(crate->getTransformValues(i)))[Entity::transform::x + j];
+                            // updated_light_pos[i][j] = (*(crate->getTransformValues(i)))[Entity::transform::x + j];
+                            updated_light_pos[i][j] = (*(crate_mesh_00->getTransformValues(i)))[Transform::x + j];
                         }
                     }
                     
-                    for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
-                        lights[i].setPosition(&updated_light_pos[i]);
+                    if (vLights.size() == NUM_LIGHTS) {
+                        for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
+                            // lights[i].setPosition(&updated_light_pos[i]);
+                            vLights[i].setPosition(&updated_light_pos[i]);
+                        }
                     }
                 }
 
+                /*
                 // 3. write the 4 lights' pos, color, and attenuation into variables to be used
                 //    by the multi-lights shader
                 // TODO: use something like 'addLight()' dynamically 
                 // instead of manually adding lights every time before rendering. {}
+                // */
             }
 
             /*
@@ -345,7 +377,8 @@ int test_02_multi_lights_entity_renderer() {
     #else
         {
     #endif
-            abstractRenderer.process();
+            // abstractRenderer.process(targets.getModels().normalMappedModels, vLights);
+            abstractRenderer.process(targets.getModels().texturedModels, vLights);
 
             last_render_time = now;
             rendered_times++;

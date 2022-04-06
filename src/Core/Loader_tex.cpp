@@ -250,6 +250,59 @@ void Loader::loadStaticTextures(std::string *imgPaths, unsigned int num, StaticT
     allocStaticTextureFromBuffers(textureIds, num, output_result);
 }
 
+Texture* Loader::getTexture(const std::string& imgPaths) {
+    int x, y, comp = 0;
+    if (!stbi_info(imgPaths.c_str(), &x, &y, &comp)) {
+        printf("  loadTexture(): Failed to read input file: %s\n", imgPaths.c_str());
+        return NULL;
+    }
+
+    // printf("  i: %d, bind tex-id: %d \n", i, texIds[i]);
+    unsigned int tid;
+    glGenTextures(1, &tid);
+    glBindTexture(GL_TEXTURE_2D, tid);
+
+        if (comp == 3) {
+            // TODO: For some png pictures taken by cellphone (no transparency), comp is still 4, 
+            // this could be displayed correctly with alpha set;
+            // but for some other png, comp is 3, and, if alpha is set to 0 in this case,
+            // the displayed color is not correct,
+            // set alpha to 1 for all situations ???
+            // 
+            // if (!load_rgb_alpha_image(imgPaths[i], 0)) {  
+            if (!load_rgb_alpha_image(imgPaths.c_str(), true)) {
+                glDeleteTextures(1, &tid);
+                return NULL;
+            }
+        }
+        else if (comp == 4) {
+            if (!load_rgb_alpha_image(imgPaths.c_str(), true)) {
+            // if (!load_rgb_alpha_image(imgPaths[i], 0)) {
+                glDeleteTextures(1, &tid);
+                return NULL;
+            }
+        }
+        else if (comp == 2) {
+            // grayscale-alpha character map for texts
+            if (!load_grayscale_alpha_image(imgPaths.c_str(), true)) {
+                glDeleteTextures(1, &tid);
+                return NULL;
+            }
+        }
+        else {
+            printf("  loadTexture(): tex file format not correct (rgb/rgba/text-char-map): %s\n", imgPaths.c_str());
+            glDeleteTextures(1, &tid);
+            return NULL;
+        }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    Texture* pTexture = new Texture(tid);
+    if (pTexture) {
+        pTextures.push_back(pTexture);
+    }
+    return pTexture;
+}
+
 StaticTexture *Loader::loadStaticTextureCube(string imgPaths[][6]) {
     if (!imgPaths) {
         return NULL;

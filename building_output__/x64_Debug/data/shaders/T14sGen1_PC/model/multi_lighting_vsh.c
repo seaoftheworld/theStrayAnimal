@@ -14,7 +14,11 @@ uniform vec3 lightPosition[8];
 
 // To fragment shader
 out vec3 vertexToCamera;
+
+// noperspective out vec3 vertexSurface;
+// flat out vec3 vertexSurface;
 out vec3 vertexSurface;
+
 out vec2 uv;
 out vec3 vertexToLight[8];
 

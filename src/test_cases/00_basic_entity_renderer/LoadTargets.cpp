@@ -1,8 +1,7 @@
 #include "LoadTargets.h"
 
-#include "Core/Renderers/Model/StaticShader.h"
-
 // The 2 square pictures
+/*
 void LoadTargets::initSingleVboEntity() {
 
     float single_vbo_data[] = { 
@@ -82,8 +81,10 @@ void LoadTargets::initSingleVboEntity() {
         single_vbo_entity.addTransform(trans_small_square);
     }
 }
+// */
 
 // A stack of pictures with transparent color
+/*
 void LoadTargets::initMultiVboEntity() {
 
     float test_pos[] = { -0.5f, 0.5f,  0.0f, 
@@ -172,17 +173,40 @@ void LoadTargets::initMultiVboEntity() {
         }
     }
 }
+// */
 
 void LoadTargets::initMisa() {
 
     float values[Entity::transform::max] = {
                 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f,
+                // 0.0f, 0.0f, 3.14f / 8.0f,
                 1.0f
     };
     Transform transform(&values);
     Transform *transforms = &transform;
 
     // TODO: improve meshes' hierachy
-    misa.loadModel("data/models/misa/misa_yForward_zUp.obj", loader, &transforms, 1);
+    // misa.loadModel("data/models/misa/misa_yForward_zUp.obj", loader, &transforms, 1);
+    misa.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", loader, &transforms, 1);
+
+    /*
+    misa.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", loader, &transforms, 1, true); {
+        // Texture* rb73_nmap = loader.getTexture("data/models/player/rb73/mtl/robot_Normal_OpenGL.png");
+        Texture* rb73_nmap = loader.getTexture("data/models/others/barrel/barrelNormal.png");
+        for (size_t i = 0; i < misa.normalMappedModels.size(); i++) {
+            (misa.normalMappedModels)[i].setNormalMap(rb73_nmap);
+        }
+
+        printf("n-map loaded: %p\n", rb73_nmap);
+        for (TexturedModel ir_mesh : misa.normalMappedModels) {
+            printf("texture info: %p\n", ir_mesh.getNormalMap());
+        }
+        printf("\n");
+        for (size_t i = 0; i < misa.normalMappedModels.size(); i++) {
+            printf("texture info: %p\n", (misa.normalMappedModels)[i].getTexture());
+        }
+        printf("\n");
+    }
+    */
 }

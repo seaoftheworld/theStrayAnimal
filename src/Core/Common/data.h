@@ -61,6 +61,43 @@ private:
     // float shineDamper = 10.0f;
 };
 
+class Texture {
+    float reflectivity = 1;
+    float shineDamper = 10.0f;
+    unsigned int id;
+public:
+    Texture(unsigned int tid) : id(tid) {}
+    unsigned int getID() {return id;}
+
+    float getReflect() {
+        return reflectivity;
+    }
+    void setReflect(float reflectivity) {
+        this->reflectivity = reflectivity;
+    }
+    float getShineDamper() {
+        return shineDamper;
+    }
+    void setShineDamper(float shineDamper) {
+        this->shineDamper = shineDamper;
+    }
+};
+
+class VaoModel {
+    unsigned int vertexCount = 0;
+    unsigned int vaoID = 0;
+public:
+    VaoModel(unsigned int vao, unsigned int count) {
+        vertexCount = count;
+        vaoID = vao;
+    }
+    unsigned int getVaoID() {
+        return vaoID;
+    }
+    unsigned int getVertexCount() {
+        return vertexCount;
+    }
+};
 
 class BaseModel {
 public:
@@ -70,6 +107,9 @@ public:
 
     virtual model_type getModelType() = 0;
 };
+
+// class SingleVboModel : BaseModel {
+// };
 
 class StaticModel_SingleVbo : public BaseModel {
 
@@ -244,6 +284,9 @@ struct Transform {
     float values[transform::max];
 
     Transform() {
+        for (int i = x; i < max; i++) {
+            values[i] = 0.0f;
+        }
     }
     Transform(float input_values[][transform::max]) {
         if (!input_values)
@@ -436,6 +479,125 @@ public:
                 }
             }
         }
+};
+
+class TexturedModel {
+    std::vector<Transform> transforms;
+
+    Texture *normalMap = NULL;
+    Texture *texture = NULL;
+    VaoModel *model = NULL;
+
+public:
+    // Texture *normalMap;
+    void setTextureModel(Texture *tex, VaoModel *mod) {
+        if (tex) {
+            texture = tex;
+        }
+        if (mod) {
+            model = mod;
+        }
+    }
+
+    void setNormalMap(Texture *nm) {
+        normalMap = nm;
+    }
+
+    Texture *getTexture() {
+        return texture;
+    }
+
+    VaoModel *getModel() {
+        return model;
+    }
+
+    Texture *getNormalMap() {
+        return normalMap;
+    }
+
+public:
+    // enum transform {
+    //     x = 0, y, z, rot_x, rot_y, rot_z, scale, max
+    // };
+
+    void addTransform(Transform &transform) {
+        transforms.push_back(transform);
+    }
+
+    void deleteTransform(unsigned int i) {
+        // transforms.erase(); ???
+    }
+
+    size_t tranformsNum() {
+        return transforms.size();
+    }
+
+    void setTransformValues(unsigned int transform_idx, float *input_data, unsigned int *input_offset, unsigned int input_offset_num) {
+
+        if (!input_offset || !input_data) {
+            return;
+        }
+
+        for (unsigned int i = 0; i < input_offset_num && i < Transform::max; i++) {
+            if (input_offset[i] >= Transform::max) {
+                continue;
+            }
+
+            if (input_data) {
+                transforms[transform_idx].values[ input_offset[i] ] = input_data[i];
+            }
+        }
+    }
+
+    void setTransformValue(unsigned int transform_idx, unsigned int value_idx, float input_value) {
+        if (transform_idx < transforms.size() && value_idx < Transform::max) {
+            transforms[transform_idx].values[value_idx] = input_value;
+        }
+    }
+
+    const float (*getTransformValues(unsigned int i))[Transform::max] {
+
+        size_t size = transforms.size();
+        if (size == 0)
+            return NULL;
+
+        if (i >= size) {
+            i = size - 1;
+        }
+
+        // return info[i].getData();
+        return &(transforms[i].values);
+    }
+
+    void increaseRotation(unsigned int i, float dx, float dy, float dz) {
+        (transforms[i].values)[Transform::rot_x] += dx;
+        (transforms[i].values)[Transform::rot_y] += dy;
+        (transforms[i].values)[Transform::rot_z] += dz;
+    }
+
+    void cleanUp() {
+        transforms.clear();
+    }
+
+    // void setRotZ(unsigned int i, float rotz) {
+    //     // (*(info[i].getData()))[rot_z] = rotz;
+    //     (transforms[i].values)[rot_z] = rotz;
+    // }
+    // void increaseTransformValue(unsigned int transform_idx, unsigned int value_idx, float delta) {
+    //     if (transform_idx < transforms.size() && value_idx < transform::max) {
+    //         transforms[transform_idx].values[value_idx] += delta;
+    //     }
+    // }
+    // void setTransformValues(unsigned int start_idx, unsigned int num, float *input_data) {
+    //     if (start_idx < transform::max) {
+
+    //         for (unsigned int i = 0; (i < num) && (i < transform::max); i++) {
+    //             if (input_data) {
+    //                 values[start_idx + i] = *input_data; input_data++;
+    //             }
+    //         }
+    //     }
+    // }
 };
 
 // class EntityInfo {

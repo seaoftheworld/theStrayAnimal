@@ -1,7 +1,7 @@
 #include "LoadTargets_03.h"
 
-#include "Core/Renderers/Model/StaticShader.h"  // for: StaticShader::attr_stride[StaticShader::id0_pos3f]
-                                                // shall be replaced with something better
+// #include "Core/Renderers/Model/StaticShader.h"  // for: StaticShader::attr_stride[StaticShader::id0_pos3f]
+                                                   // shall be replaced with something better
 
 float LoadTargets_03::misa_offset_x = 4.0f;
 float LoadTargets_03::misa_offset_y = 4.0f;
@@ -117,9 +117,12 @@ void LoadTargets_03::initMultiVboEntity() {
     unsigned short test_indices[] = { 0, 1, 2, 0, 3, 2 };
 
     StaticModel *model = NULL; {
-        unsigned int vertices_count_from_pos    = ARRAY_SIZE(test_pos) / NoLightingShader::attr_stride[NoLightingShader::id0_pos3f];
-        unsigned int vertices_count_from_uv     = ARRAY_SIZE(test_uv) / NoLightingShader::attr_stride[NoLightingShader::id1_uv2f];
-        unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / NoLightingShader::attr_stride[NoLightingShader::id2_normal3f];
+        // unsigned int vertices_count_from_pos    = ARRAY_SIZE(test_pos) / NoLightingShader::attr_stride[NoLightingShader::id0_pos3f];
+        // unsigned int vertices_count_from_uv     = ARRAY_SIZE(test_uv) / NoLightingShader::attr_stride[NoLightingShader::id1_uv2f];
+        // unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / NoLightingShader::attr_stride[NoLightingShader::id2_normal3f];
+        unsigned int vertices_count_from_pos = ARRAY_SIZE(test_pos) / 3;
+        unsigned int vertices_count_from_uv = ARRAY_SIZE(test_uv) / 2;
+        unsigned int vertices_count_from_normal = ARRAY_SIZE(dummy_normal) / 3;
 
         unsigned int vertices_count = \
             (vertices_count_from_pos == vertices_count_from_uv && \

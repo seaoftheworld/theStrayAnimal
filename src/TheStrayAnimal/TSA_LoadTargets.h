@@ -16,23 +16,30 @@
 
 class TSA_LoadTargets {
 
-    Loader &loader;
-
-    // AssimpLib misa;
-    // AssimpLib rock;
-    // AssimpLib crate;  // used for the ground now
-    Entity origin_square;
-    
-    AssimpLib ground_obj;
-    AssimpLib crate_obj;
-    AssimpLib goal_obj;
-
-    AssimpLib player_obj;
-
     static const unsigned char NUM_WATER_TILES = 4;
     WaterTile water_tiles[NUM_WATER_TILES];
     unsigned int water_normalTexture = 0;
     unsigned int water_dudvTexture = 0;
+
+    // Entity origin_square;
+    // AssimpLib misa;
+    // AssimpLib rock;
+    // AssimpLib crate;  // used for the ground now
+    
+    // Loader &loader;
+    Loader loader;
+    
+    size_t crate_start_idx = 0, crate_end_idx = 0;
+    size_t player_start_idx = 0, player_end_idx = 0;
+    size_t goals_start_idx = 0, goals_end_idx = 0;
+    AssimpLib ground_crates_models;
+    AssimpLib player_goals_models;
+
+    // AssimpLib ground_obj;
+    // AssimpLib crate_obj;
+    // AssimpLib goal_obj;
+    // AssimpLib player_obj;
+
 
     // Terrain terrain;
     // GuiType00 gui_00;
@@ -47,27 +54,25 @@ class TSA_LoadTargets {
     Picture paw;
 
     void clearData() {
-        origin_square.cleanUp();
-
+        // origin_square.cleanUp();
+        /*
         for (auto entity = ground_obj.entities.begin(); entity != ground_obj.entities.end(); entity++) {
             entity->cleanUp();
         }
-        ground_obj.cleanUp();
-
         for (auto entity = crate_obj.entities.begin(); entity != crate_obj.entities.end(); entity++) {
             entity->cleanUp();
         }
-        crate_obj.cleanUp();
-
         for (auto entity = goal_obj.entities.begin(); entity != goal_obj.entities.end(); entity++) {
             entity->cleanUp();
         }
-        goal_obj.cleanUp();
-
         for (auto entity = player_obj.entities.begin(); entity != player_obj.entities.end(); entity++) {
             entity->cleanUp();
         }
+        ground_obj.cleanUp();
+        crate_obj.cleanUp();
+        goal_obj.cleanUp();
         player_obj.cleanUp();
+        // */
 
         // loader.cleanUp();
     }
@@ -82,7 +87,7 @@ public:
     // void initMultiVboEntity();
     // void initMisa();
     // void initRock();
-    void initOriginSquare();
+    // void initOriginSquare();
     void initGround(AreaData *area_data);
 
     void updateCrate(CratesData *crates_data, unsigned short i);       // update the 1 of the transform values
@@ -109,12 +114,11 @@ public:
     void setData(TheStrayAnimal &tsa) {
 
         clearData();
-        initOriginSquare();
+        // initOriginSquare();
 
         initGround(tsa.getAreaData());
         initCrate(tsa.getCratesData());
         initGoals(tsa.getGoalsData());
-
         initPlayer(tsa.getPlayerPosition(), 0.0f);
 
         // printf("\n\n models/entities init done, press anything to continue ...\n\n"); {
@@ -140,30 +144,42 @@ public:
     // static float misa_offset_x;
     // static float misa_offset_y;
 
-    TSA_LoadTargets(Loader &r_ldr) : loader(r_ldr) {
+    // TSA_LoadTargets(Loader &r_ldr) : loader(r_ldr) {
+    TSA_LoadTargets() {
         clearData();
     }
     virtual ~TSA_LoadTargets() {
         clearData();
+        loader.cleanUp();
     }
 
 public:
-    Entity *getOriginSquare() {
-        return &origin_square;
-    }
+    // Entity *getOriginSquare() {
+    //     return &origin_square;
+    // }
 
+    /*
     AssimpLib *getPlayer() {
         return &player_obj;
     }
+    AssimpLib *getGoal() {
+        return &goal_obj;
+    }
+    // */
+    std::vector<TexturedModel>& getPlayerGoals() {
+        return player_goals_models.texturedModels;
+    }
 
+    /*
     AssimpLib *getGround() {
         return &ground_obj;
     }
     AssimpLib *getCrate() {
         return &crate_obj;
     }
-    AssimpLib *getGoal() {
-        return &goal_obj;
+    // */
+    std::vector<TexturedModel>& getGroudCrates() {
+        return ground_crates_models.texturedModels;
     }
 
     Skybox *getSkybox() {

@@ -1,13 +1,9 @@
 #version 330
 
-// out vec4 color;
-// uniform float blendAlpha = 1.0f;
-// uniform float blendAlpha;
-
 in vec3 vertexSurface;
-in vec3 vertexToLight;
-in vec3 vertexToCamera;
 in vec2 uv;
+in vec3 vertexToCamera;
+in vec3 vertexToLight;
 
 uniform sampler2D texture_sampler;
 uniform float reflectivity;

@@ -1,8 +1,8 @@
 #pragma once
 
-// #include "Core/Renderers/Model/ModelRendererBasic.h"
 // #include "Core/Renderers/Model/ModelRendererSpecular.h"
-#include "Core/Renderers/Model/ModelRendererMultiLights.h"
+#include "Core/Renderers/Model/MultiLightsRenderer.h"
+#include "Core/Renderers/Model/NoLightingRenderer.h"
 #include "Core/Renderers/Gui/GuiRenderer.h"
 
 // #include "Core/Renderers/Terrain/TerrainRenderer.h"
@@ -13,26 +13,30 @@
 #include "Core/profile.h"
 
 class TSA_WrappingRenderer {  // need a base-wrapping-renderer ???
-
-    std::vector<Light *> lights;
+    // std::vector<Light *> lights;
+    std::vector<Light> lights;
 
 public:
     // TSA_WrappingRenderer(Loader &loader) : picRenderer(loader) {
-    TSA_WrappingRenderer(Loader &loader) {
-        lights.clear();
+    TSA_WrappingRenderer() {
+        // lights.clear();
     }
     ~TSA_WrappingRenderer() {
         lights.clear();
     }
 
-    void addLights(Light *light) {
+    // void addLights(Light *light) {
+    //     lights.push_back(light);
+    // }
+    void addLights(Light &light) {
         lights.push_back(light);
     }
 
 public:
-    // BasicEntityRenderer   entityRenderer;
-    // SpecularEntityRenderer   entityRenderer;
-    MultiLightsEntityRenderer entityRenderer;
+    // BasicEntityRenderer   modelRenderer;
+    // SpecularEntityRenderer   modelRenderer;
+    MultiLightsRenderer mlRenderer;
+    NoLightingRenderer  nlRenderer;
 
     // TerrainRenderer terrainRenderer;
     // GuiRenderer         guiRenderer;
@@ -44,13 +48,25 @@ public:
     void specificSettingsOff();
     void specificSettingsOn();
 
+    void processScene(
+        std::vector<TexturedModel> &player_goals_models, std::vector<Light> &lights,
+        std::vector<TexturedModel> &the_rest_models) {
+        prepare();
+
+        mlRenderer.run(player_goals_models, lights);
+        nlRenderer.run(the_rest_models);
+
+        skyboxRenderer.run();
+    }
+
+    /*
     void processScene(float clipPlane[][4]) {
         prepare();
-            // entityRenderer.run();
-            // entityRenderer.run(*lights[0]);
+            // modelRenderer.run();
+            // modelRenderer.run(*lights[0]);
 
             // glEnable(GL_CLIP_DISTANCE0);
-            entityRenderer.run(lights, clipPlane);
+            modelRenderer.run(lights, clipPlane);
             // glDisable(GL_CLIP_DISTANCE0);
 
             // Light test_light; {
@@ -67,6 +83,7 @@ public:
             // terrainRenderer.run(lights, clipPlane);
             skyboxRenderer.run();
     }
+    // */
 
     // void processGui() {
     //     guiRenderer.run();

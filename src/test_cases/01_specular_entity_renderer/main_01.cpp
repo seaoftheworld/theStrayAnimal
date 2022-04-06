@@ -32,7 +32,8 @@ int test_01_specular_entity_renderer() {
 
     // -----------------------------
     WrappingRenderer_01 abstractRenderer;
-    if (!abstractRenderer.entityRenderer.ready()) {
+    if (!abstractRenderer.spRenderer.ready()) {
+    // if (!abstractRenderer.nmRenderer.ready()) {
         // loading/compiling/linking shader-program failed
         win.stop();
         return -1;
@@ -40,12 +41,11 @@ int test_01_specular_entity_renderer() {
     abstractRenderer.specificSettingsOn();
 
     LoadTargets targets; {
-        abstractRenderer.entityRenderer.addEntity(targets.getSingleVboEntity());
-        abstractRenderer.entityRenderer.addEntity(targets.getMultiVboEntity());
-
+        /*
         for (auto misa_entity = targets.getMisa()->entities.begin(); misa_entity != targets.getMisa()->entities.end(); misa_entity++) {
             abstractRenderer.entityRenderer.addEntity(&(*misa_entity));
         }
+        // */
     }
 
     Light test_light; {
@@ -54,7 +54,10 @@ int test_01_specular_entity_renderer() {
         float position[Light::Position::max_pos] = { 20.0f, 20.0f, 20.0f };
         // float color[Light::Color::max_color] = {1.6f, 1.2f, 1.6f};
         float color[Light::Color::max_color] = { 1.6f, 1.6f, 1.6f };
-        float dummy_attenuation[Light::Attenuation::max_att] = { 0.0f, 0.0f, 0.0f };
+
+        // This attenuatin doesn't work for nm-shader
+        // float dummy_attenuation[Light::Attenuation::max_att] = { 0.0f, 0.0f, 0.0f };
+        float dummy_attenuation[Light::Attenuation::max_att] = { 2.0f, 0.02f, 0.0f };
         test_light.setValues(&position, &color, &dummy_attenuation);
     }
 
@@ -173,13 +176,11 @@ int test_01_specular_entity_renderer() {
             win.pollEvents();  // not respond when close win with mouse without this
             cam.input_update(win);
             BaseRenderer::calculateViewMatrix(cam.getPosition(), cam.getDirection(), cam.getUp());
-
             // entity.increasePosition(0.0f, 0.0f, 0.002f);
             // entity.increaseRotation(0.0005f, 0.0f, 0.0f);
             // entity.increaseRotation(0.0f, 0.0005f, 0.0f);
             // entity.increaseRotation(0.0f, 0.0f, 0.005f);
 
-            //*
             {
                 unsigned short transform_idx = 0;
                 float rot_z_step = 0.048f;
@@ -190,13 +191,38 @@ int test_01_specular_entity_renderer() {
                 if (!stop) {
                     float delta_rot_z = (facing_left) ? (rot_z_step) : (-rot_z_step);
                     delta_rot_z = (turn_back) ? (-delta_rot_z) : (delta_rot_z);
-
+                    /*
                     for (auto itr = targets.getMisa()->entities.begin(); itr != targets.getMisa()->entities.end(); itr++) {
                         itr->increaseRotation(transform_idx, 0.0f, 0.0f, delta_rot_z);
                     }
 
                     Entity* misaEntity = &targets.getMisa()->entities[0];
                     float misa_angle = (*(misaEntity->getTransformValues(transform_idx)))[Entity::transform::rot_z];
+                    // */
+
+                    //*
+                    for (std::vector<TexturedModel>::iterator ir_mesh = targets.getMisa()->texturedModels.begin();
+                        ir_mesh != targets.getMisa()->texturedModels.end();
+                        ir_mesh++) {
+                        ir_mesh->increaseRotation(transform_idx, 0.0f, 0.0f, delta_rot_z);
+                    }
+                    float misa_angle = 0.0f;
+                    if (targets.getMisa()->texturedModels.size()) {
+                        misa_angle = (*(targets.getMisa()->texturedModels.begin()->getTransformValues(transform_idx)))[Transform::rot_z];
+                    }
+                    // */
+
+                    /*
+                    for (std::vector<TexturedModel>::iterator ir_mesh = targets.getMisa()->normalMappedModels.begin();
+                        ir_mesh != targets.getMisa()->normalMappedModels.end();
+                        ir_mesh++) {
+                        ir_mesh->increaseRotation(transform_idx, 0.0f, 0.0f, delta_rot_z);
+                    }
+                    float misa_angle = 0.0f;
+                    if (targets.getMisa()->normalMappedModels.size()) {
+                        misa_angle = (*(targets.getMisa()->normalMappedModels.begin()->getTransformValues(transform_idx)))[TexturedModel::transform::rot_z];
+                    }
+                    // */
 
                     if (!turn_back) {
                         if (facing_left && misa_angle > 3.14f + 3.14f / 4.0f) {
@@ -219,7 +245,6 @@ int test_01_specular_entity_renderer() {
                     }
                 }
             }
-            //*/
 
             last_update_time = now;
             updated_times++;
@@ -228,7 +253,8 @@ int test_01_specular_entity_renderer() {
         // Render entities
         // {
         if ( now - last_render_time >= render_cycle ) {
-            abstractRenderer.process(test_light);
+            // abstractRenderer.process(test_light, targets.getMisa()->normalMappedModels);
+            abstractRenderer.process(test_light, targets.getMisa()->texturedModels);
 
             last_render_time = now;
             rendered_times++;

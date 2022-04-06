@@ -1,8 +1,8 @@
-#include "Core/Renderers/Model/ModelRendererBasic.h"
+#include "Core/Renderers/Model/NoLightingRenderer.h"
 
 class WrappingRenderer_00 {
 public:
-    BasicEntityRenderer entityRenderer;
+    NoLightingRenderer noLightingRenderer;
 
     void specificSettingsOn() {
         glClearColor(0.7f, 0.7f, 0.8f, 1.0f);
@@ -19,11 +19,10 @@ public:
         // glCullFace(GL_FRONT);
     }
     void specificSettingsOff() {}
-    
-    // void process(Light &light) {
-    void process() {
+ 
+    void process(std::vector<TexturedModel>& meshes) {
         prepare();
-        entityRenderer.run();
+        noLightingRenderer.run(meshes);
     }
 
 private:

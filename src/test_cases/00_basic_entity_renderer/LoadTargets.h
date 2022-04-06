@@ -8,13 +8,13 @@
 class LoadTargets {
     Loader loader;
 
-    Entity single_vbo_entity;
-    Entity multi_vbo_entity;
+    // Entity single_vbo_entity;
+    // Entity multi_vbo_entity;
     AssimpLib misa;
 
     void cleanUp() {
-        single_vbo_entity.cleanUp();
-        multi_vbo_entity.cleanUp();
+        // single_vbo_entity.cleanUp();
+        // multi_vbo_entity.cleanUp();
 
         for (auto misa_entity = misa.entities.begin(); misa_entity != misa.entities.end(); misa_entity++) {
             misa_entity->cleanUp();
@@ -24,8 +24,8 @@ class LoadTargets {
         loader.cleanUp();
     }
 
-    void initSingleVboEntity();
-    void initMultiVboEntity();
+    // void initSingleVboEntity();
+    // void initMultiVboEntity();
     void initMisa();
 
 public:
@@ -33,10 +33,10 @@ public:
         cleanUp();
 
         // init entities
-        initSingleVboEntity();
-        initMultiVboEntity();
+        // initSingleVboEntity();
+        // initMultiVboEntity();
         initMisa();
-        printf("\n\n models/entities init done, press anything to continue ...\n\n"); {
+        printf("\n\n models init done, input any number to continue ...\n\n"); {
             int dbg;
             scanf("%d", &dbg);
         }
@@ -49,12 +49,12 @@ public:
         cleanUp();
     }
 
-    Entity *getSingleVboEntity() {
-        return &single_vbo_entity;
-    }
-    Entity *getMultiVboEntity() {
-        return &multi_vbo_entity;
-    }
+    // Entity *getSingleVboEntity() {
+    //     return &single_vbo_entity;
+    // }
+    // Entity *getMultiVboEntity() {
+    //     return &multi_vbo_entity;
+    // }
     AssimpLib *getMisa() {
         return &misa;
     }

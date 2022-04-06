@@ -13,7 +13,11 @@ uniform float shineDamper;
 
 // From v-shader
 in vec3 vertexToCamera;
+
+// noperspective in vec3 vertexSurface;
+// flat in vec3 vertexSurface;
 in vec3 vertexSurface;
+
 in vec2 uv;
 in vec3 vertexToLight[8];
 

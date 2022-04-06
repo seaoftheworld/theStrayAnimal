@@ -1,11 +1,7 @@
 #pragma once
-
 #include "Core/Shader/Base/BaseShader.h"
 #include "Core/Common/light.h"
 
-
-// The 'plane' part in the shader shall be disabled
-//
 #ifdef Z370_PC
     // #define MULTI_LIGHTS_VSH_PATH "data/shaders/models/multi_lights_clip_plane.vsh"
     // #define MULTI_LIGHTS_FSH_PATH "data/shaders/models/multi_lights_clip_plane.fsh"
@@ -14,67 +10,140 @@
 #elif defined T14sGen1_PC
     #define MULTI_LIGHTS_VSH_PATH "data/shaders/T14sGen1_PC/model/multi_lighting_vsh.c"
     #define MULTI_LIGHTS_FSH_PATH "data/shaders/T14sGen1_PC/model/multi_lighting_fsh.c"
+    #define NORMAL_MAPPED_VSH "data/shaders/T14sGen1_PC/model/normal_mapped_vsh.c"
+    #define NORMAL_MAPPED_FSH "data/shaders/T14sGen1_PC/model/normal_mapped_fsh.c"
 #else 
     #define MULTI_LIGHTS_VSH_PATH "data/shaders/T14sGen1_PC/model/multi_lighting_vsh.c"
     #define MULTI_LIGHTS_FSH_PATH "data/shaders/T14sGen1_PC/model/multi_lighting_fsh.c"
+    #define NORMAL_MAPPED_VSH "data/shaders/T14sGen1_PC/model/normal_mapped_vsh.c"
+    #define NORMAL_MAPPED_FSH "data/shaders/T14sGen1_PC/model/normal_mapped_fsh.c"
 #endif
 
 #define SHADER_MAX_LIGHTS (8)
 
+class NormalMappedShader : public BaseShader {
+    int    lightPosition_loc[SHADER_MAX_LIGHTS];
+    int       lightColor_loc[SHADER_MAX_LIGHTS];
+    int lightAttenuation_loc[SHADER_MAX_LIGHTS];
+
+    int shineDamper_loc = -1,
+        reflect_loc = -1,
+        texture_sampler_loc = -1,
+        normal_map_sampler_loc = -1;
+public:
+    NormalMappedShader() : BaseShader(NORMAL_MAPPED_VSH, NORMAL_MAPPED_FSH) {
+        call_subclass_init_funcs();
+    }
+    ~NormalMappedShader() {}
+
+    void bindAllAttributeLocations() override;
+    void getAllUniformLocations() override;
+    
+    // This is supposed to be called in the corresponding renderer-layer
+    void bindTextureSamplerToSlot() {
+        uniform1i(texture_sampler_loc, 0);
+        uniform1i(normal_map_sampler_loc, 1);
+    }
+
+    void loadReflectivity(float input) {
+        uniform1f(reflect_loc, input);
+    }
+
+    void loadShineDamper(float input) {
+        uniform1f(shineDamper_loc, input);
+    }
+
+    void loadLights(std::vector<Light>& lights) {
+        unsigned int num_lights_input = lights.size();
+        unsigned int val_num_lights = (num_lights_input < SHADER_MAX_LIGHTS) ? (num_lights_input) : SHADER_MAX_LIGHTS;
+
+        for (unsigned int i = 0; i < SHADER_MAX_LIGHTS; i++) {
+
+            if (i < val_num_lights) {
+                uniform3fv(lightPosition_loc[i], 1, (lights.begin() + i)->getPosition3fv());
+                uniform3fv(lightColor_loc[i], 1, (lights.begin() + i)->getColor3fv());
+                uniform3fv(lightAttenuation_loc[i], 1, (lights.begin() + i)->getAttenuation3fv());
+            }
+            else {
+                float default_pos[] = { 0.0f, 0.0f, 1.0f };
+                float default_color[] = { 0.0f, 0.0f, 0.0f };
+                float default_attenuation[] = { 1.0f, 0.0f, 0.0f };
+
+                uniform3fv(lightPosition_loc[i], 1, default_pos);
+                uniform3fv(lightColor_loc[i], 1, default_color);
+                uniform3fv(lightAttenuation_loc[i], 1, default_attenuation);
+            }
+        }
+    }
+};
+
 class MultiLightsShader : public BaseShader {
 
 public:
-    enum attrNum {
-        id0_pos3f = 0, id1_uv2f, id2_normal3f, max_attrNum
-    };
+    // enum attrNum {
+    //     id0_pos3f = 0, id1_uv2f, id2_normal3f, max_attrNum
+    // };
 
-    static const unsigned int attr_idx[max_attrNum];
-    static const unsigned int attr_stride[max_attrNum];
-    static const unsigned int attr_offset[max_attrNum];
-    static const unsigned int all_in_one_stride;
+    // static const unsigned int attr_idx[max_attrNum];
+    // static const unsigned int attr_stride[max_attrNum];
+    // static const unsigned int attr_offset[max_attrNum];
+    // static const unsigned int all_in_one_stride;
 
     MultiLightsShader() : BaseShader(MULTI_LIGHTS_VSH_PATH, MULTI_LIGHTS_FSH_PATH) {
-        
-        printf("  subclass constructor called.\n");
+        printf("  multi_lights shader constructor()\n");
         call_subclass_init_funcs();
-
-        // enable specific settings
-        // specificSettingsOn();
     }
     ~MultiLightsShader(){
+        printf("  multi_lights shader destructor()\n");
     }
 
     void bindAllAttributeLocations() override;
     void getAllUniformLocations() override;
 
-    // void loadTransformMatrix(const float *p) {
-    //     uniformMatrix4fv(transform_loc, p);
-    // }
-
-    // void loadViewMatrix(const float *p) {
-    //     uniformMatrix4fv(view_loc, p);
-    // }
-
-    // void loadProjMatrix(const float *p) {
-    //     uniformMatrix4fv(proj_loc, p);
-    // }
-
     void loadReflectivity(float input) {
-        uniform1f(objReflect_loc, input);
+        uniform1f(reflect_loc, input);
     }
 
     void loadShineDamper(float input) {
-        uniform1f(objShineDamper_loc, input);
+        uniform1f(shineDamper_loc, input);
     }
 
-    void loadClipPlane(float *p4f) {
-        uniform4fv(clipPlane_loc, 1, p4f);
+    // This is supposed to be called in the corresponding renderer-layer
+    void bindTextureSamplerToSlot() {
+        uniform1i(texture_sampler_loc, 0);
     }
 
+    // void loadClipPlane(float *p4f) {
+    //     uniform4fv(clipPlane_loc, 1, p4f);
+    // }
     // void loadAlpha(float p) {
     //     uniform1f(alpha_loc, p);
     // }
 
+    void loadLights(std::vector<Light>& lights) {
+        unsigned int num_lights_input = lights.size();
+        unsigned int num_lights_valid = (num_lights_input < SHADER_MAX_LIGHTS) ? (num_lights_input) : SHADER_MAX_LIGHTS;
+
+        for (unsigned int i = 0; i < SHADER_MAX_LIGHTS; i++) {
+
+            if (i < num_lights_valid) {
+                uniform3fv(lightPosition_loc[i], 1, (lights.begin() + i)->getPosition3fv());
+                uniform3fv(lightColor_loc[i], 1, (lights.begin() + i)->getColor3fv());
+                uniform3fv(lightAttenuation_loc[i], 1, (lights.begin() + i)->getAttenuation3fv());
+            }
+            else {
+                float default_pos[] = { 0.0f, 0.0f, 1.0f };
+                float default_color[] = { 0.0f, 0.0f, 0.0f };
+                float default_attenuation[] = { 1.0f, 0.0f, 0.0f };
+
+                uniform3fv(lightPosition_loc[i], 1, default_pos);
+                uniform3fv(lightColor_loc[i], 1, default_color);
+                uniform3fv(lightAttenuation_loc[i], 1, default_attenuation);
+            }
+        }
+    }
+
+    /*
     void loadLights(const std::vector<Light *> &lights) {
 
         unsigned int num_lights_input = lights.size();
@@ -115,7 +184,9 @@ public:
             }
         }
     }
+    // */
 
+    /*
     void loadLights(Light *input_lights, unsigned int input_num_lights) {
         unsigned int num_lights = (input_num_lights < SHADER_MAX_LIGHTS) ? (input_num_lights) : SHADER_MAX_LIGHTS;
 
@@ -153,14 +224,14 @@ public:
         }
         // printf("\n\n");
     }
+    // */
 
 private:
     int    lightPosition_loc[SHADER_MAX_LIGHTS]; 
     int       lightColor_loc[SHADER_MAX_LIGHTS];
     int lightAttenuation_loc[SHADER_MAX_LIGHTS];
 
-    int objReflect_loc = -1,
-        objShineDamper_loc = -1;
-
-    int clipPlane_loc = -1;
+    int  texture_sampler_loc = -1;
+    int          reflect_loc = -1,
+             shineDamper_loc = -1;
 };

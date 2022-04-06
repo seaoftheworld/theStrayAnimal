@@ -1,7 +1,7 @@
 #include "LoadTargets_04.h"
 
-#include "Core/Renderers/Model/StaticShader.h"  // for: StaticShader::attr_stride[StaticShader::id0_pos3f]
-                                                // shall be replaced with something better
+// #include "Core/Renderers/Model/StaticShader.h"  // for: StaticShader::attr_stride[StaticShader::id0_pos3f]
+                                                   // shall be replaced with something better
 #define NUM_CRATE (4)
 
 void LoadTargets_04::initCrate() {
