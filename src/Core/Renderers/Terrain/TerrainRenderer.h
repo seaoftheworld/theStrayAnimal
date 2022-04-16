@@ -18,16 +18,16 @@ public:
 
 public:
     TerrainRenderer() {
-        printf("TerrainRenderer() constructor called.\n\n\n");
+        printf("TerrainRenderer constructor().\n\n\n");
         freeShadersData();
         allocShadersData();
     }
     virtual ~TerrainRenderer() {
-        printf("TerrainRenderer() destructor called.\n\n\n");
+        printf("TerrainRenderer destructor().\n\n\n");
         freeShadersData();
     }
 
-    void run(std::vector<Light *> lights, float clipPlane[][4]) {
+    void run(std::vector<Light> &lights, float clipPlane[][4]) {
 
         if (!terrainShader) {
             return;

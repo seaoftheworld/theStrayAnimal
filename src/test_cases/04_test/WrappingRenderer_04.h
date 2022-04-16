@@ -1,7 +1,7 @@
 #pragma once
 
-// #include "Core/Renderers/Model/ModelRendererBasic.h"
-// #include "Core/Renderers/Model/ModelRendererSpecular.h"
+// #include "Core/Renderers/Model/NoLightingRenderer.h"
+// #include "Core/Renderers/Model/SpecularRenderer.h"
 #include "Core/Renderers/Model/MultiLightsRenderer.h"
 
 // #include "Core/Renderers/Terrain/TerrainRenderer.h"
@@ -13,10 +13,9 @@
 #include "Core/profile.h"
 
 class WrappingRenderer_04 {  // need a base-wrapping-renderer ???
-
-    std::vector<Light *> lights;
-
 public:
+    /*
+    std::vector<Light *> lights;
     WrappingRenderer_04() {
         lights.clear();
     }
@@ -27,11 +26,12 @@ public:
     void addLights(Light *light) {
         lights.push_back(light);
     }
+    // */
 
 public:
-    // BasicEntityRenderer   entityRenderer;
-    // SpecularEntityRenderer   entityRenderer;
-    MultiLightsRenderer entityRenderer;
+    // NoLightingRenderer   nlRenderer;
+    //   SpecularRenderer   spRenderer;
+    MultiLightsRenderer mlRenderer;
 
     // TerrainRenderer terrainRenderer;
     GuiRenderer         guiRenderer;
@@ -41,13 +41,19 @@ public:
     void specificSettingsOff();
     void specificSettingsOn();
 
+    void processScene(std::vector<TexturedModel> &models, std::vector<Light> &lights) {
+        prepare();
+        mlRenderer.run(models, lights);
+        skyboxRenderer.run();
+    }
+
     void processScene(Light &light, float clipPlane[][4]) {
         prepare();
             // entityRenderer.run();
             // entityRenderer.run(*lights[0]);
 
             // glEnable(GL_CLIP_DISTANCE0);
-            entityRenderer.run(lights, clipPlane);
+            // mlRenderer.run(lights, clipPlane);
             // glDisable(GL_CLIP_DISTANCE0);
 
             // Light test_light; {
@@ -65,12 +71,16 @@ public:
             skyboxRenderer.run();
     }
 
-    void processGui() {
-        guiRenderer.run();
+    void processWater(std::vector<WaterTile> &tiles, unsigned int dudv, unsigned int normal) {
+        waterRenderer.run(tiles, dudv, normal);
     }
 
     void processWater(WaterFrameBuffers *fbos, unsigned int dudv, unsigned int normal) {
         waterRenderer.run(fbos, dudv, normal);
+    }
+
+    void processGui() {
+        guiRenderer.run();
     }
 
 private:

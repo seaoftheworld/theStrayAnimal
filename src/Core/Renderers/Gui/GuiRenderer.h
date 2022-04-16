@@ -68,12 +68,12 @@ public:
 
 public:
     GuiRenderer() {
-        printf("  __ gui-renderer constructor called.\n");
+        printf("  __ gui-renderer constructor().\n");
         freeShadersData();
         allocShadersData();
     }
     ~GuiRenderer() {
-        printf("  __ gui-renderer destructor called.\n");
+        printf("  __ gui-renderer destructor().\n");
         freeShadersData();
     }
 };
@@ -93,14 +93,14 @@ public:
 
 public:
     PictureRenderer(Loader &loader) {
-        printf("  __ PictureRenderer class constructor called.\n");
+        printf("  __ PictureRenderer constructor().\n");
         freeShadersData();
         allocShadersData();
 
         allocUvBuffer(loader);
     }
     ~PictureRenderer() {
-        printf("  __ PictureRenderer class destructor called.\n");
+        printf("  __ PictureRenderer destructor().\n");
         freeShadersData();
     }
 
@@ -121,7 +121,7 @@ public:
     void render_single_picture(unsigned int idx) {
 
         Picture *pic = NULL;
-        unsigned int size = pictures.size();
+        size_t size = pictures.size();
         if (idx >= size) {
             return;
         }

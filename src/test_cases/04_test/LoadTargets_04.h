@@ -11,21 +11,20 @@
 
 #include "WrappingRenderer_04.h"  // to include data types for terrain, skybox, gui, and water
 
-// #include "test_cases/02_multi_lighting_entity_renderer/LightsPositionsUpdate.h"
-
 class LoadTargets_04 {
     Loader loader;
 
     AssimpLib crate;
     Skybox  skybox;
 
-    // GuiType00 gui_00;
-    GuiType00 gui[4];
-
     // WaterFrameBuffers waterFbos;
     unsigned int water_dudvTexture = 0;
     unsigned int water_normalTexture = 0;
-    WaterTile waterTile[4];
+    std::vector<WaterTile> waterTiles;
+    // WaterTile waterTile[4];
+
+    // GuiType00 gui_00;
+    GuiType00 gui[4];
 
     void initData() {
 
@@ -34,24 +33,21 @@ class LoadTargets_04 {
         // }
         // rock.cleanUp();
 
-        for (auto crate_entity = crate.entities.begin(); crate_entity != crate.entities.end(); crate_entity++) {
-            crate_entity->cleanUp();
-        }
-        crate.cleanUp();
-
+        // for (auto crate_entity = crate.entities.begin(); crate_entity != crate.entities.end(); crate_entity++) {
+        //     crate_entity->cleanUp();
+        // }
         loader.cleanUp();
+        crate.cleanUp();
     }
     void cleanUp() {
         initData();
         // waterFbos.cleanUp();  // this shall not be called in constructor
     }
 
+    void initSkybox();
     void initCrate();
 
-    void initSkybox();
-
     void initWaterTiles();
-    void initWaterTextures();
     void initGui();
 
 public:
@@ -64,23 +60,22 @@ public:
         // init entities
         initCrate();
         printf("\n\n crate init done, press anything to continue ...\n\n"); {
-            int dbg;
-            scanf("%d", &dbg);
+            // int dbg;
+            // scanf("%d", &dbg);
         }
 
         // init skybox
         initSkybox();
         printf("skybox init done, press anything to continue ...\n\n"); {
-            int dbg;
-            scanf("%d", &dbg);
+            // int dbg;
+            // scanf("%d", &dbg);
         }
 
         // init water
-        initWaterTextures();
         initWaterTiles();
 
-        // init gui
-        // initGui();
+        // Init GUI
+        initGui();
     }
     virtual ~LoadTargets_04() {
         cleanUp();
@@ -101,9 +96,13 @@ public:
     // WaterFrameBuffers *getWaterFbos() {
     //     return &waterFbos;
     // }
-    WaterTile *getWaterTiles() {
-        return waterTile;
+    // WaterTile *getWaterTiles() {
+    //     return waterTile;
+    // }
+    std::vector<WaterTile> &getWaterTiles() {
+        return waterTiles;
     }
+
     unsigned int getWaterDudvTexture() {
         return water_dudvTexture;
     }

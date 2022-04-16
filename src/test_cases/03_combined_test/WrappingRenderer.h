@@ -1,7 +1,7 @@
 #pragma once
 
-// #include "Core/Renderers/Model/ModelRendererBasic.h"
-// #include "Core/Renderers/Model/ModelRendererSpecular.h"
+// #include "Core/Renderers/Model/NoLightingRenderer.h"
+// #include "Core/Renderers/Model/SpecularRenderer.h"
 #include "Core/Renderers/Model/MultiLightsRenderer.h"
 
 #include "Core/Renderers/Terrain/TerrainRenderer.h"
@@ -12,42 +12,37 @@
 #define PROFILING (0)
 #include "Core/profile.h"
 
-class WrappingRenderer {  // need a base-wrapping-renderer ???
-
-    std::vector<Light *> lights;
-
+class WrappingRenderer {
 public:
-    WrappingRenderer() {
-        lights.clear();
-    }
-    ~WrappingRenderer() {
-        lights.clear();
-    }
-
-    void addLights(Light *light) {
-        lights.push_back(light);
-    }
-
-public:
-    // BasicEntityRenderer   entityRenderer;
-    // SpecularEntityRenderer   entityRenderer;
-    MultiLightsRenderer entityRenderer;
+    // SpecularRenderer    spRenderer;
+    // NoLightingRenderer nlRenderer;
+    MultiLightsRenderer mlRenderer;
 
     TerrainRenderer terrainRenderer;
     SkyboxRenderer   skyboxRenderer;
-    GuiRenderer         guiRenderer;
+    // GuiRenderer         guiRenderer;
     WaterRenderer     waterRenderer;
 
     void specificSettingsOff();
     void specificSettingsOn();
 
+    void processScene(std::vector<TexturedModel> &models, std::vector<Light> &lights) {
+        prepare();
+
+        mlRenderer.run(models, lights);
+
+        float clipPlane_display_down_all[] = {0.0f, 0.0f, -1.0f, 1000.0f};
+        terrainRenderer.run(lights, &clipPlane_display_down_all);
+
+        skyboxRenderer.run();
+    }
     void processScene(Light &light, float clipPlane[][4]) {
         prepare();
             // entityRenderer.run();
             // entityRenderer.run(*lights[0]);
 
             // glEnable(GL_CLIP_DISTANCE0);
-            entityRenderer.run(lights, clipPlane);
+            // mlRenderer.run(pLights, clipPlane);
             // glDisable(GL_CLIP_DISTANCE0);
 
             // Light test_light; {
@@ -61,16 +56,19 @@ public:
             // }
             // terrainRenderer.run(test_light);
 
-            terrainRenderer.run(lights, clipPlane);
+            // terrainRenderer.run(lights, clipPlane);
             skyboxRenderer.run();
     }
 
     void processWater(WaterFrameBuffers *fbos, unsigned int dudv, unsigned int normal) {
         waterRenderer.run(fbos, dudv, normal);
     }
+    void processWater(vector<WaterTile> &waterTiles, unsigned int dudv, unsigned int normal) {
+        waterRenderer.run(waterTiles, dudv, normal);
+    }
 
     void processGui() {
-        guiRenderer.run();
+        // guiRenderer.run();
     }
 
 private:

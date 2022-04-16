@@ -11,7 +11,7 @@ class WaterRenderer : public BaseRenderer {
 private:
     WaterShader *waterShader = NULL;
 
-    // contains values to generate Transform matris for each water tile
+    // contains values to generate Transform matrixes for each water tile
     std::vector<WaterTile *> waters;
 
     float moveSpeed = 0.0f, moveSpeedFactor = 0.0005f;
@@ -23,6 +23,17 @@ public:
 
     void addWaterTile(WaterTile *water) {
         waters.push_back(water);
+    }
+
+    void run(std::vector<WaterTile> &wTiles, unsigned int dudvTex, unsigned int normalTex) {
+        waterShader->start();
+        waterShader->loadViewMatrix(getViewMatrix());
+        moveSpeed += moveSpeedFactor; if (moveSpeed > 1.0f) { moveSpeed = 0.0f; }
+        waterShader->loadMoveSpeed(moveSpeed);
+
+        for (auto& ir_tile : wTiles) {
+            render(&ir_tile, dudvTex, normalTex);
+        }
     }
 
     void run(WaterFrameBuffers *fbos, unsigned int dudv, unsigned int normal) {

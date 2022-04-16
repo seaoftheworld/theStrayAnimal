@@ -201,7 +201,7 @@ int test_03_terrain() {
 
     AssimpLib assimp_misa; {
 
-        float values[Entity::transform::max] = {
+        float values[Transform::max] = {
                     0.0f, 0.0f, 0.0f,
                     0.0f, 0.0f, 0.0f,
                     1.0f
@@ -215,7 +215,7 @@ int test_03_terrain() {
 
     AssimpLib assimp_terrain_bottom; {
 
-        float values[Entity::transform::max] = {
+        float values[Transform::max] = {
                     10.0f, 10.0f, 0.0f,
                     0.0f, 0.0f, 0.0f,
                     10.0f
@@ -290,7 +290,7 @@ int test_03_terrain() {
             }
 
             single_vbo_entity.setTextureModel(textures[1], m); {
-                float trans_big_square_values[Entity::transform::max] = {
+                float trans_big_square_values[Transform::max] = {
                     // (float)i * 1.0f + 0.5f, (float)i * 1.0f + 0.1f, (float)i * 1.0f + 0.1f,
                     // 0.0f, 0.0f, 0.0f,
                     // (float)i * 0.3f + 0.3f
@@ -302,7 +302,7 @@ int test_03_terrain() {
                 Transform trans_big_square(&trans_big_square_values);
                 single_vbo_entity.addTransform(trans_big_square);
 
-                float trans_small_square_values[Entity::transform::max] = {
+                float trans_small_square_values[Transform::max] = {
                     // -1.5f, -1.5f, 2.0f,
                     -5.0f, -5.0f, 2.0f,
                     0.0f, 0.0f, 0.0f,
@@ -358,7 +358,7 @@ int test_03_terrain() {
             multi_vbo_entity.setTextureModel(textures[0], model);
 
             for (unsigned int i = 0; i < 10; i++) {
-                float trans_values[Entity::transform::max] = {
+                float trans_values[Transform::max] = {
                     (float)i * 1.0f + 0.5f, (float)i * 1.0f + 0.1f, (float)i * 1.0f + 0.1f,
                     0.0f, 0.0f, 0.0f,
                     (float)i * 0.3f + 0.3f
@@ -500,12 +500,12 @@ int test_03_terrain() {
                 //     (*itr).increaseRotation(et_idx, 0.0f, 0.0f, delta_rot_z);
                 // }
 
-                // if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] > 3.14f) {
-                //     // printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                // if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] > 3.14f) {
+                //     // printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                 //     increase = false;
                 // }
-                // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] < -3.14f) {
-                //     // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] < -3.14f) {
+                //     // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                 //     increase = true;
                 // }
             }
@@ -576,13 +576,13 @@ int test_03_terrain() {
                         // itr->setRotZ(0, 3.14f);
                     }
 
-                    if ((*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z] > 3.14f) {
-                        printf("rot_z max: %f\n", (*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z]);
+                    if ((*assimp_misa.entities[0].getTransformValues(et_idx))[Transform::rot_z] > 3.14f) {
+                        printf("rot_z max: %f\n", (*assimp_misa.entities[0].getTransformValues(et_idx))[Transform::rot_z]);
                         increase = false;
                         stop = true;
                     }
-                    else if ((*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z] < -3.14f) {
-                        // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z]);
+                    else if ((*assimp_misa.entities[0].getTransformValues(et_idx))[Transform::rot_z] < -3.14f) {
+                        // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getTransformValues(et_idx))[Transform::rot_z]);
                         // increase = true;
                         // stop = true;
                     }

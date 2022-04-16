@@ -16,61 +16,56 @@
 class LoadTargets_03 {
     Loader loader;
 
-    Entity single_vbo_entity;
-    Entity multi_vbo_entity;
-
-    AssimpLib crate;
-    AssimpLib misa;
-    AssimpLib rock;
+    size_t crate_start_idx = 0, crate_end_idx = 0;
+    AssimpLib models;
 
     Terrain terrain;
     Skybox  skybox;
     GuiType00 gui_00;
     GuiType00 gui_01;
 
+    vector<WaterTile> waterTiles;
+    // WaterTile waterTile[4];
     WaterFrameBuffers waterFbos;
-    WaterTile waterTile[4];
     unsigned int water_dudvTexture = 0;
     unsigned int water_normalTexture = 0;
 
     void initData() {
-        single_vbo_entity.cleanUp();
-        multi_vbo_entity.cleanUp();
+        // single_vbo_entity.cleanUp();
+        // multi_vbo_entity.cleanUp();
 
-        for (auto misa_entity = misa.entities.begin(); misa_entity != misa.entities.end(); misa_entity++) {
-            misa_entity->cleanUp();
-        }
-        misa.cleanUp();
-
-        for (auto crate_entity = crate.entities.begin(); crate_entity != crate.entities.end(); crate_entity++) {
-            crate_entity->cleanUp();
-        }
-        crate.cleanUp();
-
-        for (auto rock_entity = rock.entities.begin(); rock_entity != rock.entities.end(); rock_entity++) {
-            rock_entity->cleanUp();
-        }
-        rock.cleanUp();
+        // for (auto misa_entity = misa.entities.begin(); misa_entity != misa.entities.end(); misa_entity++) {
+        //     misa_entity->cleanUp();
+        // }
+        // for (auto crate_entity = crate.entities.begin(); crate_entity != crate.entities.end(); crate_entity++) {
+        //     crate_entity->cleanUp();
+        // }
+        // for (auto rock_entity = rock.entities.begin(); rock_entity != rock.entities.end(); rock_entity++) {
+        //     rock_entity->cleanUp();
+        // }
 
         loader.cleanUp();
+        // misa.cleanUp();
+        // crate.cleanUp();
+        // rock.cleanUp();
+        models.cleanUp();
     }
     void cleanUp() {
         initData();
         waterFbos.cleanUp();  // this shall not be called in constructor
     }
 
-    void initSingleVboEntity();
-    void initMultiVboEntity();
+    // void initSingleVboEntity();
+    // void initMultiVboEntity();
     void initCrate();
     void initMisa();
     void initRock();
 
     void initTerrain();
     void initSkybox();
-    void initGui();
-    void initWaterTiles();
 
-    void initWaterTextures();
+    void initWaterTiles();
+    void initGui();
 
 public:
     static float misa_offset_x;
@@ -78,52 +73,51 @@ public:
 
     LoadTargets_03() {
         initData();
-
         // init entities
         // initSingleVboEntity();
         // initMultiVboEntity();
 
         initCrate();
         initMisa();
-        initRock();
-
-        printf("\n\n models/entities init done, press anything to continue ...\n\n"); {
-            int dbg;
-            scanf("%d", &dbg);
-        }
 
         // init terrain
         initTerrain();
+        initRock();
 
         // init skybox
         initSkybox();
 
-        // init gui
-        // initGui();
-
         // init water
-        initWaterTextures();
         initWaterTiles();
+
+        // Init GUI
+        // initGui();
     }
     virtual ~LoadTargets_03() {
         cleanUp();
     }
 
-    Entity *getSingleVboEntity() {
-        return &single_vbo_entity;
+    // Entity *getSingleVboEntity() {
+    //     return &single_vbo_entity;
+    // }
+    // Entity *getMultiVboEntity() {
+    //     return &multi_vbo_entity;
+    // }
+
+    // AssimpLib *getCrate() {
+    //     return &crate;
+    // }
+    // AssimpLib *getMisa() {
+    //     return &misa;
+    // }
+    // AssimpLib *getRock() {
+    //     return &rock;
+    // }
+    AssimpLib &getModels() {
+        return models;
     }
-    Entity *getMultiVboEntity() {
-        return &multi_vbo_entity;
-    }
-    AssimpLib *getCrate() {
-        return &crate;
-    }
-    AssimpLib *getMisa() {
-        return &misa;
-    }
-    AssimpLib *getRock() {
-        return &rock;
-    }
+    size_t getCrateStartIdx() { return crate_start_idx; }
+    size_t getCrateEndIdx() { return crate_end_idx; }
 
     Terrain *getTerrain() {
         return &terrain;
@@ -142,8 +136,8 @@ public:
     WaterFrameBuffers *getWaterFbos() {
         return &waterFbos;
     }
-    WaterTile *getWaterTiles() {
-        return waterTile;
+    std::vector<WaterTile> &getWaterTiles() {
+        return waterTiles;
     }
     unsigned int getWaterDudvTexture() {
         return water_dudvTexture;

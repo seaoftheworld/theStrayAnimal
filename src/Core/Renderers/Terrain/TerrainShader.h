@@ -71,7 +71,7 @@ public:
     //     uniform3fv(lightPosition_loc, 1, light.getPosition3fv());
     //     uniform3fv(lightColor_loc, 1, light.getColor3fv());
     // }
-    void loadLights(const std::vector<Light *> &lights) {
+    void loadLights(std::vector<Light> &lights) {
 
         unsigned int num_lights_input = lights.size();
         unsigned int num_lights_valid = (num_lights_input < TERRAIN_SHADER_MAX_LIGHTS) ? (num_lights_input) : TERRAIN_SHADER_MAX_LIGHTS;
@@ -83,9 +83,8 @@ public:
             // Light *light = (lights.begin() + i);
 
             if (i < num_lights_valid) {
-
-                Light *light = *(lights.begin() + i);
-                if (light) {
+                auto light = lights.begin() + i;
+                // if (light) {
                     uniform3fv(lightPosition_loc[i], 1, light->getPosition3fv());
                     uniform3fv(lightColor_loc[i], 1, light->getColor3fv());
                     uniform3fv(lightAttenuation_loc[i], 1, light->getAttenuation3fv());
@@ -93,7 +92,7 @@ public:
                     // printf("%d: load light pos/color, %f, %f, %f, %f, %f, %f.\n", i, 
                     //     input_light_pos[i][0], input_light_pos[i][1], input_light_pos[i][2],
                     //     input_light_color[i][0], input_light_color[i][1], input_light_color[i][2]);
-                }
+                // }
             }
             else {
                 float default_pos[] = { 0.0f, 0.0f, 1.0f };

@@ -193,12 +193,12 @@ int test_02_multi_lights_entity_renderer() {
                 //     (*itr).increaseRotation(et_idx, 0.0f, 0.0f, delta_rot_z);
                 // }
 
-                // if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] > 3.14f) {
-                //     // printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                // if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] > 3.14f) {
+                //     // printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                 //     increase = false;
                 // }
-                // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] < -3.14f) {
-                //     // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] < -3.14f) {
+                //     // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                 //     increase = true;
                 // }
             }
@@ -315,7 +315,7 @@ int test_02_multi_lights_entity_renderer() {
                     float updated_light_pos[NUM_LIGHTS][Light::Position::max_pos];
                     for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
                         for (unsigned int j = 0; j < 3; j++) {
-                            // updated_light_pos[i][j] = (*(crate->getTransformValues(i)))[Entity::transform::x + j];
+                            // updated_light_pos[i][j] = (*(crate->getTransformValues(i)))[Transform::x + j];
                             updated_light_pos[i][j] = (*(crate_mesh_00->getTransformValues(i)))[Transform::x + j];
                         }
                     }
@@ -353,13 +353,13 @@ int test_02_multi_lights_entity_renderer() {
                         // itr->setRotZ(0, 3.14f);
                     }
 
-                    if ( (*(targets.getMisa()->entities[0].getTransformValues(et_idx)))[Entity::transform::rot_z] > 3.14f ) {
-                        printf("rot_z max: %f\n", (*targets.getMisa()->entities[0].getTransformValues(et_idx))[Entity::transform::rot_z]);
+                    if ( (*(targets.getMisa()->entities[0].getTransformValues(et_idx)))[Transform::rot_z] > 3.14f ) {
+                        printf("rot_z max: %f\n", (*targets.getMisa()->entities[0].getTransformValues(et_idx))[Transform::rot_z]);
                         increase = false;
                         stop = true;
                     }
-                    else if ( (*(targets.getMisa()->entities[0].getTransformValues(et_idx)))[Entity::transform::rot_z] < -3.14f ) {
-                        // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z]);
+                    else if ( (*(targets.getMisa()->entities[0].getTransformValues(et_idx)))[Transform::rot_z] < -3.14f ) {
+                        // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getTransformValues(et_idx))[Transform::rot_z]);
                         // increase = true;
                         // stop = true;
                     }

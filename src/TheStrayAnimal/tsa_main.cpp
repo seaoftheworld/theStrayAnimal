@@ -288,12 +288,12 @@ int tsa_main() {
                     //     (*itr).increaseRotation(et_idx, 0.0f, 0.0f, delta_rot_z);
                     // }
 
-                    // if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] > 3.14f) {
-                    //     // printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                    // if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] > 3.14f) {
+                    //     // printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                     //     increase = false;
                     // }
-                    // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] < -3.14f) {
-                    //     // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                    // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] < -3.14f) {
+                    //     // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                     //     increase = true;
                     // }
                 }

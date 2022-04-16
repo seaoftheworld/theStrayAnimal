@@ -30,7 +30,6 @@ public:
             scale[1] = (*input_scale)[1];
         }
     }
-
     unsigned int getTextureID() {
         return textureID;
     }
@@ -38,7 +37,6 @@ public:
     float (*getPosition())[2] {
         return &position;
     }
-
     float (*getScale())[2] {
         return &scale;
     }

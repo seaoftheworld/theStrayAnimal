@@ -36,63 +36,38 @@ int test_03_terrain() {
 
     // ---------------------------------
     WrappingRenderer renderers; {
-        if (!renderers.entityRenderer.ready()) {
+        if (!renderers.mlRenderer.ready() ||
+            !renderers.terrainRenderer.ready() ||
+            // !renderers.guiRenderer.ready() ||
+            !renderers.skyboxRenderer.ready() ||
+            !renderers.waterRenderer.ready()) {
             win.stop();
             return -1;
-        }
-        if (!renderers.terrainRenderer.ready()) {
-            win.stop();
-            return -1;
-        }
-        if (!renderers.skyboxRenderer.ready()) {
-            win.stop();
-            return -1;
-        }
-        if (!renderers.guiRenderer.ready()) {
-            win.stop();
-            return -1;
-        }
-        if (!renderers.waterRenderer.ready()) {
-            win.stop();
-            return -1;
-        }
-
-        printf("shaders init done, press anything to continue ...\n\n"); {
-            int dbg;
-            scanf("%d", &dbg);
         }
     }
     renderers.specificSettingsOn();
 
     // Instrumentor::Get().BeginSession("init part profiling");
     // Instrumentor::Get().EndSession();
-
     LoadTargets_03 targets; {
-
         // renderers.entityRenderer.addEntity(targets.getSingleVboEntity());
         // renderers.entityRenderer.addEntity(targets.getMultiVboEntity());
 
-        for (auto rock_entity = targets.getRock()->entities.begin(); rock_entity != targets.getRock()->entities.end(); rock_entity++) {
-            renderers.entityRenderer.addEntity(&(*rock_entity));
-        }
-        for (auto misa_entity = targets.getMisa()->entities.begin(); misa_entity != targets.getMisa()->entities.end(); misa_entity++) {
-            renderers.entityRenderer.addEntity(&(*misa_entity));
-        }
-        for (auto crate_entity = targets.getCrate()->entities.begin(); crate_entity != targets.getCrate()->entities.end(); crate_entity++) {
-            renderers.entityRenderer.addEntity(&(*crate_entity));
-        }
-
-        renderers.terrainRenderer.addTerrain(targets.getTerrain());
-        renderers.skyboxRenderer.setSkybox(targets.getSkybox());
+        // for (auto rock_entity = targets.getRock()->entities.begin(); rock_entity != targets.getRock()->entities.end(); rock_entity++) {
+        //     renderers.entityRenderer.addEntity(&(*rock_entity));
+        // }
+        // for (auto misa_entity = targets.getMisa()->entities.begin(); misa_entity != targets.getMisa()->entities.end(); misa_entity++) {
+        //     renderers.entityRenderer.addEntity(&(*misa_entity));
+        // }
+        // for (auto crate_entity = targets.getCrate()->entities.begin(); crate_entity != targets.getCrate()->entities.end(); crate_entity++) {
+        //     renderers.entityRenderer.addEntity(&(*crate_entity));
+        // }
 
         // renderers.guiRenderer.addGui(targets.getGui00());
         // renderers.guiRenderer.addGui(targets.getGui01());
 
-        WaterTile* waterTiles = targets.getWaterTiles();
-        renderers.waterRenderer.addWaterTile(&waterTiles[0]);
-        renderers.waterRenderer.addWaterTile(&waterTiles[1]);
-        renderers.waterRenderer.addWaterTile(&waterTiles[2]);
-        renderers.waterRenderer.addWaterTile(&waterTiles[3]);
+        renderers.terrainRenderer.addTerrain(targets.getTerrain());
+        renderers.skyboxRenderer.setSkybox(targets.getSkybox());
     }
 
     // Light light; {
@@ -104,53 +79,58 @@ int test_03_terrain() {
     //     float dummy_attenuation[Light::Attenuation::max_att] = {0.0f, 0.0f, 0.0f};
     //     light.setValues(&position, &color, &dummy_attenuation);
     // }
-    Light test_light; {
-        // float position[Light::Position::max_pos] = {0.0f, 1.0f, 2.0f};
-        // float position[Light::Position::max_pos] = {2.0f, 2.0f, 2.0f};
-        // float position[Light::Position::max_pos] = {20.0f, 20.0f, 8.0f};
-        float position[Light::Position::max_pos] = {20.0f, 0.0f, 8.0f};
 
-        // float color[Light::Color::max_color] = {1.6f, 1.2f, 1.6f};
-        // float color[Light::Color::max_color] = { 1.6f, 1.6f, 1.6f };
-        float color[Light::Color::max_color] = { 1.0f, 1.0f, 1.0f };
+    std::vector<Light> new_lights; {
+        {
+            Light test_light; 
+            // float position[Light::Position::max_pos] = {0.0f, 1.0f, 2.0f};
+            // float position[Light::Position::max_pos] = {2.0f, 2.0f, 2.0f};
+            // float position[Light::Position::max_pos] = {20.0f, 20.0f, 8.0f};
+            float position[Light::Position::max_pos] = {20.0f, 0.0f, 8.0f};
 
-        // float dummy_attenuation[Light::Attenuation::max_att] = {1.0f, 0.3f, 0.4f};
-        // test_light.setValues(&position, &color, &dummy_attenuation);
+            // float color[Light::Color::max_color] = {1.6f, 1.2f, 1.6f};
+            // float color[Light::Color::max_color] = { 1.6f, 1.6f, 1.6f };
+            float color[Light::Color::max_color] = { 1.0f, 1.0f, 1.0f };
 
-        // float attenuation[Light::Attenuation::max_att] = { 1.0f, 0.3f, 0.4f };
-        float attenuation[Light::Attenuation::max_att] = { 1.0f, 0.02f, 0.0f };
-        test_light.setValues(&position, &color, &attenuation);
+            // float dummy_attenuation[Light::Attenuation::max_att] = {1.0f, 0.3f, 0.4f};
+            // test_light.setValues(&position, &color, &dummy_attenuation);
 
-        renderers.addLights(&test_light);
-    }
+            // float attenuation[Light::Attenuation::max_att] = { 1.0f, 0.02f, 0.0f };
+            float attenuation[Light::Attenuation::max_att] = { 1.0f, 0.3f, 0.4f };
+            test_light.setValues(&position, &color, &attenuation);
 
-    Light lights[NUM_LIGHTS]; {
-        float light_color[NUM_LIGHTS][Light::Color::max_color] = {
-            { 1.8f, 1.0f, 1.8f },  // pink
-                // float color[Light::max_color] = { 2.0f, 0.0f, 0.0f };         // red
-                // float light_color0[Light::max_color] = { 0.0f, 2.0f, 0.0f };  // green
-                // float light_pos0[Light::max_pos] = {0.0f, 1.0f, 2.0f};
-                // float light_color0[Light::max_color] = { 0.0f, 0.0f, 0.0f };  // none
-            { 1.8f, 1.8f, 1.0f },  // red + green ==> yellow
-            { 1.0f, 2.6f, 1.0f },  // green
-            { 0.6f, 0.6f, 2.2f }   // blue
-        };
-
-        float default_att[Light::max_att] = { 1.0f, 0.3f, 0.4f };
-        // float default_att[Light::max_att] = { 1.0f, 0.3f, 0.2f };
-
-        for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
-            lights[i].setValues(&(LightsPositionsUpdate::initPosition[i]), &light_color[i], &default_att);
+            // renderers.addLights(&test_light);
+            new_lights.push_back(test_light);
         }
+        {
+            Light lights[NUM_LIGHTS]; 
+            float light_color[NUM_LIGHTS][Light::Color::max_color] = {
+                { 1.8f, 1.0f, 1.8f },  // pink
+                    // float color[Light::max_color] = { 2.0f, 0.0f, 0.0f };         // red
+                    // float light_color0[Light::max_color] = { 0.0f, 2.0f, 0.0f };  // green
+                    // float light_pos0[Light::max_pos] = {0.0f, 1.0f, 2.0f};
+                    // float light_color0[Light::max_color] = { 0.0f, 0.0f, 0.0f };  // none
+                { 1.8f, 1.8f, 1.0f },  // red + green ==> yellow
+                { 1.0f, 2.6f, 1.0f },  // green
+                { 0.6f, 0.6f, 2.2f }   // blue
+            };
 
-        for (int i = 0; i < NUM_LIGHTS; i++) {
-            renderers.addLights(&lights[i]);
+            // float default_att[Light::max_att] = { 1.0f, 0.3f, 0.4f };
+            float default_att[Light::max_att] = { 1.0f, 0.3f, 0.0f };
+
+            for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
+                lights[i].setValues(&(LightsPositionsUpdate::initPosition[i]), &light_color[i], &default_att);
+            }
+
+            for (int i = 0; i < NUM_LIGHTS; i++) {
+                // renderers.addLights(&lights[i]);
+                new_lights.push_back(lights[i]);
+            }
         }
     }
 
     // Camera cam(gl_math::vec3(-1.36f, 3.15f, 4.25f), 2.65f, -0.765f);
     Camera cam(gl_math::vec3(-0.9448f, 6.760f, 5.463f), 2.23f, -0.69f);
-
     LightsPositionsUpdate lightsPositionsUpdate;
 
     // double prevFrameTime = 0;
@@ -172,12 +152,6 @@ int test_03_terrain() {
            min_cycle = (update_cycle < render_cycle) ? (update_cycle) : (render_cycle);
 #else
 #endif
-
-    float clipPlane_display_down_all[] = {0.0f, 0.0f, -1.0f, 1000.0f};
-    // float clipPlane_display_down[] = {0.0f, 0.0f, -1.0f, -1.5f};
-    // float clipPlane_display_up[] = { 0.0f, 0.0f, 1.0f, -2.0f };
-    float clipPlane_display_down[] = { 0.0f, 0.0f, -1.0f, (targets.getWaterTiles())[0].getHeight() };
-    float clipPlane_display_up[] = { 0.0f, 0.0f, 1.0f, -(targets.getWaterTiles())[0].getHeight() };
 
     Instrumentor::Get().BeginSession("main loop profiling");
     while ( win.isValid() ) {
@@ -235,12 +209,12 @@ int test_03_terrain() {
                 //     (*itr).increaseRotation(et_idx, 0.0f, 0.0f, delta_rot_z);
                 // }
 
-                // if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] > 3.14f) {
-                //     // printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                // if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] > 3.14f) {
+                //     // printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                 //     increase = false;
                 // }
-                // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] < -3.14f) {
-                //     // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] < -3.14f) {
+                //     // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                 //     increase = true;
                 // }
             }
@@ -293,46 +267,17 @@ int test_03_terrain() {
             cam.input_update(win);
             BaseRenderer::calculateViewMatrix(cam.getPosition(), cam.getDirection(), cam.getUp());
 
-            // entity.increasePosition(0.0f, 0.0f, 0.002f);
-            // entity.increaseRotation(0.0005f, 0.0f, 0.0f);
-            // entity.increaseRotation(0.0f, 0.0005f, 0.0f);
-            // entity.increaseRotation(0.0f, 0.0f, 0.005f);
-
-            /*
-            // Updating misa model
-            {
-                unsigned short et_idx = 0;
-                float rot_z_step = 0.016f;
-
-                static bool increase = false;
-
-                // if (!stop) {
-                    float delta_rot_z = ( increase ) ? (rot_z_step) : (-rot_z_step);
-                    
-                    for (auto itr = assimp_misa.entities.begin(); itr != assimp_misa.entities.end(); itr++) {
-                    // auto itr = assimp_misa.entities.begin(); {
-                        itr->increaseRotation(et_idx, 0.0f, 0.0f, delta_rot_z);
-                        // itr->setRotZ(0, 3.14f);
-                    }
-
-                    if ((*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z] > 3.14f) {
-                        printf("rot_z max: %f\n", (*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z]);
-                        increase = false;
-                        stop = true;
-                    }
-                    else if ((*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z] < -3.14f) {
-                        // printf("rot_z min: %f\n", (*assimp_misa.entities[0].getTransformValues(et_idx))[Entity::transform::rot_z]);
-                        // increase = true;
-                        // stop = true;
-                    }
-                // }
-            }
-            //*/
-
             // Update the 4 lights according to positions of the 4 crates
             {
                 // The 1st and the only entity in 'assimp_crate' is the crate model with 4 transforms
-                Entity *crate = &(targets.getCrate()->entities[0]);
+                // Entity *crate = &(targets.getCrate()->entities[0]);
+                std::vector<TexturedModel>::iterator crate_mesh_00;
+                if (targets.getModels().texturedModels.size()) {
+                    crate_mesh_00 = targets.getModels().texturedModels.begin() + targets.getCrateStartIdx();
+                }
+                else {
+                    goto Breakout;
+                }
 
                 // 1. update crate's 4 transforms
                 if (!stop) {
@@ -340,8 +285,8 @@ int test_03_terrain() {
                     lightsPositionsUpdate.run();
 
                     unsigned int offsets[] = {
-                        Entity::transform::x, Entity::transform::y,
-                        Entity::transform::z, Entity::transform::rot_z
+                        Transform::x, Transform::y,
+                        Transform::z, Transform::rot_z
                     };
 
                     XYZRotz xyz_rotz;
@@ -357,7 +302,8 @@ int test_03_terrain() {
                             xyz_rotz.pos[Light::Position::x] += LoadTargets_03::misa_offset_x;
                             xyz_rotz.pos[Light::Position::y] += LoadTargets_03::misa_offset_y;
 
-                        crate->setTransformValues(i, xyz_rotz.pos, offsets, ARRAY_SIZE(offsets));
+                        // crate->setTransformValues(i, xyz_rotz.pos, offsets, ARRAY_SIZE(offsets));
+                        crate_mesh_00->setTransformValues(i, xyz_rotz.pos, offsets, ARRAY_SIZE(offsets));
                     }
                 }
 
@@ -366,12 +312,14 @@ int test_03_terrain() {
                     float updated_light_pos[NUM_LIGHTS][Light::Position::max_pos];
                     for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
                         for (unsigned int j = 0; j < 3; j++) {
-                            updated_light_pos[i][j] = (*(crate->getTransformValues(i)))[Entity::transform::x + j];
+                            // updated_light_pos[i][j] = (*(crate->getTransformValues(i)))[Transform::x + j];
+                            updated_light_pos[i][j] = (*(crate_mesh_00->getTransformValues(i)))[Transform::x + j];
                         }
                     }
                     
                     for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
-                        lights[i].setPosition(&updated_light_pos[i]);
+                        // lights[i].setPosition(&updated_light_pos[i]);
+                        new_lights[i].setPosition(&updated_light_pos[i]);
                     }
                 }
 
@@ -380,6 +328,7 @@ int test_03_terrain() {
                 // TODO: use something like 'addLight()' dynamically 
                 // instead of manually adding lights every time before rendering. {}
             }
+            Breakout:
 
             last_update_time = now;
             updated_times++;
@@ -392,49 +341,54 @@ int test_03_terrain() {
         {
     #endif
             PROFILE_SCOPE("Render");
+            /*
+            float clipPlane_display_down_all[] = {0.0f, 0.0f, -1.0f, 1000.0f};
+            // float clipPlane_display_down[] = {0.0f, 0.0f, -1.0f, -1.5f};
+            // float clipPlane_display_up[] = { 0.0f, 0.0f, 1.0f, -2.0f };
+            float clipPlane_display_down[] = { 0.0f, 0.0f, -1.0f, (targets.getWaterTiles())[0].getHeight() };
+            float clipPlane_display_up[] = { 0.0f, 0.0f, 1.0f, -(targets.getWaterTiles())[0].getHeight() };
+            // */
+            {
+                // float distance = 2 * (cam.getHeight() - targets.getWater()->getHeight()); {
+                //     cam.setHeight(cam.getHeight() - distance);
+                //     cam.inverseVerticalAngle();
+                //     cam.calculateDirecRightUp();
+                //     BaseRenderer::calculateViewMatrix(cam.getPosition(), cam.getDirection(), cam.getUp());
+                //         targets.getWaterFbos()->bindReflectionFBO();
+                //         renderers.processScene(test_light, &clipPlane_display_up);
+                //         targets.getWaterFbos()->unbindCurrentFBO();
+                //     cam.setHeight(cam.getHeight() + distance);
+                //     cam.inverseVerticalAngle();
+                //     cam.calculateDirecRightUp();
+                //     BaseRenderer::calculateViewMatrix(cam.getPosition(), cam.getDirection(), cam.getUp());
+                // }
 
-            // float distance = 2 * (cam.getHeight() - targets.getWater()->getHeight()); {
-            //     cam.setHeight(cam.getHeight() - distance);
-            //     cam.inverseVerticalAngle();
-            //     cam.calculateDirecRightUp();
-            //     BaseRenderer::calculateViewMatrix(cam.getPosition(), cam.getDirection(), cam.getUp());
-            //         targets.getWaterFbos()->bindReflectionFBO();
-            //         renderers.processScene(test_light, &clipPlane_display_up);
-            //         targets.getWaterFbos()->unbindCurrentFBO();
-            //     cam.setHeight(cam.getHeight() + distance);
-            //     cam.inverseVerticalAngle();
-            //     cam.calculateDirecRightUp();
-            //     BaseRenderer::calculateViewMatrix(cam.getPosition(), cam.getDirection(), cam.getUp());
-            // }
+                // targets.getWaterFbos()->bindRefractionFBO();
+                // renderers.processScene(test_light, &clipPlane_display_down);
+                // targets.getWaterFbos()->unbindCurrentFBO();
 
-            // targets.getWaterFbos()->bindRefractionFBO();
-            // renderers.processScene(test_light, &clipPlane_display_down);
-            // targets.getWaterFbos()->unbindCurrentFBO();
+                // renderer.process(light, num_misa_entities, num_all_entities);
+                // renderers.processScene(test_light, &clipPlane_up);
 
-            // renderer.process(light, num_misa_entities, num_all_entities);
-            // renderers.processScene(test_light, &clipPlane_up);
-            renderers.processScene(test_light, &clipPlane_display_down_all);
+                // renderers.processScene(test_light, &clipPlane_display_down_all);
+                renderers.processScene(targets.getModels().texturedModels, new_lights);
+            }
+            {
+                // WaterFrameBuffers *waterFbos = targets.getWaterFbos();  // high consumption on 1st frame ???
+                unsigned int dudvTex = targets.getWaterDudvTexture();
+                unsigned int normalTex = targets.getWaterNormalTexture();
+                renderers.processWater(targets.getWaterTiles(), dudvTex, normalTex);
+            }
 
-            WaterFrameBuffers *waterFbos = targets.getWaterFbos();
-            unsigned int dudvTex = targets.getWaterDudvTexture();
-            unsigned int normalTex = targets.getWaterNormalTexture();
-            renderers.processWater(waterFbos, dudvTex, normalTex);  // high consumption on 1st frame ???
-
-            renderers.processGui();
-
+            // renderers.processGui();
             last_render_time = now;
             rendered_times++;
         }
 
-        {
-            PROFILE_SCOPE("Swap");
-            win.swapBuffers();
-        }
-
-        {
-            PROFILE_SCOPE("misc");
-            fps++;
-        }
+        PROFILE_SCOPE("Swap");
+        win.swapBuffers();
+        PROFILE_SCOPE("misc");
+        fps++;
     }
 
 LOADER_WIN_CLEANUP:

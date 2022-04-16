@@ -134,12 +134,12 @@ int loop_test_with_basic_entity_renderer() {
                 //     (*itr).increaseRotation(et_idx, 0.0f, 0.0f, delta_rot_z);
                 // }
 
-                // if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] > 3.14f) {
-                //     printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                // if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] > 3.14f) {
+                //     printf("rot_z max: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                 //     increase = false;
                 // }
-                // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z] < -3.14f) {
-                //     printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Entity::transform::rot_z]);
+                // else if ((*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z] < -3.14f) {
+                //     printf("rot_z min: %f\n", (*assimp_misa.entities[0].getInfo(et_idx))[Transform::rot_z]);
                 //     increase = true;
                 // }
             }
@@ -222,7 +222,7 @@ int loop_test_with_basic_entity_renderer() {
                     }
 
                     Entity *misaEntity = &models.getMisa()->entities[0];
-                    float misa_angle = (*(misaEntity->getTransformValues(transform_idx)))[Entity::transform::rot_z];
+                    float misa_angle = (*(misaEntity->getTransformValues(transform_idx)))[Transform::rot_z];
 
                     if (!turn_back) {
                         if (facing_left && misa_angle > 3.14f + 3.14f / 4.0f) {

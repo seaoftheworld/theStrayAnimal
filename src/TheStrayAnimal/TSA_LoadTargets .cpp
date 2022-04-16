@@ -88,7 +88,7 @@ void TSA_LoadTargets::initOriginSquare() {
         const unsigned short NUM_TRANSFORM = 3;
 
         origin_square.setTextureModel(texture, model); {
-            float trans_values[NUM_TRANSFORM][Entity::transform::max] = {
+            float trans_values[NUM_TRANSFORM][Transform::max] = {
                 // { -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f },
                 // { -0.5f,  1.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f },
                 // {  1.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  1.0f }
@@ -105,7 +105,7 @@ void TSA_LoadTargets::initOriginSquare() {
         }
 
         // for (unsigned int i = 0; i < 10; i++) {
-        //     float trans_values[Entity::transform::max] = {
+        //     float trans_values[Transform::max] = {
         //         (float)i * 1.0f + 0.5f, (float)i * 1.0f + 0.1f, (float)i * 1.0f + 0.1f,
         //         0.0f, 0.0f, 0.0f,
         //         (float)i * 0.3f + 0.3f
@@ -417,7 +417,7 @@ void TSA_LoadTargets::initWaterTiles() {
     };
 
     for (int i = 0; i < NUM_WATER_TILES; i++) {
-        water_tiles[i].init(&(translate_on_xyz[i]));
+        water_tiles[i].setData(&(translate_on_xyz[i]));
     }
 
     // printf("water tiles init done, press anything to continue ...\n\n"); {

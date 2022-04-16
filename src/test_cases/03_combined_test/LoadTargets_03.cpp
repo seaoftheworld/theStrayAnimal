@@ -1,13 +1,8 @@
 #include "LoadTargets_03.h"
-
-// #include "Core/Renderers/Model/StaticShader.h"  // for: StaticShader::attr_stride[StaticShader::id0_pos3f]
-                                                   // shall be replaced with something better
-
 float LoadTargets_03::misa_offset_x = 4.0f;
 float LoadTargets_03::misa_offset_y = 4.0f;
-// float LoadTargets_03::misa_offset_x = 8.0f;
-// float LoadTargets_03::misa_offset_y = 8.0f;
 
+/*
 void LoadTargets_03::initSingleVboEntity() {
 
     float single_vbo_data[] = { 
@@ -68,7 +63,7 @@ void LoadTargets_03::initSingleVboEntity() {
 
         single_vbo_entity.setTextureModel(texture, m);
 
-        float trans_big_square_values[Entity::transform::max] = {
+        float trans_big_square_values[Transform::max] = {
             // (float)i * 1.0f + 0.5f, (float)i * 1.0f + 0.1f, (float)i * 1.0f + 0.1f,
             // 0.0f, 0.0f, 0.0f,
             // (float)i * 0.3f + 0.3f
@@ -80,7 +75,7 @@ void LoadTargets_03::initSingleVboEntity() {
         Transform trans_big_square(&trans_big_square_values);
         single_vbo_entity.addTransform(trans_big_square);
 
-        float trans_small_square_values[Entity::transform::max] = {
+        float trans_small_square_values[Transform::max] = {
             // -1.5f, -1.5f, 2.0f,
             -5.0f, -5.0f, 2.0f,
             0.0f, 0.0f, 0.0f,
@@ -90,7 +85,9 @@ void LoadTargets_03::initSingleVboEntity() {
         single_vbo_entity.addTransform(trans_small_square);
     }
 }
+// */
 
+/*
 void LoadTargets_03::initMultiVboEntity() {
 
     float test_pos[] = { -0.5f, 0.5f,  0.0f, 
@@ -173,7 +170,7 @@ void LoadTargets_03::initMultiVboEntity() {
         multi_vbo_entity.setTextureModel(texture, model);
 
         for (unsigned int i = 0; i < 10; i++) {
-            float trans_values[Entity::transform::max] = {
+            float trans_values[Transform::max] = {
                 (float)i * 1.0f + 0.5f, (float)i * 1.0f + 0.1f, (float)i * 1.0f + 0.1f,
                 0.0f, 0.0f, 0.0f,
                 (float)i * 0.3f + 0.3f
@@ -184,10 +181,11 @@ void LoadTargets_03::initMultiVboEntity() {
         }
     }
 }
+// */
 
 void LoadTargets_03::initRock() {
 
-    float values[Entity::transform::max] = {
+    float values[Transform::max] = {
                 10.0f, 10.0f, 0.0f,
                 0.0f, 0.0f, 0.0f,
                 10.0f
@@ -196,12 +194,12 @@ void LoadTargets_03::initRock() {
     Transform *transforms = &transform;
 
     // TODO: improve meshes' hierachy
-    rock.loadModel("data/models/terrain_bottom/rocks.obj", loader, &transforms, 1);
+    models.loadModel("data/models/terrain_bottom/rocks.obj", loader, &transforms, 1);
 }
 
 void LoadTargets_03::initMisa() {
 
-    float values[Entity::transform::max] = {
+    float values[Transform::max] = {
                 misa_offset_x, misa_offset_y, 0.0f + 0.5f,
                 0.0f, 0.0f, 0.0f,
                 1.0f
@@ -210,7 +208,7 @@ void LoadTargets_03::initMisa() {
     Transform *transforms = &transform;
 
     // TODO: improve meshes' hierachy
-    misa.loadModel("data/models/misa/misa_yForward_zUp.obj", loader, &transforms, 1);
+    models.loadModel("data/models/misa/misa_yForward_zUp.obj", loader, &transforms, 1);
 }
 
 // Number of transforms for the crate is defined according to LightsPosition's initial positions
@@ -218,32 +216,32 @@ void LoadTargets_03::initCrate() {
 
     // Modify the 4 init-transforms of the crate-entity
     // in the following lines:
-    float crate_transform_values[NUM_LIGHTS][Entity::transform::max];
+    float crate_transform_values[NUM_LIGHTS][Transform::max];
 
     for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
 
         const float crate_scale = 0.12f;
 
-        crate_transform_values[i][Entity::transform::x] = LightsPositionsUpdate::initPosition[i][Light::Position::x];
-        crate_transform_values[i][Entity::transform::y] = LightsPositionsUpdate::initPosition[i][Light::Position::y];
-        crate_transform_values[i][Entity::transform::z] = LightsPositionsUpdate::initPosition[i][Light::Position::z];
+        crate_transform_values[i][Transform::x] = LightsPositionsUpdate::initPosition[i][Light::Position::x];
+        crate_transform_values[i][Transform::y] = LightsPositionsUpdate::initPosition[i][Light::Position::y];
+        crate_transform_values[i][Transform::z] = LightsPositionsUpdate::initPosition[i][Light::Position::z];
 
-        crate_transform_values[i][Entity::transform::rot_x] = 0.0f;
-        crate_transform_values[i][Entity::transform::rot_y] = 0.0f;
-        crate_transform_values[i][Entity::transform::rot_z] = 0.0f;
+        crate_transform_values[i][Transform::rot_x] = 0.0f;
+        crate_transform_values[i][Transform::rot_y] = 0.0f;
+        crate_transform_values[i][Transform::rot_z] = 0.0f;
 
-        crate_transform_values[i][Entity::transform::scale] = crate_scale;
+        crate_transform_values[i][Transform::scale] = crate_scale;
     }
 
     Transform crate_transforms[NUM_LIGHTS]; {
         for (unsigned int i = 0; i < NUM_LIGHTS; i++) {
-            crate_transforms[i].values[Transform::x] = crate_transform_values[i][Entity::transform::x];
-            crate_transforms[i].values[Transform::y] = crate_transform_values[i][Entity::transform::y];
-            crate_transforms[i].values[Transform::z] = crate_transform_values[i][Entity::transform::z];
-            crate_transforms[i].values[Transform::rot_x] = crate_transform_values[i][Entity::transform::rot_x];
-            crate_transforms[i].values[Transform::rot_y] = crate_transform_values[i][Entity::transform::rot_y];
-            crate_transforms[i].values[Transform::rot_z] = crate_transform_values[i][Entity::transform::rot_z];
-            crate_transforms[i].values[Transform::scale] = crate_transform_values[i][Entity::transform::scale];
+            crate_transforms[i].values[Transform::x] = crate_transform_values[i][Transform::x];
+            crate_transforms[i].values[Transform::y] = crate_transform_values[i][Transform::y];
+            crate_transforms[i].values[Transform::z] = crate_transform_values[i][Transform::z];
+            crate_transforms[i].values[Transform::rot_x] = crate_transform_values[i][Transform::rot_x];
+            crate_transforms[i].values[Transform::rot_y] = crate_transform_values[i][Transform::rot_y];
+            crate_transforms[i].values[Transform::rot_z] = crate_transform_values[i][Transform::rot_z];
+            crate_transforms[i].values[Transform::scale] = crate_transform_values[i][Transform::scale];
         }
     }
 
@@ -253,9 +251,11 @@ void LoadTargets_03::initCrate() {
         }
     };
 
-    crate.loadModel("data/models/crate/Crate1.obj", loader, p_crate_transforms, NUM_LIGHTS);
+    crate_start_idx = models.texturedModels.size();
+    models.loadModel("data/models/crate/Crate1.obj", loader, p_crate_transforms, NUM_LIGHTS);
+    crate_end_idx = models.texturedModels.size();
 
-    // Doesnt work before shader is bound/opened/started .... !!!
+    // Doesnt work before shader is bound/opened/started ... !!!
     // multiLightsShader.loadLights(&light_pos[0], &light_color[0], 4);
 
     // printf("4 lights inited and crate model loaded, press anything to continue ...\n\n"); {
@@ -337,8 +337,8 @@ void LoadTargets_03::initSkybox() {
     skybox.init(&loader, &cloudySky, 50);
 
     printf("skybox init done, press anything to continue ...\n\n"); {
-        int dbg;
-        scanf("%d", &dbg);
+        // int dbg;
+        // scanf("%d", &dbg);
     }
 }
 
@@ -379,12 +379,42 @@ void LoadTargets_03::initGui() {
     }
 
     printf("gui init done, press anything to continue ...\n\n"); {
-        int dbg;
-        scanf("%d", &dbg);
+        // int dbg;
+        // scanf("%d", &dbg);
     }
 }
 
 void LoadTargets_03::initWaterTiles() {
+    {
+        string texture_file = "data/tex/water/waterDUDV.png";
+        StaticTexture *texture = NULL;
+
+        loader.loadStaticTextures(&texture_file, 1, &texture);
+        if (!texture) {
+            printf("  Failed to generate texture for water_dudv\n");
+        }
+        else {
+            water_dudvTexture = texture->getId();
+
+            printf("  Texture for water_dudv generated,");
+            printf("    id: %d\n\n", water_dudvTexture);
+        }
+    }
+    {
+        string texture_file = "data/tex/water/matchingNormalMap.png";
+        StaticTexture *texture = NULL;
+
+        loader.loadStaticTextures(&texture_file, 1, &texture);
+        if (!texture) {
+            printf("  Failed to generate texture for water_normal\n");
+        }
+        else {
+            water_normalTexture = texture->getId();
+
+            printf("  Texture for water_normal generated,");
+            printf("    id: %d\n\n", water_normalTexture);
+        }
+    }
 
     // The normalized values from -1 ~ 1 belows corresponds to 
     // vertex-shader's calculation for UV coordinates:
@@ -414,47 +444,14 @@ void LoadTargets_03::initWaterTiles() {
         {-2.5f + offset[0], -2.5f + offset[1], -1.5f},
         { 2.5f + offset[0], -2.5f + offset[1], -1.5f}
     };
-    waterTile[0].init( &xyz_translate[0] );
-    waterTile[1].init( &xyz_translate[1] );
-    waterTile[2].init( &xyz_translate[2] );
-    waterTile[3].init( &xyz_translate[3] );
 
-    printf("water tile init done, press anything to continue ...\n\n"); {
-        int dbg;
-        scanf("%d", &dbg);
+    for (int i = 0; i < sizeof(xyz_translate) / sizeof(xyz_translate[0]); i++) {
+        WaterTile tile(&xyz_translate[i]);
+        waterTiles.push_back(tile);
     }
-}
 
-void LoadTargets_03::initWaterTextures() {
-    std::string texture_file; 
-    {
-        texture_file = "data/tex/water/waterDUDV.png";
-        StaticTexture *texture = NULL;
-
-        loader.loadStaticTextures(&texture_file, 1, &texture);
-        if (!texture) {
-            printf("  Failed to generate texture for water_dudv\n");
-        }
-        else {
-            water_dudvTexture = texture->getId();
-
-            printf("  Texture for water_dudv generated,");
-            printf("    id: %d\n\n", water_dudvTexture);
-        }
-    }
-    {
-        texture_file = "data/tex/water/matchingNormalMap.png";
-        StaticTexture *texture = NULL;
-
-        loader.loadStaticTextures(&texture_file, 1, &texture);
-        if (!texture) {
-            printf("  Failed to generate texture for water_normal\n");
-        }
-        else {
-            water_normalTexture = texture->getId();
-
-            printf("  Texture for water_normal generated,");
-            printf("    id: %d\n\n", water_normalTexture);
-        }
+    printf("water tile init done, input any number to continue ...\n\n"); {
+        // int dbg;
+        // scanf("%d", &dbg);
     }
 }

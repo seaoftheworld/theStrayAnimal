@@ -250,7 +250,7 @@ void LoopModels::initMultiVboEntity() {
         multi_vbo_entity.setTextureModel(texture, model);
 
         for (unsigned int i = 0; i < 10; i++) {
-            float trans_values[Entity::transform::max] = {
+            float trans_values[Transform::max] = {
                 (float)i * 1.0f + 0.5f, (float)i * 1.0f + 0.1f, (float)i * 1.0f + 0.1f,
                 0.0f, 0.0f, 0.0f,
                 (float)i * 0.3f + 0.3f
@@ -322,7 +322,7 @@ void LoopModels::initSingleVboEntity() {
 
         single_vbo_entity.setTextureModel(texture, m);
 
-        float trans_big_square_values[Entity::transform::max] = {
+        float trans_big_square_values[Transform::max] = {
             // (float)i * 1.0f + 0.5f, (float)i * 1.0f + 0.1f, (float)i * 1.0f + 0.1f,
             // 0.0f, 0.0f, 0.0f,
             // (float)i * 0.3f + 0.3f
@@ -334,7 +334,7 @@ void LoopModels::initSingleVboEntity() {
         Transform trans_big_square(&trans_big_square_values);
         single_vbo_entity.addTransform(trans_big_square);
 
-        float trans_small_square_values[Entity::transform::max] = {
+        float trans_small_square_values[Transform::max] = {
             // -1.5f, -1.5f, 2.0f,
             -5.0f, -5.0f, 2.0f,
             0.0f, 0.0f, 0.0f,

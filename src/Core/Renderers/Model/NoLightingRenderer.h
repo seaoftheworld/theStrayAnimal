@@ -33,7 +33,7 @@ public:
         allocShadersData();
     }
     ~NoLightingRenderer() {
-        printf("  __ ~no-lighting-renderer destructor()).\n");
+        printf("  __ ~no-lighting-renderer destructor().\n");
         freeShadersData();
     }
 

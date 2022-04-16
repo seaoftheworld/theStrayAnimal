@@ -14,7 +14,9 @@ void WrappingRenderer::specificSettingsOn() {
     // glCullFace(GL_BACK);     // will not be correctly displayed ???
     // glCullFace(GL_FRONT);
 
-    glEnable(GL_CLIP_DISTANCE0);  // cannot be turned off after enabled in some drivers ???
+    // Makes skybox display only the left-half, water not displayed 
+    // on Lenovo P15s !!!
+    // glEnable(GL_CLIP_DISTANCE0);  // cannot be turned off after enabled in some drivers ???
 }
 
 void WrappingRenderer::specificSettingsOff() {
