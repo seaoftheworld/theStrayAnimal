@@ -13,6 +13,7 @@
     #define GUI_FSH_PATH "data/shaders/T14sGen1_PC/gui/gui_fsh.c"
 #else 
     #define GUI_VSH_PATH "data/shaders/T14sGen1_PC/gui/gui_vsh.c"
+    #define GUI_FOR_FBO_VSH_PATH "data/shaders/T14sGen1_PC/gui/gui_for_fbo_vsh.c"
     #define GUI_FSH_PATH "data/shaders/T14sGen1_PC/gui/gui_fsh.c"
 #endif
 
@@ -28,15 +29,14 @@ public:
     // static const unsigned int attr_offset[max_attrNum];
     // static const unsigned int all_in_one_stride;
 
-    GuiType00Shader() : BaseShader(GUI_VSH_PATH, GUI_FSH_PATH) {
-        
+    GuiType00Shader(bool forFBO) : BaseShader((forFBO) ? (GUI_FOR_FBO_VSH_PATH) : (GUI_VSH_PATH), GUI_FSH_PATH) {
         printf("  subclass constructor called.\n");
         call_subclass_init_funcs();
 
         // enable specific settings
         // specificSettingsOn();
     }
-    ~GuiType00Shader(){
+    ~GuiType00Shader() {
     }
 
     void bindAllAttributeLocations() override;

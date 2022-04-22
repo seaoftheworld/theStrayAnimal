@@ -53,6 +53,7 @@ int test_04() {
     // Instrumentor::Get().EndSession();
     LoadTargets_04 targets; {
         renderers.skyboxRenderer.setSkybox(targets.getSkybox());
+
         // renderers.guiRenderer.addGui(&(targets.getGui()[0]));
         // renderers.guiRenderer.addGui(&(targets.getGui()[1]));
         // renderers.guiRenderer.addGui(&(targets.getGui()[2]));
@@ -343,7 +344,7 @@ int test_04() {
                     targets.getWaterNormalTexture());
 
                 // Gui not displayed, No texture provided for gui now.
-                renderers.processGui();
+                renderers.processGui(targets.getGui());
             }
 
             last_render_time = now;

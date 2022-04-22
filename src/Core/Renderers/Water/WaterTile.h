@@ -6,18 +6,20 @@
 #define WATER_TILE_VERTICE_STRIDE (2)  // to be used for the SingleAttributeModel-object of water
 #define WATER_TILE_TRIANGLES_NUM  (2)  // to be used for the SingleAttributeModel-object of water
 
-#define WATER_TILE_FBO_WIDTH  (200)
-#define WATER_TILE_FBO_HEIGHT (200)
+// #define WATER_TILE_FBO_WIDTH  (200)
+// #define WATER_TILE_FBO_HEIGHT (200)
+#define WATER_TILE_FBO_WIDTH  (400)
+#define WATER_TILE_FBO_HEIGHT (300)
 
 class WaterTileFBO {
     int     fboID = -1, 
         textureID = -1;
-
-    void init() {
+public:
+    WaterTileFBO() {
         glGenFramebuffers(1, (GLuint *)&fboID);
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
-            glDrawBuffer(GL_COLOR_ATTACHMENT0); //indicates render to color attachment 0 when bound
-            {
+            //Indicates render to color-attachment0 when bound
+            glDrawBuffer(GL_COLOR_ATTACHMENT0); {
                 glGenTextures(1, (GLuint *)&textureID);
                 glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -27,13 +29,19 @@ class WaterTileFBO {
 
                 glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureID, 0);
             }
+            {
+                unsigned int texture = 0;
+                glGenTextures(1, (GLuint*)&texture);
+                glBindTexture(GL_TEXTURE_2D, texture);
+
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+            }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-
-public:
-    WaterTileFBO() {
-        init();
     }
     ~WaterTileFBO() {
         glDeleteTextures(1, (GLuint *)&textureID);
@@ -47,7 +55,7 @@ public:
 
 public:
     void bind() {
-        glBindTexture(GL_TEXTURE_2D, 0);
+        // glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
         glViewport(0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
     }
@@ -69,7 +77,6 @@ private:
     // WaterTileFBO fbo;
 
     // TODO: rename to be translate and support size either
-
 public:
     static const float SIZE;
 
@@ -79,13 +86,6 @@ public:
     static SingleAttributeModel *rect;
 
 public:
-    // void init(float input_data[][3]) {
-    //     if (input_data) {
-    //         transform[0] = (*input_data)[0];
-    //         transform[1] = (*input_data)[1];
-    //         transform[2] = (*input_data)[2];
-    //     }
-    // }
     WaterTile(float input_data[][3]) {
         setData(input_data);
     }
@@ -104,7 +104,7 @@ public:
         return transform[2];
     }
 
-    // WaterTileFBO *getFbo() {
-    //     return &fbo;
+    // WaterTileFBO &getFbo() {
+    //     return fbo;
     // }
 };

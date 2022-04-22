@@ -32,7 +32,8 @@ int loop_test_with_basic_entity_renderer() {
     // -----------------------------
     loopWrappingRenderer abstractRenderer;
     if (!abstractRenderer.nlRenderer.ready() || 
-        !abstractRenderer.nmRenderer.ready() ) {
+        !abstractRenderer.nmRenderer.ready() ||
+        !abstractRenderer.guiRenderer.ready()) {
         // !abstractRenderer.mlRenderer.ready() ||
         // loading/compiling/linking shader-program failed
         win.stop();
@@ -260,13 +261,18 @@ int loop_test_with_basic_entity_renderer() {
             // for (auto ir_texed_model : models.getMisa()->texturedModels) {
                 // texturedModelRenderer(ir_texed_model);
             // }
-            abstractRenderer.process(models.getFruits()->texturedModels, models.getRb73()->normalMappedModels);
+
+            models.getWaterTileFBO().bind();
+            abstractRenderer.processNL(models.getFruits()->texturedModels);
+
+            models.getWaterTileFBO().unbind();
+            abstractRenderer.process(
+                models.getTheRestModels()->normalMappedModels,
+                models.getGuis());
 
             win.swapBuffers();
-
             last_render_time = now;
             rendered_times++;
-
             fps++;
         }
 

@@ -54,28 +54,26 @@ void LoadTargets_04::initSkybox() {
 void LoadTargets_04::initWaterTiles() {
     {
         std::string texture_file = "data/tex/water/waterDUDV.png";
-        StaticTexture *texture = NULL;
+        Texture *texture = loader.getTexture(texture_file);
 
-        loader.loadStaticTextures(&texture_file, 1, &texture);
         if (!texture) {
             printf("  Failed to generate texture for water_dudv\n");
         }
         else {
-            water_dudvTexture = texture->getId();
+            water_dudvTexture = texture->getID();
             printf("  Texture for water_dudv generated,");
             printf("    id: %d\n\n", water_dudvTexture);
         }
     }
     {
         std::string texture_file = "data/tex/water/matchingNormalMap.png";
-        StaticTexture *texture = NULL;
+        Texture *texture = loader.getTexture(texture_file);
 
-        loader.loadStaticTextures(&texture_file, 1, &texture);
         if (!texture) {
             printf("  Failed to generate texture for water_normal\n");
         }
         else {
-            water_normalTexture = texture->getId();
+            water_normalTexture = texture->getID();
             printf("  Texture for water_normal generated,");
             printf("    id: %d\n\n", water_normalTexture);
         }
@@ -120,7 +118,7 @@ void LoadTargets_04::initWaterTiles() {
         waterTiles.push_back(tile);
     }
 
-    printf("water tile init done, press input any number to continue ...\n\n"); {
+    printf("water tile init done, input any number to continue ...\n\n"); {
         // int dbg;
         // scanf("%d", &dbg);
     }
@@ -135,9 +133,9 @@ void LoadTargets_04::initGui() {
     GuiType00::rect = loader.allocSingleAttributeModel(gui_rect_vertices, GUI_RECT_VERTICES_STRIDE, GUI_RECT_VERTICES_NUM);
 
     {
-        // StaticTexture *guiTexture = NULL; {
+        // Texture *guiTexture = NULL; {
         //     std::string guiTexturePath = "data/tex/marker.png";
-        //     loader.loadStaticTextures(&guiTexturePath, 1, &guiTexture);
+        //     loader.getTexture(&guiTexturePath, 1, &guiTexture);
         // }
 
         // if (guiTexture) {
@@ -151,9 +149,22 @@ void LoadTargets_04::initGui() {
     }
 
     {
-        float gui_pos[] = { -0.7f, 0.7f };
-        float gui_scale[] = { 0.125f, 0.25f };
-            // gui[0].init(waterTile[0].getFbo()->getTexture(), &gui_pos, &gui_scale);
+        // float gui_pos[] = { -0.7f, 0.7f };
+        // float gui_scale[] = { 0.125f, 0.25f };
+        float gui_pos[] = { -0.7f, 0.0f };
+        float gui_scale[] = { 0.25f, 0.5f };
+
+        const string texFile = "data/tex/water/matchingNormalMap.png";
+        GuiType00 tmpGui; 
+        Texture* tex = loader.getTexture(texFile);
+        if (tex) {
+            tmpGui.init(tex->getID(), &gui_pos, &gui_scale);
+            guis.push_back(tmpGui);
+            printf("GUI Tex loaded.\n");
+        }
+        else{
+            printf("!!! GUI Tex failed: %s !!!\n", texFile.c_str());
+        }
     }
 
     {
@@ -174,7 +185,7 @@ void LoadTargets_04::initGui() {
             // gui[3].init(waterTile[3].getFbo()->getTexture(), &gui_pos, &gui_scale);
     }
 
-    printf("gui init done, press anything to continue ...\n\n"); {
+    printf("gui init done, input any num to continue ...\n\n"); {
         // int dbg;
         // scanf("%d", &dbg);
     }

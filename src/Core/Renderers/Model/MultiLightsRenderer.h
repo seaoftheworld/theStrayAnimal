@@ -96,6 +96,9 @@ public:
                     glDisableVertexAttribArray(1);
                     glDisableVertexAttribArray(2);
                     glDisableVertexAttribArray(3);
+                    // Models which has been renderer could be ruined without this line
+                    // if the other renderers are using vbo without using vao
+                    glBindVertexArray(0);
                 }
             }
     }

@@ -1,9 +1,7 @@
 #include "Core/AssimpLib.h"
 #include "Core/Loader.h"
 
-// #include "Core/Renderers/Terrain/Terrain.h"
-// #include "Core/Renderers/Skybox/SkyboxRenderer.h"  // shall seperate skybox-data with skybox-renderer ???
-// #include "WrappingRenderer.h"
+#include "loopWrappingRenderer.h"  // to include data for gui-tile or water-tile ...
 
 #include <vector>
 
@@ -16,12 +14,15 @@ class LoopModels {
     // Entity single_vbo_entity;
     // Entity multi_vbo_entity;
     AssimpLib fruits;
-    AssimpLib rb73;
+    AssimpLib theRestModels;
     Texture* rb73_nmap = NULL;
+
+    vector<GuiType00> guis;
+    WaterTileFBO fbo;  // gui is supposed to display texture-obj from this fbo
 
     // void initSingleVboEntity();
     // void initMultiVboEntity();
-    void initFruitsRb73();
+    void initAllModels();
 
     void cleanUp() {
         // single_vbo_entity.cleanUp();
@@ -31,7 +32,7 @@ class LoopModels {
         //     ir_mesh.cleanUp();
         // }
         fruits.cleanUp();
-        rb73.cleanUp();
+        theRestModels.cleanUp();
 
         loader.cleanUp();
     }
@@ -42,7 +43,7 @@ public:
 
         // initSingleVboEntity();
         // initMultiVboEntity();
-        initFruitsRb73();
+        initAllModels();
 
         /*
         vector<double> vec_double;
@@ -61,7 +62,7 @@ public:
         );
         */
 
-        printf("\n\n models/entities init done, press anything to continue ...\n\n"); {
+        printf("\n\n models/entities init done, input any number to continue ...\n\n"); {
             int dbg;
             scanf("%d", &dbg);
         }
@@ -70,16 +71,17 @@ public:
         cleanUp();
     }
 
-    // Entity *getSingleVboEntity() {
-    //     return &single_vbo_entity;
-    // }
-    // Entity *getMultiVboEntity() {
-    //     return &multi_vbo_entity;
-    // }
     AssimpLib *getFruits() {
         return &fruits;
     }
-    AssimpLib *getRb73() {
-        return &rb73;
+    AssimpLib *getTheRestModels() {
+        return &theRestModels;
+    }
+
+    vector<GuiType00>& getGuis() {
+        return guis;
+    }
+    WaterTileFBO& getWaterTileFBO() {
+        return fbo;
     }
 };

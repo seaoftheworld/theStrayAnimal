@@ -1,6 +1,6 @@
 #include "LoopModels.h"
 
-void LoopModels::initFruitsRb73() {
+void LoopModels::initAllModels() {
 
     // apple
     {
@@ -82,8 +82,8 @@ void LoopModels::initFruitsRb73() {
         }
     }
     // */
+
     // barrel
-    //*
     {
         float values02[Transform::max] = {
             0.0f, 2.0f, 0.0f,
@@ -93,12 +93,10 @@ void LoopModels::initFruitsRb73() {
 
         Transform transform02(&values02);
         Transform* array_transforms[] = { &transform02 }; {
-            rb73.loadModel("data/models/others/barrel/barrel.obj", loader, array_transforms, 1, true);
+            theRestModels.loadModel("data/models/others/barrel/barrel.obj", loader, array_transforms, 1, true);
         }
     }
-    // */
     // rb73
-    //*
     {
         float values02[Transform::max] = {
             0.0f, 4.0f, 0.0f,
@@ -108,11 +106,10 @@ void LoopModels::initFruitsRb73() {
 
         Transform transform02(&values02); 
         Transform *array_transforms[] = { &transform02 }; {
-            rb73.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", loader, array_transforms, 1, true);
             // rb73.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", loader, array_transforms, 1);
+            theRestModels.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", loader, array_transforms, 1, true);
         }
     }
-    // */
         /*
         for (TexturedModel ir_mesh : rb73.normalMappedModels) {
             // ir_mesh.setNormalMap(rb73_nmap);
@@ -156,19 +153,48 @@ void LoopModels::initFruitsRb73() {
 
     printf("n-map loaded: %p\n", rb73_nmap);
     // printf("bbb");
-    for (size_t i = 0; i < rb73.normalMappedModels.size(); i++) {
+    for (size_t i = 0; i < theRestModels.normalMappedModels.size(); i++) {
     // for (size_t i = 0; i < 1; i++) {
-        (rb73.normalMappedModels)[i].setNormalMap(rb73_nmap);
+        (theRestModels.normalMappedModels)[i].setNormalMap(rb73_nmap);
     }
 
-    for (TexturedModel ir_mesh : rb73.normalMappedModels) {
+    for (TexturedModel ir_mesh : theRestModels.normalMappedModels) {
         printf("texture info: %p\n", ir_mesh.getNormalMap());
     }
-    for (size_t i = 0; i < rb73.normalMappedModels.size(); i++) {
-        printf("texture info: %p\n", (rb73.normalMappedModels)[i].getNormalMap());
+    for (size_t i = 0; i < theRestModels.normalMappedModels.size(); i++) {
+        printf("texture info: %p\n", (theRestModels.normalMappedModels)[i].getNormalMap());
     }
     printf("\n\n");
     // */
+
+    // Gui
+    {
+        float gui_rect_vertices[GUI_RECT_VERTICES_STRIDE * GUI_RECT_VERTICES_NUM] = {
+            -1.0f, 1.0,  -1.0f, -1.0f,
+             1.0f, 1.0f,  1.0f, -1.0f
+        };
+        GuiType00::rect = loader.allocSingleAttributeModel(gui_rect_vertices, GUI_RECT_VERTICES_STRIDE, GUI_RECT_VERTICES_NUM);
+
+        {
+            // float gui_pos[] = { -0.7f, 0.7f };
+            // float gui_scale[] = { 0.125f, 0.25f };
+            float gui_pos[] = { 0.0f, 0.0f };
+            float gui_scale[] = { 0.5f, 0.5f };
+
+            // const string texFile = "data/tex/water/matchingNormalMap.png";
+            // Texture* tex = loader.getTexture(texFile);
+            // if (tex) 
+            {
+                GuiType00 tmpGui;
+                tmpGui.init(fbo.getTexture(), &gui_pos, &gui_scale);
+                guis.push_back(tmpGui);
+                printf("GUI Tex loaded.\n");
+            }
+            // else{ printf("!!! GUI Tex failed: %s !!!\n", texFile.c_str());}
+        }
+    }
+
+    // fbo
 }
 
 // A stack of pictures with transparent color

@@ -9,7 +9,6 @@
 
 class WaterFrameBuffers {
 
-private:
     unsigned int reflectionFBO = -1,
                  reflectionTexture     = -1,
                  reflectionDepthBuffer = -1;
@@ -18,13 +17,7 @@ private:
                  refractionTexture      = -1,
                  refractionDepthTexture = -1;
 
-    void bindFrameBuffer(unsigned int fb, unsigned int width, unsigned int height) {
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, fb);
-        glViewport(0, 0, width, height);
-    }
-
-    unsigned int addColorBufferAttachment_Texture(unsigned int width, unsigned int height) {
+    unsigned int attachColorBuffer_TextureObj(unsigned int width, unsigned int height) {
         unsigned int texture = 0;
         glGenTextures(1, (GLuint *)&texture);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -38,18 +31,18 @@ private:
         return texture;
     }
 
-    unsigned int addDepthBufferAttachment_NonTexture() {
+    unsigned int attachDepthBuffer_RenderbufferObj() {
         unsigned int depthBuffer = 0;
         glGenRenderbuffers(1, (GLuint *)&depthBuffer);
         glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-        
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, REFLECTION_WIDTH, REFLECTION_HEIGHT);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
 
         return depthBuffer;
     }
 
-    unsigned int addDepthBufferAttachment_Texture() {
+    unsigned int attachDepthBuffer_TextureObj() {
         unsigned int texture = 0;
         glGenTextures(1, (GLuint *)&texture);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -63,13 +56,16 @@ private:
         return texture;
     }
 
+private:
     void initReflectionFBO() {
         glGenFramebuffers(1, (GLuint *)&reflectionFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, reflectionFBO);
-            glDrawBuffer(GL_COLOR_ATTACHMENT0); //indicates render to color attachment 0 when bound
+            // For framebuffer objects (not 'frame buffer', or 'default framebuffer'), GL_COLOR_ATTACHMENT$m$ and GL_NONE enums are accepted, 
+            // where $m$ is a value between 0 and GL_MAX_COLOR_ATTACHMENTS
+            glDrawBuffer(GL_COLOR_ATTACHMENT0); //indicates render to color-attachment0 when bound
 
-            reflectionTexture = addColorBufferAttachment_Texture(REFLECTION_WIDTH, REFLECTION_HEIGHT);
-            reflectionDepthBuffer = addDepthBufferAttachment_NonTexture();
+            reflectionTexture = attachColorBuffer_TextureObj(REFLECTION_WIDTH, REFLECTION_HEIGHT);
+            reflectionDepthBuffer = attachDepthBuffer_RenderbufferObj();
 
         unbindCurrentFBO();
     }
@@ -77,29 +73,18 @@ private:
     void initRefractionFBO() {
         glGenFramebuffers(1, (GLuint *)&refractionFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, refractionFBO);
-            glDrawBuffer(GL_COLOR_ATTACHMENT0); //indicates render to color attachment 0 when bound
+            glDrawBuffer(GL_COLOR_ATTACHMENT0); //indicates render to color-attachment0 when bound
 
-            refractionTexture = addColorBufferAttachment_Texture(REFRACTION_WIDTH, REFRACTION_HEIGHT);
-            refractionDepthTexture = addDepthBufferAttachment_Texture();
+            refractionTexture = attachColorBuffer_TextureObj(REFRACTION_WIDTH, REFRACTION_HEIGHT);
+            refractionDepthTexture = attachDepthBuffer_TextureObj();
 
         unbindCurrentFBO();
     }
 
-public:
-    unsigned int getReflectionTexture() {
-        return reflectionTexture;
-    }
-
-    // unsigned int getReflectionDepthBuffer() {
-    //     return reflectionDepthBuffer
-    // }
-
-    unsigned int getRefractionTexture() {
-        return refractionTexture;
-    }
-
-    unsigned int getRefractionDepthTexture() {
-        return refractionDepthTexture;
+    void bindFrameBuffer(unsigned int fb, unsigned int width, unsigned int height) {
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        glViewport(0, 0, width, height);
     }
 
 public:
@@ -131,4 +116,18 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
     }
+
+public:
+    unsigned int getReflectionTexture() {
+        return reflectionTexture;
+    }
+    unsigned int getRefractionTexture() {
+        return refractionTexture;
+    }
+    unsigned int getRefractionDepthTexture() {
+        return refractionDepthTexture;
+    }
+    // unsigned int getReflectionDepthBuffer() {
+    //     return reflectionDepthBuffer
+    // }
 };

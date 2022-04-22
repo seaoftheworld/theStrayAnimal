@@ -38,6 +38,8 @@ public:
     SkyboxRenderer   skyboxRenderer;
     WaterRenderer     waterRenderer;
 
+    WrappingRenderer_04() : guiRenderer(GuiRenderer(false)) {}
+
     void specificSettingsOff();
     void specificSettingsOn();
 
@@ -79,8 +81,8 @@ public:
         waterRenderer.run(fbos, dudv, normal);
     }
 
-    void processGui() {
-        guiRenderer.run();
+    void processGui(std::vector<GuiType00> &guis) {
+        guiRenderer.run(guis);
     }
 
 private:

@@ -1,13 +1,15 @@
 #include "GuiRenderer.h"
 
-void GuiRenderer::allocShadersData() {
+void GuiRenderer::allocShadersData() {}
+
+void GuiRenderer::allocShadersDataMod(bool forFBO) {
 
     if (guiShader) {
         return;
     }
 
     // Compile and Link the gui-shader
-    GuiType00Shader *shader = new GuiType00Shader;
+    GuiType00Shader *shader = new GuiType00Shader(forFBO);
     
     if (!shader) {
         // shader is not allocated
@@ -45,8 +47,6 @@ void GuiRenderer::freeShadersData() {
         delete guiShader;
         guiShader = NULL;
     }
-    
-    guis.clear();
 }
 
 bool GuiRenderer::ready() {

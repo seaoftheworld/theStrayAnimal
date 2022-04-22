@@ -20,14 +20,14 @@ class LoadTargets_04 {
     // WaterFrameBuffers waterFbos;
     unsigned int water_dudvTexture = 0;
     unsigned int water_normalTexture = 0;
+
     std::vector<WaterTile> waterTiles;
-    // WaterTile waterTile[4];
 
     // GuiType00 gui_00;
-    GuiType00 gui[4];
+    // GuiType00 gui[4];
+    std::vector<GuiType00> guis;
 
     void initData() {
-
         // for (auto rock_entity = rock.entities.begin(); rock_entity != rock.entities.end(); rock_entity++) {
         //     rock_entity->cleanUp();
         // }
@@ -38,6 +38,9 @@ class LoadTargets_04 {
         // }
         loader.cleanUp();
         crate.cleanUp();
+
+        waterTiles.clear();
+        guis.clear();
     }
     void cleanUp() {
         initData();
@@ -59,14 +62,14 @@ public:
 
         // init entities
         initCrate();
-        printf("\n\n crate init done, press anything to continue ...\n\n"); {
+        printf("\n crate init done, input any number to continue ...\n"); {
             // int dbg;
             // scanf("%d", &dbg);
         }
 
         // init skybox
         initSkybox();
-        printf("skybox init done, press anything to continue ...\n\n"); {
+        printf("skybox init done, input any number to continue ...\n"); {
             // int dbg;
             // scanf("%d", &dbg);
         }
@@ -81,8 +84,8 @@ public:
         cleanUp();
     }
 
-    GuiType00 *getGui() {
-        return gui;
+    vector<GuiType00> &getGui() {
+        return guis;
     }
 
     AssimpLib* getCrate() {
@@ -91,6 +94,10 @@ public:
 
     Skybox *getSkybox() {
         return &skybox;
+    }
+
+    vector<GuiType00>& getGuis() {
+        return guis;
     }
 
     // WaterFrameBuffers *getWaterFbos() {

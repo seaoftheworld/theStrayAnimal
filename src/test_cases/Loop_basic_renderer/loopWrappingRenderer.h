@@ -1,5 +1,10 @@
+#pragma once
+
 #include "Core/Renderers/Model/MultiLightsRenderer.h"
 #include "Core/Renderers/Model/NoLightingRenderer.h"
+#include "Core/Renderers/Gui/GuiRenderer.h"
+
+#include "Core/Renderers/Water/WaterRenderer.h"  // For the loopModes.cpp file to include WaterFBO class
 
 const unsigned short NUM_LIGHTS = 5;
 // Light light[NUM_LIGHTS];
@@ -8,7 +13,12 @@ class loopWrappingRenderer {
     std::vector<Light> lights;
 
 public:
-    loopWrappingRenderer() {
+    NoLightingRenderer       nlRenderer;
+    // MultiLightsEntityRenderer mlRenderer;
+    NormalMappedModelRenderer nmRenderer;
+    GuiRenderer              guiRenderer;
+
+    loopWrappingRenderer() : guiRenderer(GuiRenderer(true)) {
         float pos[NUM_LIGHTS][Light::Position::max_pos] = {
             { 20.0f,   0.0f, 25.0f},  // x+
             {  0.0f,  20.0f, 25.0f},  // y+
@@ -35,10 +45,6 @@ public:
         lights.clear();
     }
 
-    NoLightingRenderer       nlRenderer;
-    // MultiLightsEntityRenderer mlRenderer;
-    NormalMappedModelRenderer nmRenderer;
-
     // void specificSettingsOff() {}
     void specificSettingsOn() {
         // glClearColor(0.7f, 0.7f, 0.8f, 1.0f);
@@ -56,12 +62,16 @@ public:
         // glCullFace(GL_FRONT);
     }
 
-    void process(std::vector<TexturedModel>& texturedModels, std::vector<TexturedModel>& normalMappedModels) {
+    void processNL(vector<TexturedModel> &models) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         // mlRenderer.run(texturedModels, lights);
-        nlRenderer.run(texturedModels);
+        nlRenderer.run(models);
+    }
+    void process(vector<TexturedModel>& normalMappedModels, vector<GuiType00>&guis) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // mlRenderer.run(normalMappedModels, lights);
         nmRenderer.run(normalMappedModels, lights);
+
+        guiRenderer.run(guis);
     }
 };
