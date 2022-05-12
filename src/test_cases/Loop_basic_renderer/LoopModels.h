@@ -18,7 +18,8 @@ class LoopModels {
     Texture* rb73_nmap = NULL;
 
     vector<GuiType00> guis;
-    WaterTileFBO fbo;  // gui is supposed to display texture-obj from this fbo
+    WaterTileFBO multiSampledFbo;
+    WaterTileFBO       outputFbo;  // gui is supposed to display texture-obj from this fbo
 
     // void initSingleVboEntity();
     // void initMultiVboEntity();
@@ -38,7 +39,7 @@ class LoopModels {
     }
 
 public:
-    LoopModels() {
+    LoopModels() : multiSampledFbo(true), outputFbo(false) {
         cleanUp();
 
         // initSingleVboEntity();
@@ -81,7 +82,11 @@ public:
     vector<GuiType00>& getGuis() {
         return guis;
     }
-    WaterTileFBO& getWaterTileFBO() {
-        return fbo;
+
+    WaterTileFBO& getMultiSampledFBO() {
+        return multiSampledFbo;
+    }
+    WaterTileFBO& getOutputFBO() {
+        return outputFbo;
     }
 };

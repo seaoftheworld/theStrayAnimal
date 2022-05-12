@@ -31,7 +31,7 @@ int loop_test_with_basic_entity_renderer() {
 
     // -----------------------------
     loopWrappingRenderer abstractRenderer;
-    if (!abstractRenderer.nlRenderer.ready() || 
+    if (!abstractRenderer.nolightingRenderer.ready() || 
         !abstractRenderer.nmRenderer.ready() ||
         !abstractRenderer.guiRenderer.ready()) {
         // !abstractRenderer.mlRenderer.ready() ||
@@ -262,10 +262,11 @@ int loop_test_with_basic_entity_renderer() {
                 // texturedModelRenderer(ir_texed_model);
             // }
 
-            models.getWaterTileFBO().bind();
-            abstractRenderer.processNL(models.getFruits()->texturedModels);
+            models.getMultiSampledFBO().bind();
+            abstractRenderer.processNoLighting(models.getFruits()->texturedModels);
+            WaterTileFBO::unbind();
+            models.getMultiSampledFBO().resoveToFbo(models.getOutputFBO());
 
-            models.getWaterTileFBO().unbind();
             abstractRenderer.process(
                 models.getTheRestModels()->normalMappedModels,
                 models.getGuis());

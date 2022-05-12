@@ -13,12 +13,12 @@ class loopWrappingRenderer {
     std::vector<Light> lights;
 
 public:
-    NoLightingRenderer       nlRenderer;
+    NoLightingRenderer       nolightingRenderer;
     // MultiLightsEntityRenderer mlRenderer;
     NormalMappedModelRenderer nmRenderer;
     GuiRenderer              guiRenderer;
 
-    loopWrappingRenderer() : guiRenderer(GuiRenderer(true)) {
+    loopWrappingRenderer() : guiRenderer(true) {
         float pos[NUM_LIGHTS][Light::Position::max_pos] = {
             { 20.0f,   0.0f, 25.0f},  // x+
             {  0.0f,  20.0f, 25.0f},  // y+
@@ -48,30 +48,36 @@ public:
     // void specificSettingsOff() {}
     void specificSettingsOn() {
         // glClearColor(0.7f, 0.7f, 0.8f, 1.0f);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        // glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         // glDepthFunc(GL_LESS);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glEnable(GL_MULTISAMPLE); // Usually enabled by default in driver
+        // Usually enabled by default in driver
+        glEnable(GL_MULTISAMPLE);
 
         // glEnable(GL_CULL_FACE);  // requried the model to be enclosed, otherwise
         // glCullFace(GL_BACK);     // will not be correctly displayed ???
         // glCullFace(GL_FRONT);
     }
 
-    void processNL(vector<TexturedModel> &models) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // mlRenderer.run(texturedModels, lights);
-        nlRenderer.run(models);
-    }
+    // supposed to be rendered into default fbo
     void process(vector<TexturedModel>& normalMappedModels, vector<GuiType00>&guis) {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // mlRenderer.run(normalMappedModels, lights);
         nmRenderer.run(normalMappedModels, lights);
 
         guiRenderer.run(guis);
+    }
+
+    // supposed to be rendered into non-default fbo
+    void processNoLighting(vector<TexturedModel> &models) {
+        glClearColor(0.4f, 0.4f, 0.6f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // mlRenderer.run(texturedModels, lights);
+        nolightingRenderer.run(models);
     }
 };

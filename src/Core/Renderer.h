@@ -119,7 +119,7 @@ public:
     static void calculateViewMatrix(const gl_math::vec3 &cam_pos, const gl_math::vec3 &cam_direc, const gl_math::vec3 &cam_up) {
         view_matrix = gl_math::lookAt(
             cam_pos,             // Camera is here
-            cam_pos + cam_direc, // and looks here : at the same position, plus "camDirection"
+            cam_pos + cam_direc, // and looks here : cam_pos + cam_direction
             cam_up               // Head is up (set to 0,-1,0 to look upside-down)
         );
     }

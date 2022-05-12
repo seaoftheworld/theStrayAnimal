@@ -178,7 +178,7 @@ void LoopModels::initAllModels() {
         {
             // float gui_pos[] = { -0.7f, 0.7f };
             // float gui_scale[] = { 0.125f, 0.25f };
-            float gui_pos[] = { 0.0f, 0.0f };
+            float gui_pos[] = { -0.5f, -0.5f };
             float gui_scale[] = { 0.5f, 0.5f };
 
             // const string texFile = "data/tex/water/matchingNormalMap.png";
@@ -186,7 +186,7 @@ void LoopModels::initAllModels() {
             // if (tex) 
             {
                 GuiType00 tmpGui;
-                tmpGui.init(fbo.getTexture(), &gui_pos, &gui_scale);
+                tmpGui.init(outputFbo.getTexture(), &gui_pos, &gui_scale);
                 guis.push_back(tmpGui);
                 printf("GUI Tex loaded.\n");
             }

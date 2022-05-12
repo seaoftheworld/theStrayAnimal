@@ -11,15 +11,42 @@
 #define WATER_TILE_FBO_WIDTH  (400)
 #define WATER_TILE_FBO_HEIGHT (300)
 
+// a simpler fbo than WaterFrameBuffers
 class WaterTileFBO {
     int     fboID = -1, 
         textureID = -1;
 public:
-    WaterTileFBO() {
+    void resoveToFbo(const WaterTileFBO &output_fbo) {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, output_fbo.getFboID());
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fboID);
+
+        glBlitFramebuffer(0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 
+            0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT,
+            GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+        unbind();
+    }
+
+    WaterTileFBO(bool multi_sampled = false) {
         glGenFramebuffers(1, (GLuint *)&fboID);
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
             //Indicates render to color-attachment0 when bound
-            glDrawBuffer(GL_COLOR_ATTACHMENT0); {
+            glDrawBuffer(GL_COLOR_ATTACHMENT0); 
+            if (multi_sampled) {
+                // generate and attach rbo color-buffer for this fbo
+                unsigned int rboColorBuff = 0; {
+                    glGenRenderbuffers(1, (GLuint *)&rboColorBuff);
+                    glBindRenderbuffer(GL_RENDERBUFFER, rboColorBuff);
+
+                    glRenderbufferStorageMultisample(\
+                        GL_RENDERBUFFER, 4, GL_RGBA8, \
+                        WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
+
+                    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColorBuff);
+                }
+            }
+            else {
+                // generate and attach texture-obj color-buffer for this fbo
                 glGenTextures(1, (GLuint *)&textureID);
                 glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -29,7 +56,20 @@ public:
 
                 glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureID, 0);
             }
-            {
+
+            if (multi_sampled) {
+                // generate rbo depth-buffer for this fbo
+                unsigned int rboDepthBuff = 0;
+                    glGenRenderbuffers(1, (GLuint *)&rboDepthBuff);
+                    glBindRenderbuffer(GL_RENDERBUFFER, rboDepthBuff);
+
+                    glRenderbufferStorageMultisample(\
+                        GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT24, \
+                        WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
+
+                    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthBuff);
+            }
+            else {
                 unsigned int texture = 0;
                 glGenTextures(1, (GLuint*)&texture);
                 glBindTexture(GL_TEXTURE_2D, texture);
@@ -59,9 +99,12 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
         glViewport(0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
     }
-    void unbind() {
+    static void unbind() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
+    }
+    unsigned int getFboID() const {
+        return fboID;
     }
 };
 
