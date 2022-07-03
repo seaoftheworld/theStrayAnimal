@@ -13,8 +13,11 @@
 
 // a simpler fbo than WaterFrameBuffers
 class WaterTileFBO {
-    int     fboID = -1, 
-        textureID = -1;
+    int fboID = -1, 
+        txColorBuffID = -1,  // texture based colorBuff, depthBuff for fb, 
+        txDepthBuffID = -1,  //   https://www.khronos.org/opengl/wiki/Texture
+        rbColorBuffID = -1,  // renderBuffer based colorBuff, depthBuff for fb
+        rbDepthBuffID = -1;  //   https://www.khronos.org/opengl/wiki/Renderbuffer_Object
 public:
     void resoveToFbo(const WaterTileFBO &output_fbo) {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, output_fbo.getFboID());
@@ -24,73 +27,88 @@ public:
             0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT,
             GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-        unbind();
+        // unbind();
     }
 
     WaterTileFBO(bool multi_sampled = false) {
         glGenFramebuffers(1, (GLuint *)&fboID);
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
-            //Indicates render to color-attachment0 when bound
-            glDrawBuffer(GL_COLOR_ATTACHMENT0); 
-            if (multi_sampled) {
-                // generate and attach rbo color-buffer for this fbo
-                unsigned int rboColorBuff = 0; {
-                    glGenRenderbuffers(1, (GLuint *)&rboColorBuff);
-                    glBindRenderbuffer(GL_RENDERBUFFER, rboColorBuff);
 
-                    glRenderbufferStorageMultisample(\
-                        GL_RENDERBUFFER, 4, GL_RGBA8, \
-                        WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
+        //Indicates render to color-attachment0 when bound
+        glDrawBuffer(GL_COLOR_ATTACHMENT0); 
+        if (multi_sampled) {
+            // generate and attach rbo color-buffer for this fbo
+            {
+                glGenRenderbuffers(1, (GLuint *)&rbColorBuffID);
+                glBindRenderbuffer(GL_RENDERBUFFER, rbColorBuffID);
 
-                    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColorBuff);
+                glRenderbufferStorageMultisample(\
+                    GL_RENDERBUFFER, 4, GL_RGBA8, \
+                    WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
+
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbColorBuffID);
+            }
+
+            // generate and attach rbo depth-buffer for this fbo
+            {
+                glGenRenderbuffers(1, (GLuint *)&rbDepthBuffID);
+                glBindRenderbuffer(GL_RENDERBUFFER, rbDepthBuffID);
+
+                glRenderbufferStorageMultisample(\
+                    GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT24, \
+                    WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
+
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbDepthBuffID);
+            }
+        }
+        else {
+            // generate and attach texture-obj color-buffer for this fbo
+            {
+                glGenTextures(1, (GLuint *)&txColorBuffID);
+                glBindTexture(GL_TEXTURE_2D, txColorBuffID); {
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 }
-            }
-            else {
-                // generate and attach texture-obj color-buffer for this fbo
-                glGenTextures(1, (GLuint *)&textureID);
-                glBindTexture(GL_TEXTURE_2D, textureID);
-
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureID, 0);
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, txColorBuffID, 0);
             }
 
-            if (multi_sampled) {
-                // generate rbo depth-buffer for this fbo
-                unsigned int rboDepthBuff = 0;
-                    glGenRenderbuffers(1, (GLuint *)&rboDepthBuff);
-                    glBindRenderbuffer(GL_RENDERBUFFER, rboDepthBuff);
-
-                    glRenderbufferStorageMultisample(\
-                        GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT24, \
-                        WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
-
-                    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthBuff);
+            {
+                // generate and attach texture-obj depth-buffer for this fbo
+                glGenTextures(1, (GLuint*)&txDepthBuffID);
+                glBindTexture(GL_TEXTURE_2D, txDepthBuffID); {
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                }
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, txDepthBuffID, 0);
             }
-            else {
-                unsigned int texture = 0;
-                glGenTextures(1, (GLuint*)&texture);
-                glBindTexture(GL_TEXTURE_2D, texture);
-
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-                glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
-            }
+        }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+
     ~WaterTileFBO() {
-        glDeleteTextures(1, (GLuint *)&textureID);
+        if (txColorBuffID > 0) {
+            glDeleteTextures(1, (GLuint *)&txColorBuffID);
+        }
+        if (txDepthBuffID > 0) {
+            glDeleteTextures(1, (GLuint*)&txDepthBuffID);
+        }
+
+        if (rbColorBuffID > 0) {
+            glDeleteRenderbuffers(1, (GLuint *)&rbColorBuffID);
+        }
+        if (rbDepthBuffID > 0) {
+            glDeleteRenderbuffers(1, (GLuint *)&rbDepthBuffID);
+        }
+
         glDeleteFramebuffers(1, (GLuint *)&fboID);
     }
 
 public:
     int getTexture() {
-        return textureID;
+        return txColorBuffID;
     }
 
 public:

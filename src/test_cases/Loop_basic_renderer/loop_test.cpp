@@ -262,11 +262,15 @@ int loop_test_with_basic_entity_renderer() {
                 // texturedModelRenderer(ir_texed_model);
             // }
 
+            // Render the fruits into multi-sampled fbo
             models.getMultiSampledFBO().bind();
             abstractRenderer.processNoLighting(models.getFruits()->texturedModels);
-            WaterTileFBO::unbind();
-            models.getMultiSampledFBO().resoveToFbo(models.getOutputFBO());
 
+            // blit the multi-sampled fbo to the 2nd fbo
+            models.getMultiSampledFBO().resoveToFbo(models.getOutputFBO());
+            WaterTileFBO::unbind();
+
+            // Render the rb73, barrel models, and the fruits from the 2nd fbo (into the gui)
             abstractRenderer.process(
                 models.getTheRestModels()->normalMappedModels,
                 models.getGuis());
