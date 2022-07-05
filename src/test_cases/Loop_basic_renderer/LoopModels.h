@@ -19,7 +19,9 @@ class LoopModels {
 
     vector<GuiType00> guis;
     WaterTileFBO multiSampledFbo;
-    WaterTileFBO       outputFbo;  // gui is supposed to display texture-obj from this fbo
+    WaterTileFBO       outputFbo;  // gui is supposed to display the color-buffer of this fbo
+
+    int postProcessingRectID = -1;
 
     // void initSingleVboEntity();
     // void initMultiVboEntity();
@@ -88,5 +90,9 @@ public:
     }
     WaterTileFBO& getOutputFBO() {
         return outputFbo;
+    }
+
+    int getPostProcessingRectID() {
+        return postProcessingRectID;
     }
 };

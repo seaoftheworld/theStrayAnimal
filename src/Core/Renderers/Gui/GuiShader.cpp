@@ -1,7 +1,7 @@
 #include "GuiShader.h"
 
 #define ATTR_IDX0_POS      (0)
-#define ATTR_IDX0_POS_STRD (2)
+// #define ATTR_IDX0_POS_STRD (2)
 
     // static inline unsigned int calculateAllInOneStride() {
     //     unsigned int sum = 0;
@@ -44,6 +44,21 @@ void GuiType00Shader::bindAllAttributeLocations() {
 }
 
 void GuiType00Shader::getAllUniformLocations() {
+    printf("    override for getting uniform-loc called.\n");
+
+    setTransformMatLoc(getUniformLocation("transformMatrix"));
+    printf("    unif_loc for transform-Matrix loc: %d \n\n", getTransformMatLoc());
+}
+
+void ContrastShader::bindAllAttributeLocations() {
+    printf("    override for setting attr-idx called.\n");
+
+    // This binding takes effect when the program is linked the next time—it
+    // does not change the bindings used by the currently linked program.
+    bindAttributeLocation(ATTR_IDX0_POS,    "vertexPosition");
+}
+
+void ContrastShader::getAllUniformLocations() {
     printf("    override for getting uniform-loc called.\n");
 
     setTransformMatLoc(getUniformLocation("transformMatrix"));

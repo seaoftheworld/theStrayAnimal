@@ -6,6 +6,9 @@
 
 #include "Core/Renderers/Water/WaterRenderer.h"  // For the loopModes.cpp file to include WaterFBO class
 
+// #include "LoopModels.h"  // for the vboID of post-processing rectangle
+// class LoopModels;
+
 const unsigned short NUM_LIGHTS = 5;
 // Light light[NUM_LIGHTS];
 
@@ -79,5 +82,54 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // mlRenderer.run(texturedModels, lights);
         nolightingRenderer.run(models);
+    }
+};
+
+class PostProcessing {
+private:
+    ContrastRenderer contrastRenderer;
+
+    void start(unsigned int vboID) {
+        // unsigned int stride_in_float = GuiType00::rect->getVerticesStride();
+        unsigned int stride_in_float = 2;
+        // unsigned int vertices_count = GuiType00::rect->getVerticesCount();
+        // unsigned int vertices_count = 4;
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(
+            0,
+            stride_in_float, GL_FLOAT,
+            GL_FALSE,
+            stride_in_float << 2,  // N-floats * 4 ==> stride in bytes (N = 3, 2, ...)
+            0);
+        glDisable(GL_DEPTH_TEST);
+    }
+
+    void stop() {
+        glEnable(GL_DEPTH_TEST);
+        glDisableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+public:
+
+    bool shaderOK() {
+        if (contrastRenderer.ready())
+            return true;
+        else
+            return false;
+    }
+
+    void run(int recVboID, int txID) {
+        if (recVboID <= 0 || txID <= 0) {
+            return;
+        }
+
+        start(recVboID);
+        {
+            contrastRenderer.run(0, txID);
+        }
+        stop();
     }
 };

@@ -53,6 +53,7 @@ bool GuiRenderer::ready() {
     return (guiShader) ? (true) : (false);
 }
 
+/*
 PictureShader *PictureRenderer::picShader = NULL;
 unsigned short PictureRenderer::uv_vboId = 0;
 
@@ -128,4 +129,56 @@ void PictureRenderer::freeShadersData() {
 
 bool PictureRenderer::ready() {
     return (picShader && uv_vboId) ? (true) : (false);
+}
+// */
+
+void ContrastRenderer::allocShadersData() {
+
+    if (contrastShader) {
+        return;
+    }
+
+    // Compile and Link the constrast-shader
+    ContrastShader *shader = new ContrastShader();
+    
+    if (!shader) {
+        // shader is not allocated
+        contrastShader = NULL;
+        return;
+    }
+
+    if (shader->getStatus() != BaseShader::link_prog_passed || shader->getProgId() <= 0) {
+        // shader failed to compile
+        printf("contrastShader status: %d\n", shader->getStatus());
+        shader->cleanUp();
+        shader = NULL;
+
+        contrastShader = NULL;
+        return;
+    }
+
+    // printf("contrastShader ok\n");
+    // load projection matrix for the only once
+    shader->start();
+        // // contrastShader doesn't support projection/view_matrix now
+        // shader->loadProjMatrix(getProjMatrix());
+    shader->stop();
+
+    contrastShader = shader;
+}
+
+void ContrastRenderer::freeShadersData() {
+
+    // The specific shader's class-object is deleted here in derived-class
+    if (contrastShader) {
+        contrastShader->stop();
+        contrastShader->cleanUp();
+
+        delete contrastShader;
+        contrastShader = NULL;
+    }
+}
+
+bool ContrastRenderer::ready() {
+    return (contrastShader) ? (true) : (false);
 }

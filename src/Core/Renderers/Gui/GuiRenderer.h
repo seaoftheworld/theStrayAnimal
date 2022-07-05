@@ -6,6 +6,80 @@
 #include "Core/Loader.h"
 #include "Core/Common/gl_math.h"
 
+class GuiRenderer : public BaseRenderer {
+
+private:
+    GuiType00Shader *guiShader = NULL;
+
+    // Contains Transform and Scale info for each gui tobe displayed
+    // std::vector<GuiType00 *> guis;
+
+public:
+    void allocShadersDataMod(bool forFBO);
+    void allocShadersData() override;
+    void freeShadersData() override;
+    bool ready() override;
+
+    // void addGui(GuiType00 *gui) {
+    //     guis.push_back(gui);
+    // }
+
+    void run(std::vector<GuiType00> &guis) {
+        guiShader->start();
+        glDisable(GL_DEPTH_TEST);
+        // glEnable(GL_BLEND);
+        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            render(guis);
+
+        glEnable(GL_DEPTH_TEST);
+    }
+    
+    void render(std::vector<GuiType00> &guis) {
+
+        unsigned int vertices_count = 0, stride_in_float = 0;
+        if (GuiType00::rect) {
+            stride_in_float = GuiType00::rect->getVerticesStride();
+            vertices_count = GuiType00::rect->getVerticesCount();
+
+            glBindBuffer(GL_ARRAY_BUFFER, GuiType00::rect->getVboID());
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(
+                0, 
+                stride_in_float, GL_FLOAT,
+                GL_FALSE, 
+                stride_in_float << 2,  // N-floats * 4 ==> stride in bytes (N = 3, 2, ...)
+                0);
+        }
+
+        for (size_t i = 0; i < guis.size(); i++) {
+
+            auto gui = guis.begin() + i;
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, gui->getTextureID());
+
+            gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
+                gl_math::create_transform_matrix(gui->getPosition(), gui->getScale(), &transform_matrix);
+                guiShader->loadTransformMatrix(&transform_matrix[0][0]);
+            }
+
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices_count);
+        }
+    }
+
+public:
+    GuiRenderer(bool forFBO) {
+        printf("  __ gui-renderer constructor().\n");
+        freeShadersData();
+        allocShadersDataMod(forFBO);
+    }
+    ~GuiRenderer() {
+        printf("  __ gui-renderer destructor().\n");
+        freeShadersData();
+    }
+};
+
+/*
 class PictureRenderer : public BaseRenderer {
 
     std::vector<Picture *> pictures;
@@ -159,76 +233,98 @@ public:
         glEnable(GL_DEPTH_TEST);
     }
 };
+// */
 
-class GuiRenderer : public BaseRenderer {
+// class PictureRenderer {
+// }
+
+
+class ContrastRenderer : public BaseRenderer {
 
 private:
-    GuiType00Shader *guiShader = NULL;
+    ContrastShader *contrastShader = NULL;
 
     // Contains Transform and Scale info for each gui tobe displayed
     // std::vector<GuiType00 *> guis;
 
 public:
-    void allocShadersDataMod(bool forFBO);
     void allocShadersData() override;
     void freeShadersData() override;
     bool ready() override;
 
-    // void addGui(GuiType00 *gui) {
-    //     guis.push_back(gui);
-    // }
+    // void run_gui(std::vector<GuiType00> &guis) {
+    void run_dbg_with_gui(int rectVboID, int txID) {
+        if (rectVboID <= 0 || txID <= 0)
+            return;
 
-    void run(std::vector<GuiType00> &guis) {
-        guiShader->start();
+        // guiShader->start();
+        contrastShader->start();
         glDisable(GL_DEPTH_TEST);
-        // glEnable(GL_BLEND);
-        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            render(guis);
-
-        glEnable(GL_DEPTH_TEST);
-    }
-    
-    void render(std::vector<GuiType00> &guis) {
-
-        unsigned int vertices_count = 0, stride_in_float = 0;
-        if (GuiType00::rect) {
-            stride_in_float = GuiType00::rect->getVerticesStride();
-            vertices_count = GuiType00::rect->getVerticesCount();
-
-            glBindBuffer(GL_ARRAY_BUFFER, GuiType00::rect->getVboID());
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(
-                0, 
-                stride_in_float, GL_FLOAT,
-                GL_FALSE, 
-                stride_in_float << 2,  // N-floats * 4 ==> stride in bytes (N = 3, 2, ...)
-                0);
-        }
-
-        for (size_t i = 0; i < guis.size(); i++) {
-
-            auto gui = guis.begin() + i;
-
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, gui->getTextureID());
-
-            gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
-                gl_math::create_transform_matrix(gui->getPosition(), gui->getScale(), &transform_matrix);
-                guiShader->loadTransformMatrix(&transform_matrix[0][0]);
+        {
+            {
+                glActiveTexture(GL_TEXTURE0);
+                // glBindTexture(GL_TEXTURE_2D, guis[0].getTextureID());
+                glBindTexture(GL_TEXTURE_2D, txID);
             }
 
+            {
+                unsigned int stride_in_float = 2;
+                glBindBuffer(GL_ARRAY_BUFFER, rectVboID);
+                glEnableVertexAttribArray(0);
+                glVertexAttribPointer(
+                    0, 
+                    stride_in_float, GL_FLOAT,
+                    GL_FALSE, 
+                    stride_in_float << 2,  // N-floats * 4 ==> stride in bytes (N = 3, 2, ...)
+                    0);
+            }
+
+            {
+                gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
+                    // gl_math::create_transform_matrix(guis[0].getPosition(), guis[0].getScale(), &transform_matrix);
+
+                    // guiShader->loadTransformMatrix(&transform_matrix[0][0]);
+                    contrastShader->loadTransformMatrix(&transform_matrix[0][0]);
+                }
+
+                glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            }
+        }
+        glEnable(GL_DEPTH_TEST);
+        contrastShader->stop();
+    }
+
+    // render data from 'txID' to the rectangle bound in PostProcessing class
+    void run(int fbID, int txID) {
+
+        contrastShader->start(); 
+        {
+            // unsigned int vertices_count = GuiType00::rect->getVerticesCount();
+            unsigned int vertices_count = 4;
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, (GLuint)txID);
+
+            gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
+                float rect_pos[] = { 0.5f, -0.5f };
+                float rect_scale[] = { 0.4f, 0.4f };
+
+                gl_math::create_transform_matrix(&rect_pos, &rect_scale, &transform_matrix);
+                contrastShader->loadTransformMatrix(&transform_matrix[0][0]);
+            }
             glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices_count);
         }
+        contrastShader->stop();
     }
 
 public:
-    GuiRenderer(bool forFBO) {
-        printf("  __ gui-renderer constructor().\n");
+    ContrastRenderer() {
+        printf("  __ contrast-renderer constructor().\n");
         freeShadersData();
-        allocShadersDataMod(forFBO);
+        allocShadersData();
     }
-    ~GuiRenderer() {
-        printf("  __ gui-renderer destructor().\n");
+    ~ContrastRenderer() {
+        printf("  __ contrast-renderer destructor().\n");
         freeShadersData();
     }
 };

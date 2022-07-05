@@ -174,12 +174,13 @@ void LoopModels::initAllModels() {
              1.0f, 1.0f,  1.0f, -1.0f
         };
         GuiType00::rect = loader.allocSingleAttributeModel(gui_rect_vertices, GUI_RECT_VERTICES_STRIDE, GUI_RECT_VERTICES_NUM);
+        printf("GUI Rect model loaded.\n");
 
         {
             // float gui_pos[] = { -0.7f, 0.7f };
             // float gui_scale[] = { 0.125f, 0.25f };
             float gui_pos[] = { -0.5f, -0.5f };
-            float gui_scale[] = { 0.5f, 0.5f };
+            float gui_scale[] = { 0.4f, 0.4f };
 
             // const string texFile = "data/tex/water/matchingNormalMap.png";
             // Texture* tex = loader.getTexture(texFile);
@@ -188,9 +189,28 @@ void LoopModels::initAllModels() {
                 GuiType00 tmpGui;
                 tmpGui.init(outputFbo.getTexture(), &gui_pos, &gui_scale);
                 guis.push_back(tmpGui);
-                printf("GUI Tex loaded.\n");
+                printf("GUI initalized with tx, pos/scale.\n\n");
             }
             // else{ printf("!!! GUI Tex failed: %s !!!\n", texFile.c_str());}
+        }
+    }
+
+    // rect for post-processing
+    {
+        // float gui_rect_vertices[GUI_RECT_VERTICES_STRIDE * GUI_RECT_VERTICES_NUM] = {
+        float gui_rect_vertices[2 * 4] = {
+            -1.0f, 1.0,  -1.0f, -1.0f,
+             1.0f, 1.0f,  1.0f, -1.0f
+        };
+
+        // SingleAttributeModel *rect = loader.allocSingleAttributeModel(gui_rect_vertices, GUI_RECT_VERTICES_STRIDE, GUI_RECT_VERTICES_NUM);
+        SingleAttributeModel* rect = loader.allocSingleAttributeModel(gui_rect_vertices, 2, 4);
+        if (rect) {
+            postProcessingRectID = rect->getVboID();
+            printf("Rect model for post-processing loaded, vboID: %d.\n", postProcessingRectID);
+        }
+        else {
+            printf("Rect model for post-processing loading failed!\n");
         }
     }
 

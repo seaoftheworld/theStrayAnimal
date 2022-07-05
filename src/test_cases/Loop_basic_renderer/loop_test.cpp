@@ -30,24 +30,26 @@ int loop_test_with_basic_entity_renderer() {
     }
 
     // -----------------------------
-    loopWrappingRenderer abstractRenderer;
-    if (!abstractRenderer.nolightingRenderer.ready() || 
-        !abstractRenderer.nmRenderer.ready() ||
-        !abstractRenderer.guiRenderer.ready()) {
-        // !abstractRenderer.mlRenderer.ready() ||
+    loopWrappingRenderer wrappingRenderer;
+    PostProcessing postProcessing;
+    if (!wrappingRenderer.nolightingRenderer.ready() || 
+        !wrappingRenderer.nmRenderer.ready() ||
+        !wrappingRenderer.guiRenderer.ready() ||
+        !postProcessing.shaderOK()) {
+        // !wrappingRenderer.mlRenderer.ready() ||
         // loading/compiling/linking shader-program failed
         win.stop();
         return -1;
     }
-    abstractRenderer.specificSettingsOn();
+    wrappingRenderer.specificSettingsOn();
 
     LoopModels models; {
-        // abstractRenderer.entityRenderer.addEntity(models.getSingleVboEntity());
-        // abstractRenderer.entityRenderer.addEntity(models.getMultiVboEntity());
+        // wrappingRenderer.entityRenderer.addEntity(models.getSingleVboEntity());
+        // wrappingRenderer.entityRenderer.addEntity(models.getMultiVboEntity());
 
         /*
         for (auto misa_entity = models.getMisa()->entities.begin(); misa_entity != models.getMisa()->entities.end(); misa_entity++) {
-            abstractRenderer.mlRenderer.addEntity(&(*misa_entity));
+            wrappingRenderer.mlRenderer.addEntity(&(*misa_entity));
         }
         */
     }
@@ -255,8 +257,8 @@ int loop_test_with_basic_entity_renderer() {
         // Render entities
         if ( now - last_render_time >= render_cycle ) {
         // {
-            // abstractRenderer.process(test_light);
-            // abstractRenderer.process();
+            // wrappingRenderer.process(test_light);
+            // wrappingRenderer.process();
 
             // for (auto ir_texed_model : models.getMisa()->texturedModels) {
                 // texturedModelRenderer(ir_texed_model);
@@ -264,16 +266,19 @@ int loop_test_with_basic_entity_renderer() {
 
             // Render the fruits into multi-sampled fbo
             models.getMultiSampledFBO().bind();
-            abstractRenderer.processNoLighting(models.getFruits()->texturedModels);
+            wrappingRenderer.processNoLighting(models.getFruits()->texturedModels);
 
             // blit the multi-sampled fbo to the 2nd fbo
             models.getMultiSampledFBO().resoveToFbo(models.getOutputFBO());
             WaterTileFBO::unbind();
 
             // Render the rb73, barrel models, and the fruits from the 2nd fbo (into the gui)
-            abstractRenderer.process(
-                models.getTheRestModels()->normalMappedModels,
+            wrappingRenderer.process(\
+                models.getTheRestModels()->normalMappedModels,\
                 models.getGuis());
+
+            // postProcessing.contrastRenderer.run_dbg_with_gui(models.getPostProcessingRectID(), models.getOutputFBO().getTexture());
+            postProcessing.run(models.getPostProcessingRectID(), models.getOutputFBO().getTexture());
 
             win.swapBuffers();
             last_render_time = now;

@@ -47,12 +47,32 @@ public:
     // }
 };
 
-class PictureShader : public BaseShader {
+#define CONTRAST_VSH_PATH "data/shaders/T14sGen1_PC/postProcessing/contrast_vsh.c"
+#define CONTRAST_FSH_PATH "data/shaders/T14sGen1_PC/postProcessing/contrast_fsh.c"
+
+class ContrastShader : public BaseShader {
+
 public:
-    PictureShader() : BaseShader("afadfs", "adsfadsf") {
+    ContrastShader() : BaseShader(CONTRAST_VSH_PATH, CONTRAST_FSH_PATH) {
+        printf("  subclass constructor called.\n");
+        call_subclass_init_funcs();
+
+        // enable specific settings
+        // specificSettingsOn();
     }
-    ~PictureShader() {
+    ~ContrastShader() {
     }
-    void bindAllAttributeLocations() override {};
-    void getAllUniformLocations() override {};
+
+    void bindAllAttributeLocations() override;
+    void getAllUniformLocations() override;
 };
+
+// class PictureShader : public BaseShader {
+// public:
+//     PictureShader() : BaseShader("afadfs", "adsfadsf") {
+//     }
+//     ~PictureShader() {
+//     }
+//     void bindAllAttributeLocations() override {};
+//     void getAllUniformLocations() override {};
+// };
