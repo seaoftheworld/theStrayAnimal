@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Core/Common/data.h"
 #include "Core/Common/gl_header.h"
 
@@ -19,6 +21,8 @@ class WaterTileFBO {
         rbColorBuffID = -1,  // renderBuffer based colorBuff, depthBuff for fb
         rbDepthBuffID = -1;  //   https://www.khronos.org/opengl/wiki/Renderbuffer_Object
 public:
+    unsigned int m_width = 0, m_height = 0;
+
     void resoveToFbo(const WaterTileFBO &output_fbo) {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, output_fbo.getFboID());
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fboID);
@@ -85,6 +89,43 @@ public:
             }
         }
 
+        m_width = WATER_TILE_FBO_WIDTH;
+        m_height = WATER_TILE_FBO_HEIGHT;
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    // generate fbo for blur
+    WaterTileFBO(unsigned int width, unsigned int height) {
+        glGenFramebuffers(1, (GLuint *)&fboID);
+        glBindFramebuffer(GL_FRAMEBUFFER, fboID);
+        {
+            //Indicates render to color-attachment0 when bound
+            glDrawBuffer(GL_COLOR_ATTACHMENT0);
+            // generate and attach texture-obj color-buffer for this fbo
+            {
+                glGenTextures(1, (GLuint *)&txColorBuffID);
+                glBindTexture(GL_TEXTURE_2D, txColorBuffID); {
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                }
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, txColorBuffID, 0);
+            }
+
+            {
+                // generate and attach texture-obj depth-buffer for this fbo
+                glGenTextures(1, (GLuint*)&txDepthBuffID);
+                glBindTexture(GL_TEXTURE_2D, txDepthBuffID); {
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                }
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, txDepthBuffID, 0);
+            }
+        }
+
+        m_width = width;
+        m_height = height;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
@@ -115,7 +156,7 @@ public:
     void bind() {
         // glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
-        glViewport(0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
+        glViewport(0, 0, m_width, m_height);
     }
     static void unbind() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

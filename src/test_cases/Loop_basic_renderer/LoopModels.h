@@ -19,7 +19,9 @@ class LoopModels {
 
     vector<GuiType00> guis;
     WaterTileFBO multiSampledFbo;
-    WaterTileFBO       outputFbo;  // gui is supposed to display the color-buffer of this fbo
+    WaterTileFBO       outputFbo;  // the gui-rectangle(left) is supposed to display the color-buffer of this fbo
+
+    WaterTileFBO blurFbo1_h, blurFbo1_v, blurFbo2_h, blurFbo2_v;
 
     int postProcessingRectID = -1;
 
@@ -41,7 +43,12 @@ class LoopModels {
     }
 
 public:
-    LoopModels() : multiSampledFbo(true), outputFbo(false) {
+    LoopModels() : \
+        multiSampledFbo(true), outputFbo(false), \
+        blurFbo1_h(WATER_TILE_FBO_WIDTH / 2, WATER_TILE_FBO_HEIGHT / 2), \
+        blurFbo1_v(WATER_TILE_FBO_WIDTH / 2, WATER_TILE_FBO_HEIGHT / 2), \
+        blurFbo2_h(WATER_TILE_FBO_WIDTH / 4, WATER_TILE_FBO_HEIGHT / 4), \
+        blurFbo2_v(WATER_TILE_FBO_WIDTH / 4, WATER_TILE_FBO_HEIGHT / 4) {
         cleanUp();
 
         // initSingleVboEntity();
@@ -90,6 +97,19 @@ public:
     }
     WaterTileFBO& getOutputFBO() {
         return outputFbo;
+    }
+
+    WaterTileFBO& getBlurFBO1_h() {
+        return blurFbo1_h;
+    }
+    WaterTileFBO& getBlurFBO1_v() {
+        return blurFbo1_v;
+    }
+    WaterTileFBO& getBlurFBO2_h() {
+        return blurFbo2_h;
+    }
+    WaterTileFBO& getBlurFBO2_v() {
+        return blurFbo2_v;
     }
 
     int getPostProcessingRectID() {

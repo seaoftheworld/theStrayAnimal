@@ -278,7 +278,10 @@ int loop_test_with_basic_entity_renderer() {
                 models.getGuis());
 
             // postProcessing.contrastRenderer.run_dbg_with_gui(models.getPostProcessingRectID(), models.getOutputFBO().getTexture());
-            postProcessing.run(models.getPostProcessingRectID(), models.getOutputFBO().getTexture());
+            postProcessing.run(\
+                models.getPostProcessingRectID(), models.getOutputFBO().getTexture(), \
+                models.getBlurFBO1_h(), models.getBlurFBO1_v(), 
+                models.getBlurFBO2_h(), models.getBlurFBO2_v());
 
             win.swapBuffers();
             last_render_time = now;

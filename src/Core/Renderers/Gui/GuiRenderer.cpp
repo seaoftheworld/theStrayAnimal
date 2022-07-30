@@ -140,6 +140,7 @@ void ContrastRenderer::allocShadersData() {
 
     // Compile and Link the constrast-shader
     ContrastShader *shader = new ContrastShader();
+    // BlurShader* asfd = new BlurShader(BlurShader::ShaderType::horizonal_blur);
     
     if (!shader) {
         // shader is not allocated
@@ -181,4 +182,110 @@ void ContrastRenderer::freeShadersData() {
 
 bool ContrastRenderer::ready() {
     return (contrastShader) ? (true) : (false);
+}
+
+void HBlurRenderer::allocShadersData() {
+
+    if (hblurShader) {
+        return;
+    }
+
+    // Compile and Link the constrast-shader
+    BlurShader* shader = new BlurShader(BlurShader::ShaderType::horizonal_blur);
+
+    if (!shader) {
+        // shader is not allocated
+        hblurShader = NULL;
+        return;
+    }
+
+    if (shader->getStatus() != BaseShader::link_prog_passed || shader->getProgId() <= 0) {
+        // shader failed to compile
+        printf("hblur-Shader status: %d\n", shader->getStatus());
+        shader->cleanUp();
+        shader = NULL;
+
+        hblurShader = NULL;
+        return;
+    }
+
+    // printf("contrastShader ok\n");
+    // load projection matrix for the only once
+    shader->start();
+    // // contrastShader doesn't support projection/view_matrix now
+    // shader->loadProjMatrix(getProjMatrix());
+    int load_width = WATER_TILE_FBO_WIDTH;  // default value, might be changed latter
+    shader->loadHorResolution((float)load_width);
+    shader->stop();
+
+    hblurShader = shader;
+}
+
+void HBlurRenderer::freeShadersData() {
+
+    // The specific shader's class-object is deleted here in derived-class
+    if (hblurShader) {
+        hblurShader->stop();
+        hblurShader->cleanUp();
+
+        delete hblurShader;
+        hblurShader = NULL;
+    }
+}
+
+bool HBlurRenderer::ready() {
+    return (hblurShader) ? (true) : (false);
+}
+
+void VBlurRenderer::allocShadersData() {
+
+    if (vblurShader) {
+        return;
+    }
+
+    // Compile and Link the constrast-shader
+    BlurShader* shader = new BlurShader(BlurShader::ShaderType::vertical_blur);
+
+    if (!shader) {
+        // shader is not allocated
+        vblurShader = NULL;
+        return;
+    }
+
+    if (shader->getStatus() != BaseShader::link_prog_passed || shader->getProgId() <= 0) {
+        // shader failed to compile
+        printf("hblur-Shader status: %d\n", shader->getStatus());
+        shader->cleanUp();
+        shader = NULL;
+
+        vblurShader = NULL;
+        return;
+    }
+
+    // printf("contrastShader ok\n");
+    // load projection matrix for the only once
+    shader->start();
+    // // contrastShader doesn't support projection/view_matrix now
+    // shader->loadProjMatrix(getProjMatrix());
+    int load_height = WATER_TILE_FBO_HEIGHT;  // default value, might be changed latter
+    shader->loadVerResolution((float)load_height);
+    shader->stop();
+
+    vblurShader = shader;
+}
+
+void VBlurRenderer::freeShadersData() {
+
+    // The specific shader's class-object is deleted here in derived-class
+    if (vblurShader) {
+        vblurShader->stop();
+        vblurShader->cleanUp();
+
+        delete vblurShader;
+        vblurShader = NULL;
+    }
+}
+
+bool VBlurRenderer::ready() {
+    return (vblurShader) ? (true) : (false);
 }

@@ -6,6 +6,8 @@
 #include "Core/Loader.h"
 #include "Core/Common/gl_math.h"
 
+#include "Core/Renderers/Water/WaterTile.h"  // to use 'WaterTileFBO' class for H/VBlurRenderer
+
 class GuiRenderer : public BaseRenderer {
 
 private:
@@ -238,20 +240,17 @@ public:
 // class PictureRenderer {
 // }
 
-
 class ContrastRenderer : public BaseRenderer {
 
 private:
     ContrastShader *contrastShader = NULL;
-
-    // Contains Transform and Scale info for each gui tobe displayed
-    // std::vector<GuiType00 *> guis;
 
 public:
     void allocShadersData() override;
     void freeShadersData() override;
     bool ready() override;
 
+    /*
     // void run_gui(std::vector<GuiType00> &guis) {
     void run_dbg_with_gui(int rectVboID, int txID) {
         if (rectVboID <= 0 || txID <= 0)
@@ -293,9 +292,10 @@ public:
         glEnable(GL_DEPTH_TEST);
         contrastShader->stop();
     }
+    // */
 
     // render data from 'txID' to the rectangle bound in PostProcessing class
-    void run(int fbID, int txID) {
+    void run(int txID) {
 
         contrastShader->start(); 
         {
@@ -305,13 +305,18 @@ public:
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, (GLuint)txID);
 
+            //*
             gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
+                // float rect_pos[] = { 0.5f, 0.0f };
+                // float rect_scale[] = { 0.4f, 0.8f };
+
                 float rect_pos[] = { 0.5f, -0.5f };
                 float rect_scale[] = { 0.4f, 0.4f };
 
                 gl_math::create_transform_matrix(&rect_pos, &rect_scale, &transform_matrix);
                 contrastShader->loadTransformMatrix(&transform_matrix[0][0]);
             }
+            // */
             glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices_count);
         }
         contrastShader->stop();
@@ -325,6 +330,126 @@ public:
     }
     ~ContrastRenderer() {
         printf("  __ contrast-renderer destructor().\n");
+        freeShadersData();
+    }
+};
+
+class HBlurRenderer : public BaseRenderer {
+
+private:
+    BlurShader* hblurShader = NULL;
+
+public:
+    void allocShadersData() override;
+    void freeShadersData() override;
+    bool ready() override;
+
+    void setHorResolution(float val) {
+        hblurShader->start();
+        hblurShader->loadHorResolution(val);
+        hblurShader->stop();
+    }
+
+    // render data from 'txID' to the fbo first, 
+    // then to the rectangle bound in PostProcessing class
+    void run(WaterTileFBO &fbo, int txID) {
+
+        hblurShader->start();
+        {
+            // unsigned int vertices_count = GuiType00::rect->getVerticesCount();
+            unsigned int vertices_count = 4;
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, (GLuint)txID);
+
+            fbo.bind();
+            gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
+                // float rect_pos[] = { 0.5f, -0.5f };
+                // float rect_scale[] = { 0.4f, 0.4f };
+
+                // float rect_pos[] = { 0.5f, 0.0f };
+                // float rect_scale[] = { 0.4f, 0.8f };
+
+                float rect_pos[] = { 0.0f, 0.0f };
+                float rect_scale[] = { 1.0f, 1.0f };
+
+                gl_math::create_transform_matrix(&rect_pos, &rect_scale, &transform_matrix);
+                hblurShader->loadTransformMatrix(&transform_matrix[0][0]);
+            }
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices_count);
+            fbo.unbind();
+        }
+        hblurShader->stop();
+    }
+
+public:
+    HBlurRenderer() {
+        printf("  __ HBlur-renderer constructor().\n");
+        freeShadersData();
+        allocShadersData();
+    }
+    ~HBlurRenderer() {
+        printf("  __ HBlur-renderer destructor().\n");
+        freeShadersData();
+    }
+};
+
+class VBlurRenderer : public BaseRenderer {
+
+private:
+    BlurShader* vblurShader = NULL;
+
+public:
+    void allocShadersData() override;
+    void freeShadersData() override;
+    bool ready() override;
+
+    void setVerResolution(float val) {
+        vblurShader->start();
+        vblurShader->loadVerResolution(val);
+        vblurShader->stop();
+    }
+
+    // render data from 'txID' to the fbo first
+    // then to the rectangle bound in PostProcessing class
+    void run(WaterTileFBO& fbo, int txID) {
+
+        vblurShader->start();
+        {
+            // unsigned int vertices_count = GuiType00::rect->getVerticesCount();
+            unsigned int vertices_count = 4;
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, (GLuint)txID);
+
+            fbo.bind();
+            gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
+                // float rect_pos[] = { 0.5f, -0.5f };
+                // float rect_scale[] = { 0.4f, 0.4f };
+
+                // float rect_pos[] = { 0.5f, 0.0f };
+                // float rect_scale[] = { 0.4f, 0.8f };
+
+                float rect_pos[] = { 0.0f, 0.0f };
+                float rect_scale[] = { 1.0f, 1.0f };
+
+                gl_math::create_transform_matrix(&rect_pos, &rect_scale, &transform_matrix);
+                vblurShader->loadTransformMatrix(&transform_matrix[0][0]);
+            }
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices_count);
+            fbo.unbind();
+        }
+        vblurShader->stop();
+    }
+
+public:
+    VBlurRenderer() {
+        printf("  __ VBlur-renderer constructor().\n");
+        freeShadersData();
+        allocShadersData();
+    }
+    ~VBlurRenderer() {
+        printf("  __ VBlur-renderer destructor().\n");
         freeShadersData();
     }
 };

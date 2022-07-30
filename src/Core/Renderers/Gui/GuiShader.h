@@ -67,6 +67,43 @@ public:
     void getAllUniformLocations() override;
 };
 
+#define HBLUR_VSH_PATH "data/shaders/T14sGen1_PC/postProcessing/blur_hor_vsh.c"
+#define VBLUR_VSH_PATH "data/shaders/T14sGen1_PC/postProcessing/blur_ver_vsh.c"
+#define VBLUR_FSH_PATH "data/shaders/T14sGen1_PC/postProcessing/blur_fsh.c"
+
+class BlurShader : public BaseShader {
+    int horResolution_loc = -1,
+        verResolution_loc = -1;
+
+public:
+    enum class ShaderType {
+        horizonal_blur = 0,
+        vertical_blur
+    };
+
+    BlurShader(ShaderType type) : \
+    BaseShader((type == ShaderType::horizonal_blur) ? (HBLUR_VSH_PATH) : (VBLUR_VSH_PATH), VBLUR_FSH_PATH) {
+        printf("  subclass constructor called.\n");
+        call_subclass_init_funcs();
+
+        // enable specific settings
+        // specificSettingsOn();
+    }
+    ~BlurShader() {
+    }
+
+    void loadHorResolution(float input) {
+        uniform1f(horResolution_loc, input);
+    }
+
+    void loadVerResolution(float input) {
+        uniform1f(verResolution_loc, input);
+    }
+
+    void bindAllAttributeLocations() override;
+    void getAllUniformLocations() override;
+};
+
 // class PictureShader : public BaseShader {
 // public:
 //     PictureShader() : BaseShader("afadfs", "adsfadsf") {

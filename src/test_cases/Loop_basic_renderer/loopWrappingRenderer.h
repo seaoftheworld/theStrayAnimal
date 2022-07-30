@@ -87,7 +87,11 @@ public:
 
 class PostProcessing {
 private:
-    ContrastRenderer contrastRenderer;
+    ContrastRenderer contrastRenderer;  // renders a texture or texture-based color-buffer from an fbo the rectangle on right-bottom
+       HBlurRenderer    hblurRenderer;
+       VBlurRenderer    vblurRenderer;
+
+    bool blur_reso_set = false;
 
     void start(unsigned int vboID) {
         // unsigned int stride_in_float = GuiType00::rect->getVerticesStride();
@@ -115,20 +119,43 @@ private:
 public:
 
     bool shaderOK() {
-        if (contrastRenderer.ready())
+        if (contrastRenderer.ready() && \
+            hblurRenderer.ready() && \
+            vblurRenderer.ready())
             return true;
         else
             return false;
     }
 
-    void run(int recVboID, int txID) {
+    void run(int recVboID, int txID, \
+        WaterTileFBO& fbo1_h, WaterTileFBO& fbo1_v, \
+        WaterTileFBO &fbo2_h, WaterTileFBO& fbo2_v) {
         if (recVboID <= 0 || txID <= 0) {
             return;
         }
 
-        start(recVboID);
+        if (!blur_reso_set) {
+            hblurRenderer.setHorResolution(fbo1_h.m_width);
+            vblurRenderer.setVerResolution(fbo1_v.m_height);
+            blur_reso_set = true;
+        }
+
+        start(recVboID);  // bind with the vbo
         {
-            contrastRenderer.run(0, txID);
+            // contrastRenderer.run(txID);           // render the texture to the bound vbo
+
+            // 1. render the texture(txID) to fbo_h with h_blur-effect
+            // 2. render the texture-based color-buffer from fbo_h to fbo_v with v_blur-effect
+            // ... ...
+            hblurRenderer.run(fbo1_h, txID);
+            vblurRenderer.run(fbo1_v, fbo1_h.getTexture());
+
+            hblurRenderer.run(fbo2_h, fbo1_v.getTexture());
+            vblurRenderer.run(fbo2_v, fbo2_h.getTexture());
+
+            // vblurRenderer.run(fbo1_v, txID);
+
+            contrastRenderer.run(fbo2_v.getTexture());  // render the texture to the bound vbo
         }
         stop();
     }
