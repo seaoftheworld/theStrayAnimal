@@ -34,6 +34,19 @@ void LoopModels::initAllModels() {
                 loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
         }
     }
+    {
+        float values02[Transform::max] = {
+            0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            .12f
+        };
+        Transform transform2(&values02); {
+            Transform* transforms[] = { &transform2 };
+
+            fruits_up_scaled.loadModel("data/models/target/apple/apple.obj", \
+                loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
+        }   
+    }
 
     // banana
     {
@@ -42,11 +55,23 @@ void LoopModels::initAllModels() {
             0.0f, 0.0f, 0.0f,
             .1f
         };
-
         Transform transform0(&values00); {
             Transform* transforms[] = { &transform0 };
 
             fruits.loadModel("data/models/target/banana/banana.obj", \
+                loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
+        }
+    }
+    {
+        float values01[Transform::max] = {
+            2.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            .12f
+        };
+        Transform transform1(&values01); {
+            Transform* transforms[] = { &transform1 };
+
+            fruits_up_scaled.loadModel("data/models/target/banana/banana.obj", \
                 loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
         }
     }
@@ -63,6 +88,20 @@ void LoopModels::initAllModels() {
             Transform* transforms[] = { &transform0 };
 
             fruits.loadModel("data/models/target/orange/orange.obj", \
+                loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
+        }
+    }
+    {
+        float values00[Transform::max] = {
+            4.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            .12f
+        };
+
+        Transform transform0(&values00); {
+            Transform* transforms[] = { &transform0 };
+
+            fruits_up_scaled.loadModel("data/models/target/orange/orange.obj", \
                 loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
         }
     }
@@ -179,8 +218,12 @@ void LoopModels::initAllModels() {
         {
             // float gui_pos[] = { -0.7f, 0.7f };
             // float gui_scale[] = { 0.125f, 0.25f };
-            float gui_pos[] = { -0.5f, -0.5f };
-            float gui_scale[] = { 0.4f, 0.4f };
+
+            // float gui_pos[] = { -0.5f, -0.5f };
+            // float gui_scale[] = { 0.4f, 0.4f };
+
+            float gui_pos[] = { -0.5f, 0.0f };
+            float gui_scale[] = { 0.4f, 0.8f };
 
             // const string texFile = "data/tex/water/matchingNormalMap.png";
             // Texture* tex = loader.getTexture(texFile);

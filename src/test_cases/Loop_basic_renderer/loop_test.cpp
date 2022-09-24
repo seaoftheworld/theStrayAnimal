@@ -65,6 +65,8 @@ int loop_test_with_basic_entity_renderer() {
     // }
 
     Camera cam(gl_math::vec3(-10.0f, 0.0f, 0.0f), (3.14 / 2), 0.0f);
+    // Camera cam(gl_math::vec3(-1.6f, 0.0f, 0.0f), (3.14 / 2), 0.0f);
+
     // cam  position: -10.000000, 0.000000, 0.000000
     // cam direction: 1.000000, 0.000000, 0.000000
     // cam        up: -0.000000, 0.000000, 1.0
@@ -265,12 +267,26 @@ int loop_test_with_basic_entity_renderer() {
             // }
 
             // Render the fruits into multi-sampled fbo
-            models.getMultiSampledFBO().bind();
-            wrappingRenderer.processNoLighting(models.getFruits()->texturedModels);
+            {
+                /*
+                models.getMultiSampledFBO().bind();
+                wrappingRenderer.processNoLighting(models.getFruits()->texturedModels);
 
-            // blit the multi-sampled fbo to the 2nd fbo
-            models.getMultiSampledFBO().resoveToFbo(models.getOutputFBO());
-            WaterTileFBO::unbind();
+                // blit the multi-sampled fbo to the 2nd fbo
+                models.getMultiSampledFBO().resoveToFbo(models.getOutputFBO());
+                WaterTileFBO::unbind();
+                // */
+            }
+
+            {
+                models.getOutputFBO().bind();
+                wrappingRenderer.processNoLighting(models.getFruits()->texturedModels);
+                WaterTileFBO::unbind();
+
+                models.getOutputFBOForUpScaled().bind();
+                wrappingRenderer.processNoLighting(models.getUpScaledFruits()->texturedModels);
+                WaterTileFBO::unbind();
+            }
 
             // Render the rb73, barrel models, and the fruits from the 2nd fbo (into the gui)
             wrappingRenderer.process(\
@@ -279,9 +295,12 @@ int loop_test_with_basic_entity_renderer() {
 
             // postProcessing.contrastRenderer.run_dbg_with_gui(models.getPostProcessingRectID(), models.getOutputFBO().getTexture());
             postProcessing.run(\
-                models.getPostProcessingRectID(), models.getOutputFBO().getTexture(), \
+                models.getPostProcessingRectID(), \
+                models.getOutputFBO().getTexture(), models.getOutputFBOForUpScaled().getTexture(), \
+                models.getBrightnessFBO(),
                 models.getBlurFBO1_h(), models.getBlurFBO1_v(), 
-                models.getBlurFBO2_h(), models.getBlurFBO2_v());
+                models.getBlurFBO2_h(), models.getBlurFBO2_v(),
+                models.getBlurFBO3_h(), models.getBlurFBO3_v());
 
             win.swapBuffers();
             last_render_time = now;

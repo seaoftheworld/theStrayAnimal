@@ -14,14 +14,19 @@ class LoopModels {
     // Entity single_vbo_entity;
     // Entity multi_vbo_entity;
     AssimpLib fruits;
+    AssimpLib fruits_up_scaled;
     AssimpLib theRestModels;
     Texture* rb73_nmap = NULL;
 
     vector<GuiType00> guis;
     WaterTileFBO multiSampledFbo;
     WaterTileFBO       outputFbo;  // the gui-rectangle(left) is supposed to display the color-buffer of this fbo
+    WaterTileFBO       outputFbo_up_scale;
 
-    WaterTileFBO blurFbo1_h, blurFbo1_v, blurFbo2_h, blurFbo2_v;
+    WaterTileFBO brightnessFbo, \
+        blurFbo1_h, blurFbo1_v, \
+        blurFbo2_h, blurFbo2_v, \
+        blurFbo3_h, blurFbo3_v;
 
     int postProcessingRectID = -1;
 
@@ -45,10 +50,13 @@ class LoopModels {
 public:
     LoopModels() : \
         multiSampledFbo(true), outputFbo(false), \
-        blurFbo1_h(WATER_TILE_FBO_WIDTH / 2, WATER_TILE_FBO_HEIGHT / 2), \
-        blurFbo1_v(WATER_TILE_FBO_WIDTH / 2, WATER_TILE_FBO_HEIGHT / 2), \
-        blurFbo2_h(WATER_TILE_FBO_WIDTH / 4, WATER_TILE_FBO_HEIGHT / 4), \
-        blurFbo2_v(WATER_TILE_FBO_WIDTH / 4, WATER_TILE_FBO_HEIGHT / 4) {
+        brightnessFbo(WATER_TILE_FBO_WIDTH / 4, WATER_TILE_FBO_HEIGHT / 4),
+        blurFbo1_h(WATER_TILE_FBO_WIDTH / 5, WATER_TILE_FBO_HEIGHT / 5), \
+        blurFbo1_v(WATER_TILE_FBO_WIDTH / 5, WATER_TILE_FBO_HEIGHT / 5), \
+        blurFbo2_h(WATER_TILE_FBO_WIDTH / 10, WATER_TILE_FBO_HEIGHT / 10), \
+        blurFbo2_v(WATER_TILE_FBO_WIDTH / 10, WATER_TILE_FBO_HEIGHT / 10), \
+        blurFbo3_h(WATER_TILE_FBO_WIDTH / 20, WATER_TILE_FBO_HEIGHT / 20),
+        blurFbo3_v(WATER_TILE_FBO_WIDTH / 20, WATER_TILE_FBO_HEIGHT / 20) {
         cleanUp();
 
         // initSingleVboEntity();
@@ -84,6 +92,9 @@ public:
     AssimpLib *getFruits() {
         return &fruits;
     }
+    AssimpLib *getUpScaledFruits() {
+        return &fruits_up_scaled;
+    }
     AssimpLib *getTheRestModels() {
         return &theRestModels;
     }
@@ -98,7 +109,13 @@ public:
     WaterTileFBO& getOutputFBO() {
         return outputFbo;
     }
+    WaterTileFBO& getOutputFBOForUpScaled() {
+        return outputFbo_up_scale;
+    }
 
+    WaterTileFBO& getBrightnessFBO() {
+        return brightnessFbo;
+    }
     WaterTileFBO& getBlurFBO1_h() {
         return blurFbo1_h;
     }
@@ -110,6 +127,12 @@ public:
     }
     WaterTileFBO& getBlurFBO2_v() {
         return blurFbo2_v;
+    }
+    WaterTileFBO& getBlurFBO3_h() {
+        return blurFbo3_h;
+    }
+    WaterTileFBO& getBlurFBO3_v() {
+        return blurFbo3_v;
     }
 
     int getPostProcessingRectID() {

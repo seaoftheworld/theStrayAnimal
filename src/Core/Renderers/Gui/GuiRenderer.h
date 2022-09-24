@@ -307,11 +307,11 @@ public:
 
             //*
             gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
-                // float rect_pos[] = { 0.5f, 0.0f };
-                // float rect_scale[] = { 0.4f, 0.8f };
+                float rect_pos[] = { 0.5f, 0.0f };
+                float rect_scale[] = { 0.4f, 0.8f };
 
-                float rect_pos[] = { 0.5f, -0.5f };
-                float rect_scale[] = { 0.4f, 0.4f };
+                // float rect_pos[] = { 0.5f, -0.5f };
+                // float rect_scale[] = { 0.4f, 0.4f };
 
                 gl_math::create_transform_matrix(&rect_pos, &rect_scale, &transform_matrix);
                 contrastShader->loadTransformMatrix(&transform_matrix[0][0]);
@@ -450,6 +450,116 @@ public:
     }
     ~VBlurRenderer() {
         printf("  __ VBlur-renderer destructor().\n");
+        freeShadersData();
+    }
+};
+
+class BrightnessOnlyRenderer : public BaseRenderer {
+
+private:
+    BrightnessOnlyShader *brightnessOnlyShader = NULL;
+
+public:
+    void allocShadersData() override;
+    void freeShadersData() override;
+    bool ready() override;
+
+    // render data from 'txID' to the fbo first
+    // then to the rectangle bound in PostProcessing class
+    void run(WaterTileFBO& fbo, int txID) {
+
+        brightnessOnlyShader->start();
+        {
+            // unsigned int vertices_count = GuiType00::rect->getVerticesCount();
+            unsigned int vertices_count = 4;
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, (GLuint)txID);
+
+            fbo.bind();
+            gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
+                // float rect_pos[] = { 0.5f, -0.5f };
+                // float rect_scale[] = { 0.4f, 0.4f };
+
+                // float rect_pos[] = { 0.5f, 0.0f };
+                // float rect_scale[] = { 0.4f, 0.8f };
+
+                float rect_pos[] = { 0.0f, 0.0f };
+                float rect_scale[] = { 1.0f, 1.0f };
+
+                gl_math::create_transform_matrix(&rect_pos, &rect_scale, &transform_matrix);
+                brightnessOnlyShader->loadTransformMatrix(&transform_matrix[0][0]);
+            }
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices_count);
+            fbo.unbind();
+        }
+        brightnessOnlyShader->stop();
+    }
+
+public:
+    BrightnessOnlyRenderer() {
+        printf("  __ brightOnly-renderer constructor().\n");
+        freeShadersData();
+        allocShadersData();
+    }
+    ~BrightnessOnlyRenderer() {
+        printf("  __ brightOnly-renderer destructor().\n");
+        freeShadersData();
+    }
+};
+
+class CombineRenderer : public BaseRenderer {
+
+private:
+    CombineShader *combineShader = NULL;
+
+public:
+    void allocShadersData() override;
+    void freeShadersData() override;
+    bool ready() override;
+
+    // render data from 'txID' to the fbo first
+    // then to the rectangle bound in PostProcessing class
+    void run(WaterTileFBO& fbo, int tx00ID, int tx01ID) {
+
+        combineShader->start();
+        {
+            // unsigned int vertices_count = GuiType00::rect->getVerticesCount();
+            const unsigned int vertices_count = 4;
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, (GLuint)tx00ID);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, (GLuint)tx01ID);
+
+            // fbo.bind();
+            gl_math::mat4 transform_matrix = gl_math::mat4(1.0f); {
+                // float rect_pos[] = { 0.5f, -0.5f };
+                // float rect_scale[] = { 0.4f, 0.4f };
+
+                float rect_pos[] = { 0.5f, 0.0f };
+                float rect_scale[] = { 0.4f, 0.8f };
+
+                // float rect_pos[] = { 0.0f, 0.0f };
+                // float rect_scale[] = { 1.0f, 1.0f };
+
+                gl_math::create_transform_matrix(&rect_pos, &rect_scale, &transform_matrix);
+                combineShader->loadTransformMatrix(&transform_matrix[0][0]);
+            }
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices_count);
+            // fbo.unbind();
+        }
+        combineShader->stop();
+    }
+
+public:
+    CombineRenderer() {
+        printf("  __ combine-renderer constructor().\n");
+        freeShadersData();
+        allocShadersData();
+    }
+    ~CombineRenderer() {
+        printf("  __ combine-renderer destructor().\n");
         freeShadersData();
     }
 };

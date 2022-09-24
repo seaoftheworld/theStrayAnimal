@@ -25,16 +25,83 @@ void main()
 	}
 
 	vec4 color = vec4(0.0);
-	color += texture(guiTexture, uv_blur[0]) * 0.0093;
-	color += texture(guiTexture, uv_blur[1]) * 0.028002;
-	color += texture(guiTexture, uv_blur[2]) * 0.065984;
-	color += texture(guiTexture, uv_blur[3]) * 0.121703;
-	color += texture(guiTexture, uv_blur[4]) * 0.175713;
-	color += texture(guiTexture, uv_blur[5]) * 0.198596;
-	color += texture(guiTexture, uv_blur[6]) * 0.175713;
-	color += texture(guiTexture, uv_blur[7]) * 0.121703;
-	color += texture(guiTexture, uv_blur[8]) * 0.065984;
-	color += texture(guiTexture, uv_blur[9]) * 0.028002;
-	color += texture(guiTexture, uv_blur[10]) * 0.0093;
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[0]) * 0.0093;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[1]) * 0.028002;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[2]) * 0.065984;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[3]) * 0.121703;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[4]) * 0.175713;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[5]) * 0.198596;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[6]) * 0.175713;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[7]) * 0.121703;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[8]) * 0.065984;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[9]) * 0.028002;
+	}
+
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) {
+	// if (uv_blur[0].x >= 0.0) 
+	// if (uv_blur[0].x >= 0.0 && uv_blur[0].x <= 1.0) 
+	{
+		color += texture(guiTexture, uv_blur[10]) * 0.0093;
+	}
+
 	gl_FragColor = color;
 }

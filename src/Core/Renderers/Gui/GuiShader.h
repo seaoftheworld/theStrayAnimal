@@ -104,6 +104,61 @@ public:
     void getAllUniformLocations() override;
 };
 
+#define BRT_COMB_COMMON_VSH_PATH \
+                      "data/shaders/T14sGen1_PC/postProcessing/pp_bri_comb_common_vsh.c"
+#define  BRT_FSH_PATH "data/shaders/T14sGen1_PC/postProcessing/pp_brighter_only_fsh.c"
+#define COMB_FSH_PATH "data/shaders/T14sGen1_PC/postProcessing/pp_combine_fsh.c"
+
+class BrightnessOnlyShader : public BaseShader {
+    int briTexture_loc = -1;
+
+public:
+
+    BrightnessOnlyShader() : BaseShader(BRT_COMB_COMMON_VSH_PATH, BRT_FSH_PATH) {
+        printf("  BrightnessOnlyShader() constructor\n");
+        call_subclass_init_funcs();
+
+        // enable specific settings
+        // specificSettingsOn();
+    }
+    ~BrightnessOnlyShader() {
+    }
+
+    void bindAllAttributeLocations() override;
+    void getAllUniformLocations() override;
+
+    void setMultiTextureSlots() {
+        // set slot-0 to be the slot to which this texture will be bound and sampled from
+        uniform1i(briTexture_loc, 0);
+    }
+};
+
+class CombineShader : public BaseShader {
+    int Texture00_loc = -1;
+    int Texture01_loc = -1;
+
+public:
+
+    CombineShader() : BaseShader(BRT_COMB_COMMON_VSH_PATH, COMB_FSH_PATH) {
+        printf("  CombineShader() constructor\n");
+        call_subclass_init_funcs();
+
+        // enable specific settings
+        // specificSettingsOn();
+    }
+    ~CombineShader() {
+    }
+
+    void bindAllAttributeLocations() override;
+    void getAllUniformLocations() override;
+
+    void setMultiTextureSlots() {
+        // set slot-0/1 to be the slots to which 2 textures will be bound and sampled from
+        uniform1i(Texture00_loc, 0);
+        uniform1i(Texture01_loc, 1);    
+    }
+};
+
 // class PictureShader : public BaseShader {
 // public:
 //     PictureShader() : BaseShader("afadfs", "adsfadsf") {

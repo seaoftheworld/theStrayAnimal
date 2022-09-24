@@ -68,7 +68,7 @@ public:
 
     // supposed to be rendered into default fbo
     void process(vector<TexturedModel>& normalMappedModels, vector<GuiType00>&guis) {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.4f, 0.4f, 0.6f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // mlRenderer.run(normalMappedModels, lights);
         nmRenderer.run(normalMappedModels, lights);
@@ -78,7 +78,8 @@ public:
 
     // supposed to be rendered into non-default fbo
     void processNoLighting(vector<TexturedModel> &models) {
-        glClearColor(0.4f, 0.4f, 0.6f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // mlRenderer.run(texturedModels, lights);
         nolightingRenderer.run(models);
@@ -90,6 +91,8 @@ private:
     ContrastRenderer contrastRenderer;  // renders a texture or texture-based color-buffer from an fbo the rectangle on right-bottom
        HBlurRenderer    hblurRenderer;
        VBlurRenderer    vblurRenderer;
+BrightnessOnlyRenderer  bOnlyRenderer;
+       CombineRenderer  combineRenderer;
 
     bool blur_reso_set = false;
 
@@ -121,15 +124,19 @@ public:
     bool shaderOK() {
         if (contrastRenderer.ready() && \
             hblurRenderer.ready() && \
-            vblurRenderer.ready())
+            vblurRenderer.ready() && \
+            bOnlyRenderer.ready() && \
+          combineRenderer.ready())
             return true;
         else
             return false;
     }
 
-    void run(int recVboID, int txID, \
-        WaterTileFBO& fbo1_h, WaterTileFBO& fbo1_v, \
-        WaterTileFBO &fbo2_h, WaterTileFBO& fbo2_v) {
+    void run(int recVboID, int txID, int up_scaled_txID, \
+        WaterTileFBO &briFBO, \
+        WaterTileFBO &fbo1_h, WaterTileFBO &fbo1_v, \
+        WaterTileFBO &fbo2_h, WaterTileFBO &fbo2_v, \
+        WaterTileFBO &fbo3_h, WaterTileFBO &fbo3_v) {
         if (recVboID <= 0 || txID <= 0) {
             return;
         }
@@ -141,6 +148,22 @@ public:
         }
 
         start(recVboID);  // bind with the vbo
+        {
+            bOnlyRenderer.run(briFBO, up_scaled_txID);
+
+            hblurRenderer.run(fbo1_h, briFBO.getTexture());
+            vblurRenderer.run(fbo1_v, fbo1_h.getTexture());
+
+            hblurRenderer.run(fbo2_h, fbo1_v.getTexture());
+            vblurRenderer.run(fbo2_v, fbo2_h.getTexture());
+
+            hblurRenderer.run(fbo3_h, fbo2_v.getTexture());
+            vblurRenderer.run(fbo3_v, fbo3_h.getTexture());
+
+            // contrastRenderer.run(fbo2_v.getTexture());  // render the texture to the bound vbo
+            combineRenderer.run(fbo2_v, txID, fbo3_v.getTexture());
+        }
+        /*
         {
             // contrastRenderer.run(txID);           // render the texture to the bound vbo
 
@@ -157,6 +180,7 @@ public:
 
             contrastRenderer.run(fbo2_v.getTexture());  // render the texture to the bound vbo
         }
+        // */
         stop();
     }
 };

@@ -83,3 +83,41 @@ void BlurShader::getAllUniformLocations() {
     verResolution_loc = getUniformLocation("verResolution");
     printf("    unif_loc for hor/verResoluation: %d, %d \n\n", horResolution_loc, verResolution_loc);
 }
+
+void BrightnessOnlyShader::bindAllAttributeLocations() {
+    printf("    override for setting attr-idx called.\n");
+
+    // This binding takes effect when the program is linked the next time—it
+    // does not change the bindings used by the currently linked program.
+    bindAttributeLocation(ATTR_IDX0_POS,    "vertexPosition");
+}
+
+void BrightnessOnlyShader::getAllUniformLocations() {
+    printf("    override for getting uniform-loc called.\n");
+
+    setTransformMatLoc(getUniformLocation("transformMatrix"));
+    printf("    unif_loc for transform-Matrix loc: %d \n", getTransformMatLoc());
+
+    briTexture_loc = getUniformLocation("briTexture");
+    printf("    unif_loc for briTexture_loc: %d\n\n", briTexture_loc);
+}
+
+void CombineShader::bindAllAttributeLocations() {
+    printf("    override for setting attr-idx called.\n");
+
+    // This binding takes effect when the program is linked the next time—it
+    // does not change the bindings used by the currently linked program.
+    bindAttributeLocation(ATTR_IDX0_POS,    "vertexPosition");
+}
+
+void CombineShader::getAllUniformLocations() {
+    printf("    override for getting uniform-loc called.\n");
+
+    setTransformMatLoc(getUniformLocation("transformMatrix"));
+    printf("    unif_loc for transform-Matrix loc: %d \n", getTransformMatLoc());
+
+    Texture00_loc = getUniformLocation("Texture00");
+    Texture01_loc = getUniformLocation("Texture01");
+    printf("    unif_loc for Texture00/01_loc: %d, %d\n\n", Texture00_loc, Texture01_loc);
+
+}

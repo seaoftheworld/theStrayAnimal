@@ -289,3 +289,107 @@ void VBlurRenderer::freeShadersData() {
 bool VBlurRenderer::ready() {
     return (vblurShader) ? (true) : (false);
 }
+
+void BrightnessOnlyRenderer::allocShadersData() {
+
+    if (brightnessOnlyShader) {
+        return;
+    }
+
+    // Compile and Link the constrast-shader
+    BrightnessOnlyShader *shader = new BrightnessOnlyShader();
+
+    if (!shader) {
+        // shader is not allocated
+        brightnessOnlyShader = NULL;
+        return;
+    }
+
+    if (shader->getStatus() != BaseShader::link_prog_passed || shader->getProgId() <= 0) {
+        // shader failed to compile
+        printf("brightnessOnly-Shader status: %d\n", shader->getStatus());
+        shader->cleanUp();
+        shader = NULL;
+
+        brightnessOnlyShader = NULL;
+        return;
+    }
+
+    // printf("contrastShader ok\n");
+    // load projection matrix for the only once
+    shader->start();
+    shader->setMultiTextureSlots();
+    shader->stop();
+
+    brightnessOnlyShader = shader;
+}
+
+void BrightnessOnlyRenderer::freeShadersData() {
+
+    // The specific shader's class-object is deleted here in derived-class
+    if (!brightnessOnlyShader) {
+        return;
+    }
+
+    brightnessOnlyShader->stop();
+    brightnessOnlyShader->cleanUp();
+
+    delete brightnessOnlyShader;
+    brightnessOnlyShader = NULL;
+}
+
+bool BrightnessOnlyRenderer::ready() {
+    return (brightnessOnlyShader) ? (true) : (false);
+}
+
+void CombineRenderer::allocShadersData() {
+
+    if (combineShader) {
+        return;
+    }
+
+    // Compile and Link the constrast-shader
+    CombineShader *shader = new CombineShader();
+
+    if (!shader) {
+        // shader is not allocated
+        combineShader = NULL;
+        return;
+    }
+
+    if (shader->getStatus() != BaseShader::link_prog_passed || shader->getProgId() <= 0) {
+        // shader failed to compile
+        printf("Combine-Shader status: %d\n", shader->getStatus());
+        shader->cleanUp();
+        shader = NULL;
+
+        combineShader = NULL;
+        return;
+    }
+
+    // printf("contrastShader ok\n");
+    // load projection matrix for the only once
+    shader->start();
+    shader->setMultiTextureSlots();
+    shader->stop();
+
+    combineShader = shader;
+}
+
+void CombineRenderer::freeShadersData() {
+
+    // The specific shader's class-object is deleted here in derived-class
+    if (!combineShader) {
+        return;
+    }
+
+    combineShader->stop();
+    combineShader->cleanUp();
+
+    delete combineShader;
+    combineShader = NULL;
+}
+
+bool CombineRenderer::ready() {
+    return (combineShader) ? (true) : (false);
+}
