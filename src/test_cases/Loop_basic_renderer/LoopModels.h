@@ -13,15 +13,14 @@ class LoopModels {
 
     // Entity single_vbo_entity;
     // Entity multi_vbo_entity;
-    AssimpLib fruits;
-    AssimpLib fruits_up_scaled;
-    AssimpLib theRestModels;
     Texture* rb73_nmap = NULL;
+    AssimpLib theRestModels;
+    AssimpLib fruits;
 
     vector<GuiType00> guis;
+
     WaterTileFBO multiSampledFbo;
     WaterTileFBO       outputFbo;  // the gui-rectangle(left) is supposed to display the color-buffer of this fbo
-    WaterTileFBO       outputFbo_up_scale;
 
     WaterTileFBO brightnessFbo, \
         blurFbo1_h, blurFbo1_v, \
@@ -48,42 +47,42 @@ class LoopModels {
     }
 
 public:
+
     LoopModels() : \
-        multiSampledFbo(true), outputFbo(false), \
-        brightnessFbo(WATER_TILE_FBO_WIDTH / 4, WATER_TILE_FBO_HEIGHT / 4),
-        blurFbo1_h(WATER_TILE_FBO_WIDTH / 5, WATER_TILE_FBO_HEIGHT / 5), \
-        blurFbo1_v(WATER_TILE_FBO_WIDTH / 5, WATER_TILE_FBO_HEIGHT / 5), \
-        blurFbo2_h(WATER_TILE_FBO_WIDTH / 10, WATER_TILE_FBO_HEIGHT / 10), \
-        blurFbo2_v(WATER_TILE_FBO_WIDTH / 10, WATER_TILE_FBO_HEIGHT / 10), \
-        blurFbo3_h(WATER_TILE_FBO_WIDTH / 20, WATER_TILE_FBO_HEIGHT / 20),
-        blurFbo3_v(WATER_TILE_FBO_WIDTH / 20, WATER_TILE_FBO_HEIGHT / 20) {
+        multiSampledFbo(true), \
+        outputFbo(false), \
+        brightnessFbo(WATER_TILE_FBO_WIDTH / 4, WATER_TILE_FBO_HEIGHT / 4), \
+        blurFbo1_h(WATER_TILE_FBO_WIDTH / 2.0, WATER_TILE_FBO_HEIGHT / 2.0), \
+        blurFbo1_v(WATER_TILE_FBO_WIDTH / 2.0, WATER_TILE_FBO_HEIGHT / 2.0), \
+        blurFbo2_h(WATER_TILE_FBO_WIDTH / 2.5, WATER_TILE_FBO_HEIGHT / 2.5), \
+        blurFbo2_v(WATER_TILE_FBO_WIDTH / 2.5, WATER_TILE_FBO_HEIGHT / 2.5), \
+        blurFbo3_h(WATER_TILE_FBO_WIDTH / 3, WATER_TILE_FBO_HEIGHT / 3), \
+        blurFbo3_v(WATER_TILE_FBO_WIDTH / 3, WATER_TILE_FBO_HEIGHT / 3) {
         cleanUp();
 
         // initSingleVboEntity();
         // initMultiVboEntity();
-        initAllModels();
+        initAllModels(); {
+            // vector<double> vec_double;
+            // vector<float> vec_float;
+            // vector<char> vec_char;
+            // vector<int> vec_int;
 
-        /*
-        vector<double> vec_double;
-        vector<float> vec_float;
-        vector<int> vec_int;
-        vector<char> vec_char;
-        
-        vector<double>::size_type vec_double_max = vec_double.max_size();
-        size_t vec_double_max_size = vec_double.max_size();
+            // // vector<double>::size_type vec_double_max = vec_double.max_size();
+            // // size_t vec_double_max_size = vec_double.max_size();
 
-        printf("max size of vectors: \n%zu, \n%zu, \n%zu, \n%zu\n", 
-            vec_double.max_size(), 
-            vec_float.max_size(), 
-            vec_int.max_size(), 
-            vec_char.max_size()
-        );
-        */
-
-        printf("\n\n models/entities init done, input any number to continue ...\n\n"); {
-            int dbg;
-            scanf("%d", &dbg);
+            // printf("max size of vectors for double, float, int, char: \n%zu, \n%zu, \n%zu, \n%zu\n", 
+            //     vec_double.max_size(), 
+            //     vec_float.max_size(), 
+            //     vec_int.max_size(), 
+            //     vec_char.max_size()
+            // );
         }
+
+        // printf("\n\n models/entities init done, input any number to continue ...\n\n"); {
+        //     int dbg;
+        //     scanf("%d", &dbg);
+        // }
     }
     virtual ~LoopModels() {
         cleanUp();
@@ -91,9 +90,6 @@ public:
 
     AssimpLib *getFruits() {
         return &fruits;
-    }
-    AssimpLib *getUpScaledFruits() {
-        return &fruits_up_scaled;
     }
     AssimpLib *getTheRestModels() {
         return &theRestModels;
@@ -108,9 +104,6 @@ public:
     }
     WaterTileFBO& getOutputFBO() {
         return outputFbo;
-    }
-    WaterTileFBO& getOutputFBOForUpScaled() {
-        return outputFbo_up_scale;
     }
 
     WaterTileFBO& getBrightnessFBO() {

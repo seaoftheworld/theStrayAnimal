@@ -24,6 +24,16 @@ void main()
     float pixelHeight = 1.0 / verResolution;
 
     for (int i = -5; i <= 5; i++) {
+
     	uv_blur[i + 5] = uv + vec2(0.0, pixelHeight * i);
+
+        // Blurred model gets further from original model as camera moves
+        //
+        // if (uv_blur[i + 5].y > 1.0) {
+        //     uv_blur[i + 5].y = 1.0;
+        // }
+        // else if (uv_blur[i + 5].y < 0.0) {
+        //     uv_blur[i + 5].y = 0.0;
+        // }
     }
 }

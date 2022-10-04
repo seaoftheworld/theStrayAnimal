@@ -27,14 +27,20 @@ public:
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, output_fbo.getFboID());
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fboID);
 
-        glBlitFramebuffer(0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 
-            0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT,
+        // glBlitFramebuffer(0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, \
+            0, 0, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, \
+            GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+        glBlitFramebuffer(0, 0, m_width, m_height, \
+            0, 0, output_fbo.m_width, output_fbo.m_height, \
             GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
         // unbind();
     }
 
+    // WaterTileFBO(unsigned int width, unsigned int height, bool multi_sampled) {
     WaterTileFBO(bool multi_sampled = false) {
+
         glGenFramebuffers(1, (GLuint *)&fboID);
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 
@@ -45,6 +51,10 @@ public:
             {
                 glGenRenderbuffers(1, (GLuint *)&rbColorBuffID);
                 glBindRenderbuffer(GL_RENDERBUFFER, rbColorBuffID);
+
+                // glRenderbufferStorageMultisample(\
+                    GL_RENDERBUFFER, 4, GL_RGBA8, \
+                    width, height);
 
                 glRenderbufferStorageMultisample(\
                     GL_RENDERBUFFER, 4, GL_RGBA8, \
@@ -58,6 +68,9 @@ public:
                 glGenRenderbuffers(1, (GLuint *)&rbDepthBuffID);
                 glBindRenderbuffer(GL_RENDERBUFFER, rbDepthBuffID);
 
+                // glRenderbufferStorageMultisample(\
+                //     GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT24, \
+                //     width, height);
                 glRenderbufferStorageMultisample(\
                     GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT24, \
                     WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT);
@@ -71,8 +84,17 @@ public:
                 glGenTextures(1, (GLuint *)&txColorBuffID);
                 glBindTexture(GL_TEXTURE_2D, txColorBuffID); {
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+                    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+                    // glTexImage2D(\
+                        GL_TEXTURE_2D, 0, GL_RGB, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, \
+                        0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+                    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 }
                 glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, txColorBuffID, 0);
             }
@@ -82,19 +104,31 @@ public:
                 glGenTextures(1, (GLuint*)&txDepthBuffID);
                 glBindTexture(GL_TEXTURE_2D, txDepthBuffID); {
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+                    // glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+                    // glTexImage2D(\
+                        GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, WATER_TILE_FBO_WIDTH, WATER_TILE_FBO_HEIGHT, \
+                        0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+                    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 }
                 glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, txDepthBuffID, 0);
             }
         }
 
+        // m_width = width; m_height = height;
         m_width = WATER_TILE_FBO_WIDTH;
         m_height = WATER_TILE_FBO_HEIGHT;
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     // generate fbo for blur
+    //*
     WaterTileFBO(unsigned int width, unsigned int height) {
         glGenFramebuffers(1, (GLuint *)&fboID);
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
@@ -105,9 +139,13 @@ public:
             {
                 glGenTextures(1, (GLuint *)&txColorBuffID);
                 glBindTexture(GL_TEXTURE_2D, txColorBuffID); {
+
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+                    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 }
                 glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, txColorBuffID, 0);
             }
@@ -116,9 +154,13 @@ public:
                 // generate and attach texture-obj depth-buffer for this fbo
                 glGenTextures(1, (GLuint*)&txDepthBuffID);
                 glBindTexture(GL_TEXTURE_2D, txDepthBuffID); {
+
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+                    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 }
                 glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, txDepthBuffID, 0);
             }
@@ -128,6 +170,7 @@ public:
         m_height = height;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+    // */
 
     ~WaterTileFBO() {
         if (txColorBuffID > 0) {

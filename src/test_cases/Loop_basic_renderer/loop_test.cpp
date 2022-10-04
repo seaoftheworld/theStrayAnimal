@@ -266,37 +266,35 @@ int loop_test_with_basic_entity_renderer() {
                 // texturedModelRenderer(ir_texed_model);
             // }
 
-            // Render the fruits into multi-sampled fbo
+            // Render the fruits into a fbo (outputFbo) after anti-aliasing, color-buffer 
+            // of this fbo will also be used for post-processing and blur effect
             {
-                /*
                 models.getMultiSampledFBO().bind();
                 wrappingRenderer.processNoLighting(models.getFruits()->texturedModels);
 
-                // blit the multi-sampled fbo to the 2nd fbo
+                // blit from the current multiSampledFbo to the 2nd fbo, then unbind every fbo
                 models.getMultiSampledFBO().resoveToFbo(models.getOutputFBO());
                 WaterTileFBO::unbind();
-                // */
             }
 
+            // Render the fruits into a fbo (outputFbo) without anti-aliasing, color-buffer of this fbo 
+            // will also be used for post-processing and blur effect
             {
-                models.getOutputFBO().bind();
-                wrappingRenderer.processNoLighting(models.getFruits()->texturedModels);
-                WaterTileFBO::unbind();
-
-                models.getOutputFBOForUpScaled().bind();
-                wrappingRenderer.processNoLighting(models.getUpScaledFruits()->texturedModels);
-                WaterTileFBO::unbind();
+                // models.getOutputFBO().bind();
+                // wrappingRenderer.processNoLighting(models.getFruits()->texturedModels);
+                // WaterTileFBO::unbind();
             }
 
-            // Render the rb73, barrel models, and the fruits from the 2nd fbo (into the gui)
+            // Render rb73, barrel models with normal-renderer to the background/default fb, 
+            // and render the gui's rect (rect on the left), 
+            // the gui's texture is set to be from 'outputFbo' for fruits when init models.
             wrappingRenderer.process(\
                 models.getTheRestModels()->normalMappedModels,\
                 models.getGuis());
 
-            // postProcessing.contrastRenderer.run_dbg_with_gui(models.getPostProcessingRectID(), models.getOutputFBO().getTexture());
+            // Render the Post-processing's rect (rect on the right)
             postProcessing.run(\
-                models.getPostProcessingRectID(), \
-                models.getOutputFBO().getTexture(), models.getOutputFBOForUpScaled().getTexture(), \
+                models.getPostProcessingRectID(), models.getOutputFBO().getTexture(), \
                 models.getBrightnessFBO(),
                 models.getBlurFBO1_h(), models.getBlurFBO1_v(), 
                 models.getBlurFBO2_h(), models.getBlurFBO2_v(),

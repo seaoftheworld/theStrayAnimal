@@ -120,7 +120,6 @@ BrightnessOnlyRenderer  bOnlyRenderer;
     }
 
 public:
-
     bool shaderOK() {
         if (contrastRenderer.ready() && \
             hblurRenderer.ready() && \
@@ -132,35 +131,63 @@ public:
             return false;
     }
 
-    void run(int recVboID, int txID, int up_scaled_txID, \
-        WaterTileFBO &briFBO, \
+    void run(int recVboID, int txID, WaterTileFBO &briFBO, \
         WaterTileFBO &fbo1_h, WaterTileFBO &fbo1_v, \
         WaterTileFBO &fbo2_h, WaterTileFBO &fbo2_v, \
         WaterTileFBO &fbo3_h, WaterTileFBO &fbo3_v) {
+
         if (recVboID <= 0 || txID <= 0) {
             return;
         }
 
-        if (!blur_reso_set) {
-            hblurRenderer.setHorResolution(fbo1_h.m_width);
-            vblurRenderer.setVerResolution(fbo1_v.m_height);
-            blur_reso_set = true;
-        }
-
         start(recVboID);  // bind with the vbo
         {
-            bOnlyRenderer.run(briFBO, up_scaled_txID);
+            // render the original texture into briFBO fbo (now without modifying)
+            bOnlyRenderer.run(briFBO, txID);
 
+            hblurRenderer.setHorResolution(fbo1_h.m_width);
             hblurRenderer.run(fbo1_h, briFBO.getTexture());
+            vblurRenderer.setVerResolution(fbo1_v.m_height);
             vblurRenderer.run(fbo1_v, fbo1_h.getTexture());
 
+            //*
+            // blur effect based on previous fbo's effect and resolution
+            hblurRenderer.setHorResolution(fbo2_h.m_width);
             hblurRenderer.run(fbo2_h, fbo1_v.getTexture());
+            vblurRenderer.setVerResolution(fbo2_v.m_height);
             vblurRenderer.run(fbo2_v, fbo2_h.getTexture());
 
+            hblurRenderer.setHorResolution(fbo3_h.m_width);
             hblurRenderer.run(fbo3_h, fbo2_v.getTexture());
+            vblurRenderer.setVerResolution(fbo3_v.m_height);
             vblurRenderer.run(fbo3_v, fbo3_h.getTexture());
+            // */
 
-            // contrastRenderer.run(fbo2_v.getTexture());  // render the texture to the bound vbo
+            /*
+            // blur effect irrelevant from previous fbo's effect and resolution
+            hblurRenderer.setHorResolution(fbo2_h.m_width);
+            hblurRenderer.run(fbo2_h, briFBO.getTexture());
+            vblurRenderer.setVerResolution(fbo2_v.m_height);
+            vblurRenderer.run(fbo2_v, fbo2_h.getTexture());
+
+            hblurRenderer.setHorResolution(fbo3_h.m_width);
+            hblurRenderer.run(fbo3_h, briFBO.getTexture());
+            vblurRenderer.setVerResolution(fbo3_v.m_height);
+            vblurRenderer.run(fbo3_v, fbo3_h.getTexture());
+            // */
+
+            {
+                // Use contrastRenderer (no contrast now) for debugging
+
+                // contrastRenderer.run(txID);
+                // contrastRenderer.run(briFBO.getTexture());
+            
+                // contrastRenderer.run(fbo3_v.getTexture());
+                // stop();
+                // return;
+            }
+
+            // The 1st param is not used now
             combineRenderer.run(fbo2_v, txID, fbo3_v.getTexture());
         }
         /*

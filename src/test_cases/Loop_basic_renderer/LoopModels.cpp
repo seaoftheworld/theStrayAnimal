@@ -30,10 +30,13 @@ void LoopModels::initAllModels() {
             // misa.loadModel("data/models/player/rb73/rb73_yForward_zUp.obj", \
                 loader, transforms, sizeof(transforms)/sizeof(transforms[0]), true);
 
+            // fruits.loadModel("data/models/target/orange/orange.obj", \
+
             fruits.loadModel("data/models/target/apple/apple.obj", \
                 loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
         }
     }
+    /*
     {
         float values02[Transform::max] = {
             0.0f, 0.0f, 0.0f,
@@ -45,8 +48,9 @@ void LoopModels::initAllModels() {
 
             fruits_up_scaled.loadModel("data/models/target/apple/apple.obj", \
                 loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
-        }   
+        }
     }
+    // */
 
     // banana
     {
@@ -62,19 +66,6 @@ void LoopModels::initAllModels() {
                 loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
         }
     }
-    {
-        float values01[Transform::max] = {
-            2.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
-            .12f
-        };
-        Transform transform1(&values01); {
-            Transform* transforms[] = { &transform1 };
-
-            fruits_up_scaled.loadModel("data/models/target/banana/banana.obj", \
-                loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
-        }
-    }
 
     // orange
     {
@@ -87,40 +78,12 @@ void LoopModels::initAllModels() {
         Transform transform0(&values00); {
             Transform* transforms[] = { &transform0 };
 
+            // fruits.loadModel("data/models/target/apple/apple.obj", \
+
             fruits.loadModel("data/models/target/orange/orange.obj", \
                 loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
         }
     }
-    {
-        float values00[Transform::max] = {
-            4.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
-            .12f
-        };
-
-        Transform transform0(&values00); {
-            Transform* transforms[] = { &transform0 };
-
-            fruits_up_scaled.loadModel("data/models/target/orange/orange.obj", \
-                loader, transforms, sizeof(transforms) / sizeof(transforms[0]));
-        }
-    }
-
-    // extra-fruit
-    /*
-    {
-        float values02[TexturedModel::transform::max] = {
-            0.0f, 2.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
-            .1f
-        };
-
-        Transform transform02(&values02);
-        Transform* array_transforms[] = { &transform02 }; {
-            rb73.loadModel("data/models/target/orange/orange.obj", loader, array_transforms, 1, true);
-        }
-    }
-    // */
 
     // barrel
     {
@@ -135,6 +98,7 @@ void LoopModels::initAllModels() {
             theRestModels.loadModel("data/models/others/barrel/barrel.obj", loader, array_transforms, 1, true);
         }
     }
+
     // rb73
     {
         float values02[Transform::max] = {
@@ -184,27 +148,31 @@ void LoopModels::initAllModels() {
     printf("\n\n");
     // */
 
-    //*
-    // printf("aaa");
-    // Texture* rb73_nmap = loader.getTexture("data/models/player/rb73/mtl/robot_Normal_OpenGL.png");
-    rb73_nmap = loader.getTexture("data/models/player/rb73/mtl/robot_Normal_OpenGL.png");
-    // rb73_nmap = loader.getTexture("data/models/others/barrel/barrelNormal.png");
+    {
+        // Set normal-texutures for norma-mapped models
 
-    printf("n-map loaded: %p\n", rb73_nmap);
-    // printf("bbb");
-    for (size_t i = 0; i < theRestModels.normalMappedModels.size(); i++) {
-    // for (size_t i = 0; i < 1; i++) {
-        (theRestModels.normalMappedModels)[i].setNormalMap(rb73_nmap);
-    }
+        //*
+        // printf("aaa");
+        // Texture* rb73_nmap = loader.getTexture("data/models/player/rb73/mtl/robot_Normal_OpenGL.png");
+        // rb73_nmap = loader.getTexture("data/models/others/barrel/barrelNormal.png");
+        rb73_nmap = loader.getTexture("data/models/player/rb73/mtl/robot_Normal_OpenGL.png");
+        printf("n-map loaded: %p\n", rb73_nmap);
 
-    for (TexturedModel ir_mesh : theRestModels.normalMappedModels) {
-        printf("texture info: %p\n", ir_mesh.getNormalMap());
+        // printf("bbb");
+        for (size_t i = 0; i < theRestModels.normalMappedModels.size(); i++) {
+            (theRestModels.normalMappedModels)[i].setNormalMap(rb73_nmap);
+        }
+
+        for (TexturedModel ir_mesh : theRestModels.normalMappedModels) {
+            printf("texture info a: %p\n", ir_mesh.getNormalMap());
+        }
+
+        for (size_t i = 0; i < theRestModels.normalMappedModels.size(); i++) {
+            printf("texture info b: %p\n", (theRestModels.normalMappedModels)[i].getNormalMap());
+        }
+        printf("\n\n");
+        // */
     }
-    for (size_t i = 0; i < theRestModels.normalMappedModels.size(); i++) {
-        printf("texture info: %p\n", (theRestModels.normalMappedModels)[i].getNormalMap());
-    }
-    printf("\n\n");
-    // */
 
     // Gui
     {
@@ -256,8 +224,6 @@ void LoopModels::initAllModels() {
             printf("Rect model for post-processing loading failed!\n");
         }
     }
-
-    // fbo
 }
 
 // A stack of pictures with transparent color
